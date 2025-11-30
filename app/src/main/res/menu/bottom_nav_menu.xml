@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_charging"
+        android:icon="@drawable/ic_charging"
+        android:title="充电中" />
+    <item
+        android:id="@+id/nav_estimation"
+        android:icon="@drawable/ic_estimation"
+        android:title="测容量" />
+    <item
+        android:id="@+id/nav_statistics"
+        android:icon="@drawable/ic_statistics"
+        android:title="统计" />
+    <item
+        android:id="@+id/nav_discovery"
+        android:icon="@drawable/ic_discovery"
+        android:title="发现" />
+</menu>
