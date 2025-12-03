@@ -3,17 +3,17 @@
     <item
         android:id="@+id/nav_charging"
         android:icon="@drawable/ic_charging"
-        android:title="充电中" />
+        android:title="实时监控" />
     <item
-        android:id="@+id/nav_estimation"
+        android:id="@+id/nav_battery_usage"
         android:icon="@drawable/ic_estimation"
-        android:title="测容量" />
+        android:title="耗电排行" />
     <item
-        android:id="@+id/nav_statistics"
+        android:id="@+id/nav_health"
         android:icon="@drawable/ic_statistics"
-        android:title="统计" />
+        android:title="健康评估" />
     <item
-        android:id="@+id/nav_discovery"
+        android:id="@+id/nav_system_info"
         android:icon="@drawable/ic_discovery"
-        android:title="发现" />
+        android:title="系统信息" />
 </menu>

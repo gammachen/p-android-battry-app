@@ -9,7 +9,10 @@
     <string name="chart_description">显示各项指标图表对比，数据指标一目了然</string>
     <string name="history_description">记录历史充电/放电数据，随时进行电量溯源</string>
     <string name="charging">充电中</string>
+    <string name="charging_state">充电中</string>
     <string name="discharging_state">放电中</string>
+    <string name="charging_speed">充电速度</string>
+    <string name="discharging_speed">放电速度</string>
     <string name="design_capacity">设计容量</string>
     <string name="estimated_capacity">估计容量</string>
     <string name="click_to_set">数值不对?点击设置</string>

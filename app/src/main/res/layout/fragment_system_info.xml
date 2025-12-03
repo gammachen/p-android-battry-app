@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- 存储信息部分 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="存储信息"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:paddingVertical="16dp"
+            android:textColor="@android:color/black" />
+
+        <LinearLayout
+            android:id="@+id/storage_info_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/info_container_background"
+            android:padding="16dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="24dp" />
+
+        <!-- 网络信息部分 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="网络信息"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:paddingVertical="16dp"
+            android:textColor="@android:color/black" />
+
+        <LinearLayout
+            android:id="@+id/network_info_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/info_container_background"
+            android:padding="16dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="24dp" />
+
+        <!-- 系统信息部分 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="系统信息"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:paddingVertical="16dp"
+            android:textColor="@android:color/black" />
+
+        <LinearLayout
+            android:id="@+id/system_info_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/info_container_background"
+            android:padding="16dp" />
+
+    </LinearLayout>
+
+</ScrollView>

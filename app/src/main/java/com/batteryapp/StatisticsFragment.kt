@@ -6,21 +6,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import com.batteryapp.databinding.FragmentStatisticsBinding
+import androidx.recyclerview.widget.RecyclerView
 
 class StatisticsFragment : Fragment() {
 
-    private var _binding: FragmentStatisticsBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var recyclerView: RecyclerView
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentStatisticsBinding.inflate(inflater, container, false)
+        return inflater.inflate(R.layout.fragment_statistics, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        recyclerView = view.findViewById(R.id.recyclerView)
         setupRecyclerView()
-        return binding.root
     }
 
     private fun setupRecyclerView() {
@@ -53,14 +56,9 @@ class StatisticsFragment : Fragment() {
             // 处理卡片点击事件
         }
 
-        binding.recyclerView.apply {
+        recyclerView.apply {
             layoutManager = GridLayoutManager(context, 2)
             this.adapter = adapter
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

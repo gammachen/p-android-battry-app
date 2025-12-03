@@ -14,7 +14,7 @@
         android:background="@color/green_100"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.toolbar.MaterialToolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -22,15 +22,14 @@
             app:title="统计"
             app:titleTextColor="@color/gray_800">
 
-            <com.google.android.material.button.MaterialButton
+            <Button
                 android:id="@+id/btn_settings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:text="设置"
-                style="@style/Widget.Material3.Button.TextButton"
                 android:textColor="@color/gray_600" />
-        </com.google.android.material.toolbar.MaterialToolbar>
+        </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.fragment.app.FragmentContainerView

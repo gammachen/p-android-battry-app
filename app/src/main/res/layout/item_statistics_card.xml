@@ -6,7 +6,6 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     android:background="@color/white"
-    app:shapeAppearance="@style/ShapeAppearance.Material3.Card.RoundedLarge"
     app:cardElevation="2dp">
 
     <LinearLayout
@@ -21,7 +20,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/gray_800"
             android:textSize="16sp"
-            android:textStyle="medium" />
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
