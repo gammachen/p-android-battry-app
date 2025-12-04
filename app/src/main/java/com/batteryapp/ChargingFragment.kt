@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 
@@ -224,6 +225,9 @@ class ChargingFragment : Fragment() {
             getString(R.string.discharging_state)
         }
         tvBatteryState.text = stateText
+        
+        // 更新水平进度条
+        view?.findViewById<ProgressBar>(R.id.horizontalProgressBar)?.progress = actualPercentage
         
         // 更新功率值
         tvPowerValue.text = String.format("%.2f w", displayPower)

@@ -361,7 +361,7 @@ adb -s emulator-5554 logcat -t 100
 adb -s emulator-5554 logcat -t 100 | grep -i "BatteryViewModel\|database\|Room"
 adb -s emulator-5554 logcat | grep -i "BatteryViewModel\|database\|Room"
 
-
+cd /Users/shhaofu/Code/cursor-projects/p-android-battry-app && ./gradlew installDebug -Pandroid.install.experimental.installOptions="--device-id=emulator-5554" 
 ```
 
 ### 无线连接的步骤
