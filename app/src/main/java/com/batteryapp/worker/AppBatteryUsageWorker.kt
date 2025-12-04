@@ -7,6 +7,7 @@ import android.os.BatteryManager
 import android.os.Build
 import android.util.Log
 import android.app.usage.UsageStatsManager
+import android.net.TrafficStats
 import android.os.PersistableBundle
 import androidx.annotation.RequiresApi
 import androidx.work.CoroutineWorker
@@ -150,16 +151,23 @@ class AppBatteryUsageWorker(
                     val screenOffUsage = backgroundUsage // 后台使用时屏幕可能关闭
                     val idleUsage = screenOffUsage * 0.5 // 假设50%的后台时间是空闲状态
                     
+                    // 获取应用WLAN使用情况
+                    val (wlanUpload, wlanDownload) = getAppWlanUsage(packageName)
+                    
                     // 获取应用耗电量（mAh）
                     val totalUsage = appBatteryConsumptionMap[packageName] ?: calculateBatteryUsageFromTime(
                         foregroundTime,
-                        backgroundUsage
+                        backgroundUsage,
+                        wlanUpload,
+                        wlanDownload
                     )
                     
                     // 增加调试日志
                     Log.d("AppBatteryUsageWorker", "应用${appName}（${packageName}）耗电量: $totalUsage mAh")
                     Log.d("AppBatteryUsageWorker", "  - 前台时间: $foregroundTime 秒")
                     Log.d("AppBatteryUsageWorker", "  - 后台时间: $backgroundUsage 秒")
+                    Log.d("AppBatteryUsageWorker", "  - WLAN上传: $wlanUpload MB")
+                    Log.d("AppBatteryUsageWorker", "  - WLAN下载: $wlanDownload MB")
 
                     val appUsage = AppBatteryUsage(
                         timestamp = System.currentTimeMillis(),
@@ -170,7 +178,9 @@ class AppBatteryUsageWorker(
                         wakelockTime = wakelockTime,
                         screenOnUsage = screenOnUsage,
                         screenOffUsage = screenOffUsage,
-                        idleUsage = idleUsage
+                        idleUsage = idleUsage,
+                        wlanUpload = wlanUpload,
+                        wlanDownload = wlanDownload
                     )
                     
                     appUsageList.add(appUsage)
@@ -201,25 +211,83 @@ class AppBatteryUsageWorker(
     }
     
     /**
+     * 获取应用的UID
+     */
+    private fun getUidForPackage(packageName: String): Int {
+        try {
+            val packageInfo = packageManager.getPackageInfo(packageName, 0)
+            return packageInfo.applicationInfo.uid
+        } catch (e: PackageManager.NameNotFoundException) {
+            Log.e("AppBatteryUsageWorker", "获取应用UID失败: $packageName, ${e.message}")
+            return -1
+        }
+    }
+
+    /**
+     * 获取应用的WLAN网络使用情况
+     * @param packageName 应用包名
+     * @return Pair<Double, Double> 第一个值是上传量（MB），第二个值是下载量（MB）
+     */
+    private fun getAppWlanUsage(packageName: String): Pair<Double, Double> {
+        try {
+            val uid = getUidForPackage(packageName)
+            if (uid == -1) {
+                return Pair(0.0, 0.0)
+            }
+
+            // 使用TrafficStats获取应用的网络流量数据
+            // 注意：TrafficStats返回的是从设备启动以来的累计流量
+            val totalRxBytes = TrafficStats.getUidRxBytes(uid)
+            val totalTxBytes = TrafficStats.getUidTxBytes(uid)
+
+            // 转换为MB
+            val rxMB = if (totalRxBytes != TrafficStats.UNSUPPORTED.toLong()) {
+                totalRxBytes / (1024.0 * 1024.0)
+            } else {
+                0.0
+            }
+
+            val txMB = if (totalTxBytes != TrafficStats.UNSUPPORTED.toLong()) {
+                totalTxBytes / (1024.0 * 1024.0)
+            } else {
+                0.0
+            }
+
+            Log.d("AppBatteryUsageWorker", "应用${packageName} WLAN使用情况: 上传${txMB}MB, 下载${rxMB}MB")
+            return Pair(txMB, rxMB)
+        } catch (e: Exception) {
+            Log.e("AppBatteryUsageWorker", "获取应用WLAN使用情况失败: $packageName, ${e.message}")
+            return Pair(0.0, 0.0)
+        }
+    }
+
+    /**
      * 基于使用时间估算应用耗电量
      * @param foregroundTime 前台使用时间（秒）
      * @param backgroundTime 后台使用时间（秒）
+     * @param wlanUpload WLAN上传量（MB）
+     * @param wlanDownload WLAN下载量（MB）
      * @return 估算的耗电量（mAh）
      */
     private fun calculateBatteryUsageFromTime(
         foregroundTime: Double,
-        backgroundTime: Double
+        backgroundTime: Double,
+        wlanUpload: Double,
+        wlanDownload: Double
     ): Double {
         try {
             // 基于时间的耗电量估算模型
             // 前台应用：假设每小时消耗20mAh
             // 后台应用：假设每小时消耗5mAh
+            // WLAN数据传输：假设每MB上传/下载消耗0.1mAh
             val foregroundConsumptionRate = 20.0 / 3600.0 // mAh/秒
             val backgroundConsumptionRate = 5.0 / 3600.0  // mAh/秒
+            val wlanConsumptionRate = 0.1 // mAh/MB
             
             // 计算总耗电量
             val totalUsage = (foregroundTime * foregroundConsumptionRate) + 
-                           (backgroundTime * backgroundConsumptionRate)
+                           (backgroundTime * backgroundConsumptionRate) + 
+                           ((wlanUpload + wlanDownload) * wlanConsumptionRate)
             
             // 确保耗电量为正数
             return Math.max(totalUsage, 0.0)

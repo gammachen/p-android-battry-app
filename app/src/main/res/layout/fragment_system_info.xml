@@ -98,6 +98,28 @@
             android:layout_width="match_parent"
             android:layout_height="24dp" />
 
+        <!-- 屏幕信息部分 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="屏幕信息"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:paddingVertical="16dp"
+            android:textColor="@android:color/black" />
+
+        <LinearLayout
+            android:id="@+id/screen_info_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/info_container_background"
+            android:padding="16dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="24dp" />
+
         <!-- 传感器信息部分 -->
         <TextView
             android:layout_width="match_parent"

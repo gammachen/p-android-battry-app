@@ -5,11 +5,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.batteryapp.data.BatteryRepository
 import com.batteryapp.model.AppBatteryUsage
 
 class AppBatteryUsageAdapter(
     private val appList: List<AppBatteryUsage>,
-    private val totalUsageTime: Double = 0.0 // 总使用时间，用于计算百分比
+    private val totalUsage: Double = 0.0, // 总使用量，用于计算百分比
+    private val rankType: BatteryRepository.BatteryUsageRankType = BatteryRepository.BatteryUsageRankType.TOTAL_USAGE
 ) : RecyclerView.Adapter<AppBatteryUsageAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -30,13 +32,33 @@ class AppBatteryUsageAdapter(
         val appUsage = appList[position]
         holder.tvAppName.text = appUsage.appName
         
-        // 显示原始时间（保留两位小数）
-        holder.tvUsageValue.text = String.format("%.2f", appUsage.totalUsage)
-        holder.tvUsageUnit.text = "秒"
+        // 根据不同的排序类型显示不同的单位和数值
+        when (rankType) {
+            BatteryRepository.BatteryUsageRankType.TOTAL_USAGE -> {
+                // 总使用时间（秒）
+                holder.tvUsageValue.text = String.format("%.2f", appUsage.backgroundUsage + appUsage.screenOnUsage)
+                holder.tvUsageUnit.text = "秒"
+            }
+            BatteryRepository.BatteryUsageRankType.BACKGROUND_USAGE -> {
+                // 后台使用时间（秒）
+                holder.tvUsageValue.text = String.format("%.2f", appUsage.backgroundUsage)
+                holder.tvUsageUnit.text = "秒"
+            }
+            BatteryRepository.BatteryUsageRankType.WAKELOCK_TIME -> {
+                // 唤醒锁时间（毫秒）
+                holder.tvUsageValue.text = String.format("%d", appUsage.wakelockTime)
+                holder.tvUsageUnit.text = "ms"
+            }
+            BatteryRepository.BatteryUsageRankType.ESTIMATED_CONSUMPTION -> {
+                // 预估耗电量（mAh）
+                holder.tvUsageValue.text = String.format("%.2f", appUsage.totalUsage)
+                holder.tvUsageUnit.text = "mAh"
+            }
+        }
         
         // 计算并显示百分比
-        val percentage = if (totalUsageTime > 0.0) {
-            (appUsage.totalUsage / totalUsageTime) * 100
+        val percentage = if (totalUsage > 0.0) {
+            (appUsage.totalUsage / totalUsage) * 100
         } else {
             0.0
         }

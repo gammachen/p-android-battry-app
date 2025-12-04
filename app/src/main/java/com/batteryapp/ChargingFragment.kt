@@ -13,6 +13,9 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 class ChargingFragment : Fragment() {
 
@@ -26,6 +29,21 @@ class ChargingFragment : Fragment() {
     private lateinit var tvPower: TextView
     private lateinit var tvEstimatedCapacityValue: TextView
     private lateinit var tvCardPower: TextView
+    private lateinit var tvEstimatedChargingTime: TextView
+    
+    // 性能模式相关
+    private lateinit var switchPerformanceMode: SwitchMaterial
+    private lateinit var tvPerformanceModeTip: TextView
+    
+    // 省电模式相关
+    private lateinit var switchPowerSavingMode: SwitchMaterial
+    private lateinit var tvPowerSavingModeTip: TextView
+    
+    // 今日亮屏时长
+    private lateinit var tvScreenOnTime: TextView
+    
+    // 耗电排行
+    private lateinit var rvBatteryUsageRank: RecyclerView
     
     private lateinit var batteryReceiver: BroadcastReceiver
     
@@ -67,6 +85,31 @@ class ChargingFragment : Fragment() {
         tvPower = view.findViewById(R.id.tv_power)
         tvEstimatedCapacityValue = view.findViewById(R.id.tv_estimated_capacity_value)
         tvCardPower = view.findViewById(R.id.tv_card_power)
+        tvEstimatedChargingTime = view.findViewById(R.id.tv_estimated_charging_time)
+        
+        // 性能模式相关
+        switchPerformanceMode = view.findViewById(R.id.switch_performance_mode)
+        tvPerformanceModeTip = view.findViewById(R.id.tv_performance_mode_tip)
+        
+        // 省电模式相关
+        switchPowerSavingMode = view.findViewById(R.id.switch_power_saving_mode)
+        tvPowerSavingModeTip = view.findViewById(R.id.tv_power_saving_mode_tip)
+        
+        // 今日亮屏时长
+        tvScreenOnTime = view.findViewById(R.id.tv_screen_on_time)
+        
+        // 耗电排行
+        rvBatteryUsageRank = view.findViewById(R.id.rv_battery_usage_rank)
+        setupBatteryUsageRecyclerView()
+    }
+    
+    /**
+     * 设置耗电排行RecyclerView
+     */
+    private fun setupBatteryUsageRecyclerView() {
+        rvBatteryUsageRank.layoutManager = LinearLayoutManager(requireContext())
+        // 暂时隐藏耗电排行，因为AppBatteryUsageAdapter需要导入和处理
+        rvBatteryUsageRank.visibility = View.GONE
     }
     
     private fun registerBatteryReceiver() {
@@ -99,13 +142,16 @@ class ChargingFragment : Fragment() {
         // 获取当前剩余电荷（微安时 µAh）
         val chargeCounter = try {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                Log.d("BatteryInfo", "charge_counter_1: ${batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)}")
                 batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
             } else {
                 // 旧版本使用intent获取
+                Log.d("BatteryInfo", "charge_counter_2: ${intent.getLongExtra("charge_counter", -1)}")
                 intent.getLongExtra("charge_counter", -1)
             }
         } catch (e: Exception) {
             // 兜底方案
+            Log.d("BatteryInfo", "charge_counter_3: ${intent.getLongExtra("charge_counter", -1)}")
             intent.getLongExtra("charge_counter", -1)
         }
         
@@ -299,7 +345,7 @@ class ChargingFragment : Fragment() {
                     val remainingTimeStr = String.format("预估续航：%d时%d分%d秒", hours, minutes, seconds)
                     
                     // 组合放电速度和续航时间
-                    "$speedStr \n ($remainingTimeStr)"
+                    "$speedStr \n $remainingTimeStr"
                 } else {
                     speedStr
                 }
@@ -335,6 +381,39 @@ class ChargingFragment : Fragment() {
             "$estimatedCapacity mAh"
         }
         tvEstimatedCapacityValue.text = estimatedCapacityText
+        
+        // 计算并更新预估充电时间
+        updateEstimatedChargingTime(isCharging, actualPercentage, current)
+    }
+    
+    /**
+     * 更新预估充电时间
+     */
+    private fun updateEstimatedChargingTime(isCharging: Boolean, currentPercentage: Int, current: Double) {
+        if (isCharging && current > 0 && currentPercentage < 100) {
+            // 计算剩余电量百分比
+            val remainingPercentage = 100 - currentPercentage
+            
+            // 计算剩余容量（mAh）
+            val remainingCapacity = (estimatedCapacity * remainingPercentage) / 100.0
+            
+            // 计算预估充电时间（分钟）：剩余容量（mAh） / 充电电流（mA） * 60（分钟）
+            val estimatedMinutes = (remainingCapacity / current) * 60.0
+            
+            // 格式化时间为xx小时:xx分钟格式
+            val totalMinutes = estimatedMinutes.toInt()
+            val hours = totalMinutes / 60
+            val minutes = totalMinutes % 60
+            
+            // 更新UI，固定显示为小时:分钟格式
+            tvEstimatedChargingTime.text = String.format("%d小时:%d分钟", hours, minutes)
+        } else if (currentPercentage >= 100) {
+            // 已经充满
+            tvEstimatedChargingTime.text = "已充满"
+        } else {
+            // 未充电或充电电流为0
+            tvEstimatedChargingTime.text = "--:--"
+        }
     }
     
     override fun onDestroyView() {

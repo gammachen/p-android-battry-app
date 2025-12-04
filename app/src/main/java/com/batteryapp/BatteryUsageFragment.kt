@@ -27,14 +27,12 @@ class BatteryUsageFragment : Fragment() {
     private lateinit var tabLayout: TabLayout
     private lateinit var progressBar: ProgressBar
     private lateinit var adapter: AppUsagePagerAdapter
-    // 只保留"总耗电量"标签页
-    private val tabTitles = arrayOf("总耗电量")
+    // 添加"按预估电量"标签页
+    private val tabTitles = arrayOf("总耗电量", "按预估电量")
     
     private var appUsageLists = mapOf(
-        BatteryRepository.BatteryUsageRankType.TOTAL_USAGE to emptyList<AppBatteryUsage>()
-        // 注释掉后台运行时长和唤醒锁时间
-        // BatteryRepository.BatteryUsageRankType.BACKGROUND_USAGE to emptyList<AppBatteryUsage>(),
-        // BatteryRepository.BatteryUsageRankType.WAKELOCK_TIME to emptyList<AppBatteryUsage>()
+        BatteryRepository.BatteryUsageRankType.TOTAL_USAGE to emptyList<AppBatteryUsage>(),
+        BatteryRepository.BatteryUsageRankType.ESTIMATED_CONSUMPTION to emptyList<AppBatteryUsage>()
     )
     
     override fun onCreateView(
@@ -76,9 +74,17 @@ class BatteryUsageFragment : Fragment() {
             val totalUsageTime = it.sumOf { appUsage -> appUsage.totalUsage }
             Log.d("BatteryUsageFragment", "总使用时间: $totalUsageTime")
             
-            // 只更新总耗电量标签页的数据
+            // 更新总耗电量标签页的数据
             val newMap = appUsageLists.toMutableMap()
             newMap[BatteryRepository.BatteryUsageRankType.TOTAL_USAGE] = it
+            
+            // 简单估算应用耗电量：基于使用时长和唤醒锁时间
+            // 计算方法：(totalUsage * 0.7) + (wakelockTime / 1000.0 * 0.3)
+            val estimatedConsumptionList = it.sortedByDescending { appUsage ->
+                (appUsage.totalUsage * 0.7) + (appUsage.wakelockTime / 1000.0 * 0.3)
+            }
+            newMap[BatteryRepository.BatteryUsageRankType.ESTIMATED_CONSUMPTION] = estimatedConsumptionList
+            
             appUsageLists = newMap
             adapter.updateData(appUsageLists)
         }
@@ -105,8 +111,12 @@ class BatteryUsageFragment : Fragment() {
     }
     
     private fun loadAppUsageDataByPosition(position: Int) {
-        // 只处理总耗电量标签页（position 0）
-        val rankType = BatteryRepository.BatteryUsageRankType.TOTAL_USAGE
+        // 根据位置选择对应的排名类型
+        val rankType = when (position) {
+            0 -> BatteryRepository.BatteryUsageRankType.TOTAL_USAGE
+            1 -> BatteryRepository.BatteryUsageRankType.ESTIMATED_CONSUMPTION
+            else -> BatteryRepository.BatteryUsageRankType.TOTAL_USAGE
+        }
         viewModel.loadAppBatteryUsageRanking(rankType)
     }
     
@@ -122,9 +132,13 @@ class BatteryUsageFragment : Fragment() {
         override fun getItemCount(): Int = data.size
         
         override fun createFragment(position: Int): Fragment {
-            // 只处理总耗电量标签页（position 0）
-            val rankType = BatteryRepository.BatteryUsageRankType.TOTAL_USAGE
-            val fragment = AppUsageListFragment.newInstance(data[rankType] ?: emptyList())
+            // 根据位置选择对应的排名类型
+            val rankType = when (position) {
+                0 -> BatteryRepository.BatteryUsageRankType.TOTAL_USAGE
+                1 -> BatteryRepository.BatteryUsageRankType.ESTIMATED_CONSUMPTION
+                else -> BatteryRepository.BatteryUsageRankType.TOTAL_USAGE
+            }
+            val fragment = AppUsageListFragment.newInstance(data[rankType] ?: emptyList(), rankType)
             fragmentMap[position] = fragment
             return fragment
         }
@@ -134,10 +148,14 @@ class BatteryUsageFragment : Fragment() {
             
             // 更新已创建的Fragment实例的数据
             fragmentMap.forEach { (position, fragment) ->
-                // 只处理总耗电量标签页（position 0）
-                val rankType = BatteryRepository.BatteryUsageRankType.TOTAL_USAGE
+                // 根据位置选择对应的排名类型
+                val rankType = when (position) {
+                    0 -> BatteryRepository.BatteryUsageRankType.TOTAL_USAGE
+                    1 -> BatteryRepository.BatteryUsageRankType.ESTIMATED_CONSUMPTION
+                    else -> BatteryRepository.BatteryUsageRankType.TOTAL_USAGE
+                }
                 val updatedData = data[rankType] ?: emptyList()
-                fragment.updateData(updatedData)
+                fragment.updateData(updatedData, rankType)
             }
             
             notifyDataSetChanged()

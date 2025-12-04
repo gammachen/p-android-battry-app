@@ -230,9 +230,19 @@ class BatteryRepository(private val context: Context) {
         Log.d("getAppBatteryUsageRanking", "rankType: $rankType")
         val oneDayAgo = System.currentTimeMillis() - 24 * 60 * 60 * 1000 // 过去24小时（TODO 理论上要从开机时间开始的）
         when (rankType) {
-            BatteryUsageRankType.TOTAL_USAGE -> batteryDao.getAppBatteryUsageTotalByPackage(oneDayAgo)
+            BatteryUsageRankType.TOTAL_USAGE -> batteryDao.getAppBatteryUsageBackgroundByPackage(oneDayAgo)
             BatteryUsageRankType.BACKGROUND_USAGE -> batteryDao.getAppBatteryUsageBackgroundByPackage(oneDayAgo)
             BatteryUsageRankType.WAKELOCK_TIME -> batteryDao.getAppBatteryUsageWakelockByPackage(oneDayAgo)
+            BatteryUsageRankType.ESTIMATED_CONSUMPTION -> {
+                // 获取所有应用数据，然后按预估耗电量排序
+                val allApps = batteryDao.getAppBatteryUsageTotalByPackage(oneDayAgo)
+                // 使用更新后的估算公式：基于使用时长、唤醒锁时间和WLAN数据
+                allApps.sortedByDescending {
+                    // totalUsage已经包含了WLAN数据的影响，所以可以直接使用
+                    // 这里可以进一步优化，添加更复杂的估算逻辑
+                    it.totalUsage
+                }
+            }
         }
     }
     
@@ -254,7 +264,8 @@ class BatteryRepository(private val context: Context) {
     enum class BatteryUsageRankType {
         TOTAL_USAGE,
         BACKGROUND_USAGE,
-        WAKELOCK_TIME
+        WAKELOCK_TIME,
+        ESTIMATED_CONSUMPTION
     }
     
     enum class BatteryUsageSceneType {

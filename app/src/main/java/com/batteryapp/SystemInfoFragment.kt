@@ -32,6 +32,7 @@ class SystemInfoFragment : Fragment() {
     private lateinit var storageInfoContainer: ViewGroup
     private lateinit var cameraInfoContainer: ViewGroup
     private lateinit var sensorInfoContainer: ViewGroup
+    private lateinit var screenInfoContainer: ViewGroup
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,12 +47,14 @@ class SystemInfoFragment : Fragment() {
         storageInfoContainer = view.findViewById(R.id.storage_info_container)
         cameraInfoContainer = view.findViewById(R.id.camera_info_container)
         sensorInfoContainer = view.findViewById(R.id.sensor_info_container)
+        screenInfoContainer = view.findViewById(R.id.screen_info_container)
         
         // 加载系统信息
         loadSystemInfo()
         loadNetworkInfo()
         loadStorageInfo()
         loadCameraInfo()
+        loadScreenInfo()
         loadSensorInfo()
         
         return view
@@ -296,6 +299,125 @@ class SystemInfoFragment : Fragment() {
         }
         
         addInfoToContainer(cameraInfoContainer, cameraInfo)
+    }
+    
+    /**
+     * 加载屏幕信息
+     */
+    private fun loadScreenInfo() {
+        val screenInfo = mutableMapOf<String, String>()
+        
+        try {
+            // 获取屏幕分辨率和相关信息
+            val displayMetrics = resources.displayMetrics
+            val widthPixels = displayMetrics.widthPixels
+            val heightPixels = displayMetrics.heightPixels
+            val density = displayMetrics.density
+            val xdpi = displayMetrics.xdpi
+            val ydpi = displayMetrics.ydpi
+            
+            // 分辨率
+            screenInfo["分辨率"] = "${widthPixels}x${heightPixels}"
+            
+            // 计算宽高比
+            val aspectRatio = calculateAspectRatio(widthPixels, heightPixels)
+            screenInfo["宽高比"] = aspectRatio
+            
+            // 计算屏幕尺寸（英寸）
+            val screenSize = calculateScreenSize(widthPixels, heightPixels, xdpi, ydpi)
+            screenInfo["屏幕尺寸"] = "${String.format("%.1f", screenSize)} 英寸"
+            
+            // 屏幕密度
+            screenInfo["屏幕密度"] = "${displayMetrics.densityDpi} dpi"
+            
+            // 获取GPU信息
+            val gpuInfo = getGpuInfo()
+            screenInfo["GPU"] = gpuInfo
+            
+            // 获取屏幕刷新率
+            val refreshRate = getRefreshRate()
+            screenInfo["刷新率"] = "${refreshRate} Hz"
+            
+        } catch (e: Exception) {
+            Log.e("SystemInfoFragment", "获取屏幕信息失败: ${e.message}")
+            screenInfo["屏幕信息"] = "无法获取屏幕信息"
+        }
+        
+        addInfoToContainer(screenInfoContainer, screenInfo)
+    }
+    
+    /**
+     * 获取屏幕刷新率
+     */
+    private fun getRefreshRate(): Int {
+        try {
+            // 使用Display API获取刷新率
+            val display = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                requireContext().display
+            } else {
+                @Suppress("DEPRECATION")
+                requireActivity().windowManager.defaultDisplay
+            }
+            
+            return if (display != null) {
+                val refreshRate = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    display.refreshRate
+                } else {
+                    @Suppress("DEPRECATION")
+                    display.refreshRate
+                }
+                refreshRate.toInt()
+            } else {
+                60 // 默认值
+            }
+        } catch (e: Exception) {
+            Log.e("SystemInfoFragment", "获取刷新率失败: ${e.message}")
+            return 60 // 默认值
+        }
+    }
+    
+    /**
+     * 计算宽高比
+     */
+    private fun calculateAspectRatio(width: Int, height: Int): String {
+        val gcd = greatestCommonDivisor(width, height)
+        val aspectWidth = width / gcd
+        val aspectHeight = height / gcd
+        return "${aspectWidth}:${aspectHeight}"
+    }
+    
+    /**
+     * 计算最大公约数
+     */
+    private fun greatestCommonDivisor(a: Int, b: Int): Int {
+        var tempA = a
+        var tempB = b
+        while (tempB != 0) {
+            val temp = tempB
+            tempB = tempA % tempB
+            tempA = temp
+        }
+        return tempA
+    }
+    
+    /**
+     * 计算屏幕尺寸（英寸）
+     */
+    private fun calculateScreenSize(widthPixels: Int, heightPixels: Int, xdpi: Float, ydpi: Float): Double {
+        val widthInches = widthPixels / xdpi.toDouble()
+        val heightInches = heightPixels / ydpi.toDouble()
+        return Math.sqrt(widthInches * widthInches + heightInches * heightInches)
+    }
+    
+    /**
+     * 获取GPU信息
+     */
+    private fun getGpuInfo(): String {
+        // 使用系统属性获取GPU信息
+        val glVendor = System.getProperty("ro.opengles.version") ?: "未知"
+        val gpuModel = System.getProperty("ro.hardware") ?: "未知"
+        
+        return "${glVendor} - ${gpuModel}"
     }
     
     /**

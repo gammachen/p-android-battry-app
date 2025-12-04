@@ -138,7 +138,9 @@ class BatteryViewModel(application: Application) : AndroidViewModel(application)
                         wakelockTime = 3600000,
                         screenOnUsage = 1000.0,
                         screenOffUsage = 500.0,
-                        idleUsage = 200.0
+                        idleUsage = 200.0,
+                        wlanUpload = 100.0,
+                        wlanDownload = 500.0
                     ),
                     AppBatteryUsage(
                         timestamp = currentTimestamp,
@@ -149,7 +151,9 @@ class BatteryViewModel(application: Application) : AndroidViewModel(application)
                         wakelockTime = 2400000,
                         screenOnUsage = 800.0,
                         screenOffUsage = 400.0,
-                        idleUsage = 150.0
+                        idleUsage = 150.0,
+                        wlanUpload = 80.0,
+                        wlanDownload = 400.0
                     ),
                     AppBatteryUsage(
                         timestamp = currentTimestamp,
@@ -160,7 +164,9 @@ class BatteryViewModel(application: Application) : AndroidViewModel(application)
                         wakelockTime = 1800000,
                         screenOnUsage = 600.0,
                         screenOffUsage = 300.0,
-                        idleUsage = 100.0
+                        idleUsage = 100.0,
+                        wlanUpload = 60.0,
+                        wlanDownload = 300.0
                     ),
                     AppBatteryUsage(
                         timestamp = currentTimestamp,
@@ -171,7 +177,9 @@ class BatteryViewModel(application: Application) : AndroidViewModel(application)
                         wakelockTime = 1200000,
                         screenOnUsage = 500.0,
                         screenOffUsage = 250.0,
-                        idleUsage = 80.0
+                        idleUsage = 80.0,
+                        wlanUpload = 50.0,
+                        wlanDownload = 250.0
                     ),
                     AppBatteryUsage(
                         timestamp = currentTimestamp,
@@ -182,7 +190,9 @@ class BatteryViewModel(application: Application) : AndroidViewModel(application)
                         wakelockTime = 900000,
                         screenOnUsage = 400.0,
                         screenOffUsage = 200.0,
-                        idleUsage = 60.0
+                        idleUsage = 60.0,
+                        wlanUpload = 40.0,
+                        wlanDownload = 200.0
                     )
                 )
                 

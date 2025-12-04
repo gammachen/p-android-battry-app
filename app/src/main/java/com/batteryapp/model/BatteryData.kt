@@ -178,7 +178,9 @@ data class AppBatteryUsage(
     val wakelockTime: Long,
     val screenOnUsage: Double,
     val screenOffUsage: Double,
-    val idleUsage: Double
+    val idleUsage: Double,
+    val wlanUpload: Double = 0.0,
+    val wlanDownload: Double = 0.0
 )
 
 /**

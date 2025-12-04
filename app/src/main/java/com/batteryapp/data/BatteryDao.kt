@@ -48,13 +48,13 @@ interface BatteryDao {
     suspend fun getAppBatteryUsageByWakelock(): List<AppBatteryUsage>
     
     // 按应用分组累加用电量查询（过去24小时）
-    @Query("SELECT 0 AS id, packageName, appName, SUM(totalUsage) AS totalUsage, SUM(backgroundUsage) AS backgroundUsage, SUM(wakelockTime) AS wakelockTime, SUM(screenOnUsage) AS screenOnUsage, SUM(screenOffUsage) AS screenOffUsage, SUM(idleUsage) AS idleUsage, MAX(timestamp) AS timestamp FROM AppBatteryUsage WHERE timestamp > :oneDayAgo GROUP BY packageName, appName ORDER BY totalUsage DESC")
+    @Query("SELECT 0 AS id, packageName, appName, SUM(totalUsage) AS totalUsage, SUM(backgroundUsage) AS backgroundUsage, SUM(wakelockTime) AS wakelockTime, SUM(screenOnUsage) AS screenOnUsage, SUM(screenOffUsage) AS screenOffUsage, SUM(idleUsage) AS idleUsage, SUM(wlanUpload) AS wlanUpload, SUM(wlanDownload) AS wlanDownload, MAX(timestamp) AS timestamp FROM AppBatteryUsage WHERE timestamp > :oneDayAgo GROUP BY packageName, appName ORDER BY totalUsage DESC")
     suspend fun getAppBatteryUsageTotalByPackage(oneDayAgo: Long): List<AppBatteryUsage>
     
-    @Query("SELECT 0 AS id, packageName, appName, SUM(totalUsage) AS totalUsage, SUM(backgroundUsage) AS backgroundUsage, SUM(wakelockTime) AS wakelockTime, SUM(screenOnUsage) AS screenOnUsage, SUM(screenOffUsage) AS screenOffUsage, SUM(idleUsage) AS idleUsage, MAX(timestamp) AS timestamp FROM AppBatteryUsage WHERE timestamp > :oneDayAgo GROUP BY packageName, appName ORDER BY backgroundUsage DESC")
+    @Query("SELECT 0 AS id, packageName, appName, SUM(totalUsage) AS totalUsage, SUM(backgroundUsage) AS backgroundUsage, SUM(wakelockTime) AS wakelockTime, SUM(screenOnUsage) AS screenOnUsage, SUM(screenOffUsage) AS screenOffUsage, SUM(idleUsage) AS idleUsage, SUM(wlanUpload) AS wlanUpload, SUM(wlanDownload) AS wlanDownload, MAX(timestamp) AS timestamp FROM AppBatteryUsage WHERE timestamp > :oneDayAgo GROUP BY packageName, appName ORDER BY backgroundUsage DESC")
     suspend fun getAppBatteryUsageBackgroundByPackage(oneDayAgo: Long): List<AppBatteryUsage>
     
-    @Query("SELECT 0 AS id, packageName, appName, SUM(totalUsage) AS totalUsage, SUM(backgroundUsage) AS backgroundUsage, SUM(wakelockTime) AS wakelockTime, SUM(screenOnUsage) AS screenOnUsage, SUM(screenOffUsage) AS screenOffUsage, SUM(idleUsage) AS idleUsage, MAX(timestamp) AS timestamp FROM AppBatteryUsage WHERE timestamp > :oneDayAgo GROUP BY packageName, appName ORDER BY wakelockTime DESC")
+    @Query("SELECT 0 AS id, packageName, appName, SUM(totalUsage) AS totalUsage, SUM(backgroundUsage) AS backgroundUsage, SUM(wakelockTime) AS wakelockTime, SUM(screenOnUsage) AS screenOnUsage, SUM(screenOffUsage) AS screenOffUsage, SUM(idleUsage) AS idleUsage, SUM(wlanUpload) AS wlanUpload, SUM(wlanDownload) AS wlanDownload, MAX(timestamp) AS timestamp FROM AppBatteryUsage WHERE timestamp > :oneDayAgo GROUP BY packageName, appName ORDER BY wakelockTime DESC")
     suspend fun getAppBatteryUsageWakelockByPackage(oneDayAgo: Long): List<AppBatteryUsage>
     
     // BatteryHistory相关操作

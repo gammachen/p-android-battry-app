@@ -19,7 +19,7 @@ import com.batteryapp.model.AppBatteryUsage
         AppBatteryUsage::class,
         BatteryHistory::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class BatteryDatabase : RoomDatabase() {

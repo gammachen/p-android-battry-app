@@ -21,7 +21,7 @@ class BatteryAppApplication : Application() {
         initWorkManager()
         
         // 清空旧的测试数据
-        clearTestData()
+        // clearTestData()
     }
     
     /**

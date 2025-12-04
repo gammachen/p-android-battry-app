@@ -293,6 +293,12 @@ adb -s 192.168.31.172:5555 shell screencap -p /sdcard/battery_status.png
 
 adb -s 192.168.31.172:5555 install -r ./app/build/outputs/apk/debug/app-debug.apk
 
+adb -s 192.168.31.236:5555 install -r ./app/build/outputs/apk/debug/app-debug.apk
+
+adb -s 192.168.31.38:5555 install -r ./app/build/outputs/apk/debug/app-debug.apk
+
+adb -s 192.168.31.106:5555 install -r ./app/build/outputs/apk/debug/app-debug.apk
+
 直接安装(错误的选项--device)
 # ./gradlew installDebug --device emulator-5554 
 # 不要--device参数
@@ -351,8 +357,10 @@ adb logcat -c && adb logcat | grep -i battery
 
 adb logcat -c && adb logcat --pid=$(adb shell pidof -s com.batteryapp) 
 
-
+## 打包、安装、启动
+### 启动模拟器
 ./gradlew clean assembleDebug && ./gradlew installDebug && adb -s emulator-5554 shell am start -n com.batteryapp/.MainActivity
+### 启动某台机器
 ./gradlew clean assembleDebug && ./gradlew installDebug && adb -s 192.168.31.106:5555 shell am start -n com.batteryapp/.MainActivity
 ./gradlew clean assembleDebug && ./gradlew installDebug && adb -s 192.168.31.236:5555 shell am start -n com.batteryapp/.MainActivity
 ./gradlew clean assembleDebug && ./gradlew installDebug && adb -s 192.168.31.38:5555 shell am start -n com.batteryapp/.MainActivity
@@ -367,18 +375,18 @@ cd /Users/shhaofu/Code/cursor-projects/p-android-battry-app && ./gradlew install
 ### 无线连接的步骤
 
 ```bash
- 2834  adb -s 8HQSXOSGP7HM4XWS tcpip 5555
- 2836  adb connect 192.168.31.38:5555
+2834  adb -s 8HQSXOSGP7HM4XWS tcpip 5555
+2836  adb connect 192.168.31.38:5555
 
- 2840  adb -s 7SQ0221C03016071 tcpip 5555
- 2843  adb connect 192.168.31.236:5555
- 
- 2845  adb -s f21b96cd0307 tcpip 5555
- 2847  adb connect 192.168.31.106:5555
+2840  adb -s 7SQ0221C03016071 tcpip 5555
+2843  adb connect 192.168.31.236:5555
 
- 首先是使用tcpip将5555端口打开，然后使用connect连接到设备。（至于手机的ip地址，可以使用ipconfig查看，或者查看手机网络中的网络连接，或者通过路由器查看终端的机器ip地址）
+2845  adb -s f21b96cd0307 tcpip 5555
+2847  adb connect 192.168.31.106:5555
 
- 无线的好处就是不会动不动就断开连接，只要保持5555端口打开，就可以一直连接到设备。
+首先是使用tcpip将5555端口打开，然后使用connect连接到设备。（至于手机的ip地址，可以使用ipconfig查看，或者查看手机网络中的网络连接，或者通过路由器查看终端的机器ip地址）
+
+无线的好处就是不会动不动就断开连接，只要保持5555端口打开，就可以一直连接到设备。
 ```
 
 ```bash
@@ -726,7 +734,53 @@ class AppBatteryUsageWorker(
     }
 ```
 
+```bash
+获取的电池的容量与预估的持续续航时间：
+12-04 15:01:09.422 14685 14685 D BatteryInfo: Intent extras: Bundle[mParcelledData.dataSize=616]
+获取的chargeCounter：
+12-04 15:01:09.425 14685 14685 D BatteryInfo: chargeCounter: 2292 μAh, percentage: 77%
+预估的容量： TODO 明显有问题
+12-04 15:01:09.425 14685 14685 D BatteryInfo: estimatedCapacity: 2 mAh
+获取的电流：
+12-04 15:01:09.425 14685 14685 D BatteryInfo: current_now: -1 μA
+获取的电流：
+12-04 15:01:09.425 14685 14685 D BatteryInfo: current: -1 mA
+12-04 15:01:09.425 14685 14685 D BatteryInfo:  v: 2292 μA
+12-04 15:01:09.425 14685 14685 D BatteryInfo: isCharging: false
+12-04 15:01:09.425 14685 14685 D BatteryInfo: voltageRaw: 3940 mV
+12-04 15:01:09.425 14685 14685 D BatteryInfo: Final voltage: 3.94 V
+12-04 15:01:09.425 14685 14685 D BatteryInfo: Final current: 2.292 mA
+12-04 15:01:09.429 14685 14685 D BatteryInfo: speedText: -0.0 mAh/min 
+12-04 15:01:09.429 14685 14685 D BatteryInfo:  (预估续航：0时40分18秒)
+12-04 15:01:09.475 14685 14685 D BatteryInfo: Intent extras: Bundle[mParcelledData.dataSize=616]
+12-04 15:01:09.476 14685 14685 D BatteryInfo: chargeCounter: 2292 μAh, percentage: 77%
+12-04 15:01:09.476 14685 14685 D BatteryInfo: estimatedCapacity: 2 mAh
+12-04 15:01:09.477 14685 14685 D BatteryInfo: current_now: -1 μA  
+12-04 15:01:09.477 14685 14685 D BatteryInfo: current: -1 mA
+12-04 15:01:09.477 14685 14685 D BatteryInfo: charge_counter: 2292 μA
+12-04 15:01:09.477 14685 14685 D BatteryInfo: isCharging: false
+12-04 15:01:09.477 14685 14685 D BatteryInfo: voltageRaw: 3940 mV
+12-04 15:01:09.477 14685 14685 D BatteryInfo: Final voltage: 3.94 V
+12-04 15:01:09.477 14685 14685 D BatteryInfo: Final current: 2.292 mA
+12-04 15:01:09.480 14685 14685 D BatteryInfo: speedText: -0.0 mAh/min 
+12-04 15:01:09.480 14685 14685 D BatteryInfo:  (预估续航：0时40分18秒)
+```
+
+```bash
+不同的机器获得的chargeCounter不同
+1. 华为的一台机器android 12（REL） 31 得到的是：
+12-04 15:51:29.754 29919 29919 D BatteryInfo: charge_counter_1: 2027
+
+2. 小米的Android 10（REL） 29 得到的是：
+12-04 15:48:46.701  8100  8100 D BatteryInfo: charge_counter_1: 3544800
+
+完全是两个量级的差异
+
+3. 模拟器上面得到的是：
+12-04 15:56:12.729 21265 21265 D BatteryInfo: charge_counter_1: 10000
+
+4. OPPO的Android 13（REL） 33 得到的是：
+12-04 15:58:07.090 26546 26546 D BatteryInfo: charge_counter_1: 292800
 
 
-
-
+```
