@@ -91,3 +91,7 @@ Thumbs.db
 
 # Kotlin
 *.kt~
+
+# VS Code
+.vscode/
+!.vscode/java-formatter.xml

@@ -867,3 +867,111 @@ Caused by: java.lang.IllegalAccessError: superclass access check failed: class o
 
 
 ```
+
+```bash
+trae中运行的java进程究竟在干什么鬼的，消耗资源太大了
+
+(base) shhaofu@shhaofudeMacBook-Pro system-images % lsof -p 5535
+COMMAND  PID    USER   FD   TYPE             DEVICE  SIZE/OFF                NODE NAME
+java    5535 shhaofu  cwd    DIR               1,13       672           233846703 /Users/shhaofu/Code/cursor-projects/p-android-battry-app
+java    5535 shhaofu  txt    REG               1,13     69920              891124 /Users/shhaofu/Library/Java/JavaVirtualMachines/corretto-17.0.9/Contents/Home/bin/java
+java    5535 shhaofu  txt    REG               1,13     32768           235277363 /private/var/folders/9l/kbk_mdlj0x5bcvscm_41pmbm0000gn/T/hsperfdata_shhaofu/5535
+java    5535 shhaofu  txt    REG               1,13     76896              891203 /Users/shhaofu/Library/Java/JavaVirtualMachines/corretto-17.0.9/Contents/Home/lib/libjimage.dylib
+java    5535 shhaofu  txt    REG               1,13       110 1152921500312130264 /System/Library/CoreServices/SystemVersion.bundle/English.lproj/SystemVersion.strings
+java    5535 shhaofu  txt    REG               1,13    202672              891196 /Users/shhaofu/Library/Java/JavaVirtualMachines/corretto-17.0.9/Contents/Home/lib/libjava.dylib
+java    5535 shhaofu  txt    REG               1,13    125392              891190 /Users/shhaofu/Library/Java/JavaVirtualMachines/corretto-17.0.9/Contents/Home/lib/libnio.dylib
+java    5535 shhaofu  txt    REG               1,13    106016              891228 /Users/shhaofu/Library/Java/JavaVirtualMachines/corretto-17.0.9/Contents/Home/lib/libverify.dylib
+java    5535 shhaofu  txt    REG               1,13    137968              891205 /Users/shhaofu/Library/Java/JavaVirtualMachines/corretto-17.0.9/Contents/Home/lib/libnet.dylib
+java    5535 shhaofu  txt    REG               1,13    161712              891214 /Users/shhaofu/Library/Java/JavaVirtualMachines/corretto-17.0.9/Contents/Home/lib/libzip.dylib
+java    5535 shhaofu  txt    REG               1,13    131024              891193 /Users/shhaofu/Library/Java/JavaVirtualMachines/corretto-17.0.9/Contents/Home/lib/libjli.dylib
+java    5535 shhaofu  txt    REG               1,13     57992           235271988 /Library/Preferences/Logging/.plist-cache.7lVQgAaE
+java    5535 shhaofu  txt    REG               1,13   1024176           235277482 /private/var/folders/9l/kbk_mdlj0x5bcvscm_41pmbm0000gn/T/sqlite-3.41.2.1-8c7b04b5-c4f1-4749-aa78-052bb0ed66c6-libsqlitejdbc.jnilib
+java    5535 shhaofu  txt    REG               1,13  16812896              891187 /Users/shhaofu/Library/Java/JavaVirtualMachines/corretto-17.0.9/Contents/Home/lib/server/libjvm.dylib
+java    5535 shhaofu  txt    REG               1,13 128233125              891191 /Users/shhaofu/Library/Java/JavaVirtualMachines/corretto-17.0.9/Contents/Home/lib/modules
+java    5535 shhaofu  txt    REG               1,13  32572416 1152921500312535251 /usr/share/icu/icudt74l.dat
+java    5535 shhaofu  txt    REG               1,13  13516800              891188 /Users/shhaofu/Library/Java/JavaVirtualMachines/corretto-17.0.9/Contents/Home/lib/server/classes.jsa
+java    5535 shhaofu    0u  unix 0x29ef1891c13b8fb7       0t0                     ->(none)
+java    5535 shhaofu    1u  unix 0x29ef1891c13b1b4f       0t0                     ->(none)
+java    5535 shhaofu    2u  unix 0x29ef1891c13b1cdf       0t0                     ->(none)
+java    5535 shhaofu    3r   REG               1,13 128233125              891191 /Users/shhaofu/Library/Java/JavaVirtualMachines/corretto-17.0.9/Contents/Home/lib/modules
+java    5535 shhaofu    4r   REG               1,13    471430           235155840 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/server-1.3.13.jar
+java    5535 shhaofu    5r   REG               1,13    145310           235155841 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/shared-1.3.13.jar
+java    5535 shhaofu    6r   REG               1,13     83372           235155842 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/kotlin-scripting-jvm-host-unshaded-2.1.0.jar
+java    5535 shhaofu    7r   REG               1,13    385384           235155843 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/kotlin-scripting-compiler-2.1.0.jar
+java    5535 shhaofu    8r   REG               1,13    163225           235155845 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/ktfmt-b5d31d1.jar
+java    5535 shhaofu    9r   REG               1,13      2199           235156570 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar
+java    5535 shhaofu   10r   REG               1,13     19936           235156573 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/jsr305-3.0.2.jar
+java    5535 shhaofu   11r   REG               1,13     17536           235156541 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/annotations-13.0.jar
+java    5535 shhaofu   12r   REG               1,13   1137286           235156555 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/jna-4.2.2.jar
+java    5535 shhaofu   13r   REG               1,13    248982           235156361 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/google-java-format-1.8.jar
+java    5535 shhaofu   14r   REG               1,13  60226240           235155846 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/kotlin-compiler-2.1.0.jar
+java    5535 shhaofu   15r   REG               1,13    176635           235155996 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/exposed-dao-0.37.3.jar
+java    5535 shhaofu   16r   REG               1,13     58462           235155999 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/exposed-jdbc-0.37.3.jar
+java    5535 shhaofu   17r   REG               1,13   1028542           235156000 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/exposed-core-0.37.3.jar
+java    5535 shhaofu   18r   REG               1,13    225203           235156012 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/kotlin-scripting-compiler-impl-2.1.0.jar
+java    5535 shhaofu   19r   REG               1,13   3069241           235156018 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/kotlin-reflect-2.1.0.jar
+java    5535 shhaofu   20r   REG               1,13    149761           235156044 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/kotlin-scripting-jvm-2.1.0.jar
+java    5535 shhaofu   21r   REG               1,13    195963           235156048 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/kotlin-scripting-common-2.1.0.jar
+java    5535 shhaofu   22r   REG               1,13   1476653           235156056 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/kotlinx-coroutines-core-jvm-1.6.4.jar
+java    5535 shhaofu   23r   REG               1,13       950           235156082 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/kotlin-stdlib-jdk8-2.1.0.jar
+java    5535 shhaofu   24r   REG               1,13       944           235156085 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/kotlin-stdlib-jdk7-2.1.0.jar
+java    5535 shhaofu   25r   REG               1,13   1690048           235156087 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/kotlin-stdlib-2.1.0.jar
+java    5535 shhaofu   26r   REG               1,13   1131640           235156113 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/org.eclipse.lsp4j-0.21.2.jar
+java    5535 shhaofu   27r   REG               1,13    138679           235156140 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/org.eclipse.lsp4j.jsonrpc-0.21.2.jar
+java    5535 shhaofu   28r   REG               1,13     18551           235156146 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/kotlin-sam-with-receiver-compiler-plugin-2.1.0.jar
+java    5535 shhaofu   29r   REG               1,13    657836           235156151 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/fernflower-1.0.jar
+java    5535 shhaofu   30r   REG               1,13   2303679           235156162 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/h2-1.4.200.jar
+java    5535 shhaofu   31r   REG               1,13     83782           235156203 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/jcommander-1.78.jar
+java    5535 shhaofu   32r   REG               1,13  12844673           235156215 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/sqlite-jdbc-3.41.2.1.jar
+java    5535 shhaofu   33r   REG               1,13   3078245           235156365 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/guava-33.3.0-jre.jar
+java    5535 shhaofu   34r   REG               1,13    283367           235156543 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/gson-2.10.1.jar
+java    5535 shhaofu   35r   REG               1,13     43363           235156545 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/kotlin-script-runtime-2.1.0.jar
+java    5535 shhaofu   36r   REG               1,13    572985           235156546 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/trove4j-1.0.20200330.jar
+java    5535 shhaofu   37r   REG               1,13   1145741           235156548 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/jline-3.24.1.jar
+java    5535 shhaofu   38r   REG               1,13     41203           235156553 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/slf4j-api-1.7.25.jar
+java    5535 shhaofu   39r   REG               1,13      4740           235156568 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/failureaccess-1.0.2.jar
+java    5535 shhaofu   40r   REG               1,13    231525           235156575 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/checker-qual-3.43.0.jar
+java    5535 shhaofu   41r   REG               1,13     19370           235156578 /Users/shhaofu/Library/Application Support/Trae CN/User/globalStorage/fwcd.kotlin/langServerInstall/server/lib/error_prone_annotations-2.28.0.jar
+java    5535 shhaofu   42r   CHR               17,0      0t20                 608 /dev/random
+java    5535 shhaofu   43r   CHR               17,1  0t124372                 609 /dev/urandom
+java    5535 shhaofu   44r   REG               1,13    110512              891194 /Users/shhaofu/Library/Java/JavaVirtualMachines/corretto-17.0.9/Contents/Home/lib/jrt-fs.jar
+java    5535 shhaofu   45r   REG               1,13 128233125              891191 /Users/shhaofu/Library/Java/JavaVirtualMachines/corretto-17.0.9/Contents/Home/lib/modules
+java    5535 shhaofu   46u  unix 0x29ef1891c13c4d5f       0t0                     ->(none)
+java    5535 shhaofu   47r   DIR               1,13       192             3628392 /Users/shhaofu/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib
+java    5535 shhaofu   48r   DIR               1,13       192             3628392 /Users/shhaofu/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib
+java    5535 shhaofu   49r   DIR               1,13       288           112483521 /Users/shhaofu/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib/1.9.22
+java    5535 shhaofu   50r   REG               1,13     61456           234232280 /Users/shhaofu/.gradle/caches/modules-2/files-2.1/androidx.room/room-common/2.6.1/ff1b9580850a9b7eef56554e356628d225785265/room-common-2.6.1.jar
+java    5535 shhaofu   51r   REG               1,13    678454           235282049 /Users/shhaofu/.gradle/caches/8.9/transforms/5bb007a334b342c59ea730699ba683e6/transformed/fragment-1.6.2-api.jar
+java    5535 shhaofu   52r   DIR               1,13       192             3628392 /Users/shhaofu/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib
+java    5535 shhaofu   53r   REG               1,13     73063           235282076 /Users/shhaofu/.gradle/caches/8.9/transforms/f2bda3d739d8f113e266290b3c60ab68/transformed/jetified-fragment-ktx-1.6.2-api.jar
+java    5535 shhaofu   54r   DIR               1,13       192             3628392 /Users/shhaofu/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib
+java    5535 shhaofu   55r   REG               1,13    431842           235282512 /Users/shhaofu/.gradle/caches/8.9/transforms/e5cf3a04fbf7e1ce552daa76df925a8a/transformed/jetified-core-ktx-1.12.0-api.jar
+java    5535 shhaofu   56r   REG               1,13      2087           235282378 /Users/shhaofu/.gradle/caches/8.9/transforms/d0b74c8d926e30f3d9788133279eea5f/transformed/jetified-savedstate-ktx-1.2.1-api.jar
+java    5535 shhaofu   57r   REG               1,13   2869359           235282218 /Users/shhaofu/.gradle/caches/8.9/transforms/f4a66f0aee959d08e59373f6c26d72bc/transformed/core-1.12.0-api.jar
+java    5535 shhaofu   58r   REG               1,13     18776           235282276 /Users/shhaofu/.gradle/caches/8.9/transforms/8fc6f29ec6c9f0f512b63c99f0a43994/transformed/lifecycle-livedata-core-2.7.0-api.jar
+java    5535 shhaofu   59r   REG               1,13     38126           235282402 /Users/shhaofu/.gradle/caches/8.9/transforms/7f376330cd10b419a8c40f9ae1743da2/transformed/jetified-savedstate-1.2.1-api.jar
+java    5535 shhaofu   60r   REG               1,13      4808           235282287 /Users/shhaofu/.gradle/caches/8.9/transforms/fe00f541ddcf690006b077aa31f06693/transformed/jetified-lifecycle-livedata-core-ktx-2.7.0-api.jar
+java    5535 shhaofu   61r   REG               1,13     84619           235282274 /Users/shhaofu/.gradle/caches/8.9/transforms/6b0dd80105fbb95c0e1021d1a449c25f/transformed/lifecycle-viewmodel-2.7.0-api.jar
+java    5535 shhaofu   62r   REG               1,13     60505           235282451 /Users/shhaofu/.gradle/caches/8.9/transforms/00292f6cdd88710a8a48e13789eadc09/transformed/sqlite-2.4.0-api.jar
+java    5535 shhaofu   63r   REG               1,13    555733           235282348 /Users/shhaofu/.gradle/caches/8.9/transforms/792758648b8baec846250f277093e334/transformed/room-runtime-2.6.1-api.jar
+java    5535 shhaofu   64r   DIR               1,13       288           112483521 /Users/shhaofu/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib/1.9.22
+java    5535 shhaofu   65r   REG               1,13     18629           235282439 /Users/shhaofu/.gradle/caches/8.9/transforms/71f34aaa4973298e07c0cb315fa8ec27/transformed/jetified-collection-ktx-1.1.0.jar
+java    5535 shhaofu   66r   REG               1,13     55218           235282528 /Users/shhaofu/.gradle/caches/8.9/transforms/c8cfdac57773a936d49a0f9df7af3a55/transformed/jetified-annotation-jvm-1.6.0.jar
+java    5535 shhaofu   67r   REG               1,13     56617           233952808 /Users/shhaofu/.gradle/caches/modules-2/files-2.1/androidx.lifecycle/lifecycle-common/2.7.0/85334205d65cca70ed0109c3acbd29e22a2d9cb1/lifecycle-common-2.7.0.jar
+java    5535 shhaofu   68r   REG               1,13    944090           235300254 /Users/shhaofu/Code/cursor-projects/p-android-battry-app/app/build/intermediates/compile_and_runtime_not_namespaced_r_class_jar/debug/processDebugResources/R.jar
+java    5535 shhaofu   69r   REG               1,13   1718956           112483564 /Users/shhaofu/.m2/repository/org/jetbrains/kotlin/kotlin-stdlib/1.9.22/kotlin-stdlib-1.9.22.jar
+java    5535 shhaofu   70r   REG               1,13     72728           235282426 /Users/shhaofu/.gradle/caches/8.9/transforms/4acd5fd55cecd4922e753013d8afeb38/transformed/sqlite-framework-2.4.0-api.jar
+java    5535 shhaofu   71r   REG               1,13     10092           235282425 /Users/shhaofu/.gradle/caches/8.9/transforms/3dc67f53ec499c3ceae3162bdd0733ff/transformed/jetified-annotation-experimental-1.3.0-api.jar
+java    5535 shhaofu   72r   REG               1,13     84784           235282379 /Users/shhaofu/.gradle/caches/8.9/transforms/7d8411a5aaf6cf6a8e1fd0d9e0a18a52/transformed/jetified-lifecycle-viewmodel-savedstate-2.7.0-api.jar
+java    5535 shhaofu   73r   REG               1,13     92700           235282377 /Users/shhaofu/.gradle/caches/8.9/transforms/d113668b8d41369654b189f399325a16/transformed/jetified-room-ktx-2.6.1-api.jar
+java    5535 shhaofu   74r   REG               1,13  26361808           105468849 /Users/shhaofu/Library/Android/sdk/platforms/android-34/android.jar
+java    5535 shhaofu   75r   REG               1,13   1548432           235282610 /Users/shhaofu/.gradle/caches/8.9/transforms/b68e1d9dcff85332ab5c32a4355e5a83/transformed/jetified-kotlinx-coroutines-core-jvm-1.7.1.jar
+java    5535 shhaofu   77r   REG               1,13    375158           235282139 /Users/shhaofu/.gradle/caches/8.9/transforms/b6617566bb2914e002f60bbd575ee324/transformed/jetified-activity-1.8.0-api.jar
+java    5535 shhaofu   78r   REG               1,13    131635           235282269 /Users/shhaofu/.gradle/caches/8.9/transforms/d99b23acc4409a1fd82da9376c311dac/transformed/lifecycle-livedata-2.7.0-api.jar
+java    5535 shhaofu   79r   REG               1,13     57682           235282080 /Users/shhaofu/.gradle/caches/8.9/transforms/959e42bb00476fcdc378e8f7143387f8/transformed/jetified-activity-ktx-1.8.0-api.jar
+java    5535 shhaofu   80r   REG               1,13      4446           235282340 /Users/shhaofu/.gradle/caches/8.9/transforms/6f5312ddb4b6b3edf56850a0c71e6207/transformed/jetified-lifecycle-viewmodel-ktx-2.7.0-api.jar
+java    5535 shhaofu   81r   REG               1,13     20637           235282526 /Users/shhaofu/.gradle/caches/8.9/transforms/2824326533b74201422e72aa3ca54424/transformed/jetified-kotlinx-coroutines-android-1.7.1.jar
+java    5535 shhaofu   82r   REG               1,13     42921           235282308 /Users/shhaofu/.gradle/caches/8.9/transforms/608d0816a42ed2843d0f73bacf14c6ee/transformed/lifecycle-runtime-2.7.0-api.jar
+java    5535 shhaofu   83r   REG               1,13     79637           235282300 /Users/shhaofu/.gradle/caches/8.9/transforms/2d35401b443c4c23cc5bd348c06f8cec/transformed/jetified-lifecycle-runtime-ktx-2.7.0-api.jar
+```
+

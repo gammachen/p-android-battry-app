@@ -36,7 +36,7 @@ class AppBatteryUsageAdapter(
         when (rankType) {
             BatteryRepository.BatteryUsageRankType.TOTAL_USAGE -> {
                 // 总使用时间（秒）
-                holder.tvUsageValue.text = String.format("%.2f", appUsage.backgroundUsage + appUsage.screenOnUsage)
+                holder.tvUsageValue.text = String.format("%.2f %.2f", appUsage.backgroundUsage, appUsage.screenOnUsage)
                 holder.tvUsageUnit.text = "秒"
             }
             BatteryRepository.BatteryUsageRankType.BACKGROUND_USAGE -> {
@@ -51,7 +51,7 @@ class AppBatteryUsageAdapter(
             }
             BatteryRepository.BatteryUsageRankType.ESTIMATED_CONSUMPTION -> {
                 // 预估耗电量（mAh）
-                holder.tvUsageValue.text = String.format("%.2f", appUsage.totalUsage)
+                holder.tvUsageValue.text = String.format("%.2f %.2f %.2f", appUsage.totalUsage, appUsage.wlanUpload, appUsage.wlanDownload)
                 holder.tvUsageUnit.text = "mAh"
             }
         }
