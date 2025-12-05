@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.switchmaterial.SwitchMaterial
+import java.util.concurrent.TimeUnit
 
 class ChargingFragment : Fragment() {
 
@@ -32,11 +33,11 @@ class ChargingFragment : Fragment() {
     private lateinit var tvEstimatedChargingTime: TextView
     
     // 性能模式相关
-    private lateinit var switchPerformanceMode: SwitchMaterial
-    private lateinit var tvPerformanceModeTip: TextView
+    // private lateinit var switchPerformanceMode: SwitchMaterial
+    // private lateinit var tvPerformanceModeTip: TextView
     
     // 省电模式相关
-    private lateinit var switchPowerSavingMode: SwitchMaterial
+    // private lateinit var switchPowerSavingMode: SwitchMaterial
     private lateinit var tvPowerSavingModeTip: TextView
     
     // 今日亮屏时长
@@ -75,42 +76,58 @@ class ChargingFragment : Fragment() {
     }
     
     private fun initViews(view: View) {
+        // 电池电量百分比文本
         tvBatteryPercentage = view.findViewById(R.id.tv_battery_percentage)
+        // 电池状态文本（充电/放电）
         tvBatteryState = view.findViewById(R.id.tv_battery_state)
+        // 实时功率值文本
         tvPowerValue = view.findViewById(R.id.tv_power_value)
+        // 充电/放电电流文本
         tvChargingCurrent = view.findViewById(R.id.tv_charging_current)
+        // 电池电压文本
         tvVoltage = view.findViewById(R.id.tv_voltage)
+        // 电池温度文本
         tvBatteryTemperature = view.findViewById(R.id.tv_battery_temperature)
+        // 充电速度或放电速度文本
         tvSpeedValue = view.findViewById(R.id.tv_speed_value)
+        // 功率标签文本
         tvPower = view.findViewById(R.id.tv_power)
+        // 估计电池容量文本
         tvEstimatedCapacityValue = view.findViewById(R.id.tv_estimated_capacity_value)
+        // 卡片功率值文本
         tvCardPower = view.findViewById(R.id.tv_card_power)
+        // 预计充满所需时间文本
         tvEstimatedChargingTime = view.findViewById(R.id.tv_estimated_charging_time)
         
         // 性能模式相关
-        switchPerformanceMode = view.findViewById(R.id.switch_performance_mode)
-        tvPerformanceModeTip = view.findViewById(R.id.tv_performance_mode_tip)
+        // switchPerformanceMode = view.findViewById(R.id.switch_performance_mode)
+        // 性能模式提示文本
+        // tvPerformanceModeTip = view.findViewById(R.id.tv_performance_mode_tip)
         
         // 省电模式相关
-        switchPowerSavingMode = view.findViewById(R.id.switch_power_saving_mode)
+        // switchPowerSavingMode = view.findViewById(R.id.switch_power_saving_mode)
+        // 省电模式提示文本
         tvPowerSavingModeTip = view.findViewById(R.id.tv_power_saving_mode_tip)
         
         // 今日亮屏时长
         tvScreenOnTime = view.findViewById(R.id.tv_screen_on_time)
         
         // 耗电排行
-        rvBatteryUsageRank = view.findViewById(R.id.rv_battery_usage_rank)
-        setupBatteryUsageRecyclerView()
+        // rvBatteryUsageRank = view.findViewById(R.id.rv_battery_usage_rank)
+        // 设置适配器
+        // setupBatteryUsageRecyclerView()
     }
     
     /**
      * 设置耗电排行RecyclerView
      */
+    /*
     private fun setupBatteryUsageRecyclerView() {
         rvBatteryUsageRank.layoutManager = LinearLayoutManager(requireContext())
         // 暂时隐藏耗电排行，因为AppBatteryUsageAdapter需要导入和处理
         rvBatteryUsageRank.visibility = View.GONE
     }
+     */
     
     private fun registerBatteryReceiver() {
         batteryReceiver = object : BroadcastReceiver() {
@@ -384,6 +401,23 @@ class ChargingFragment : Fragment() {
         
         // 计算并更新预估充电时间
         updateEstimatedChargingTime(isCharging, actualPercentage, current)
+
+        // 调用系统API获取今日亮屏时长
+        val usageStatsManager = requireContext().getSystemService(Context.USAGE_STATS_SERVICE) as android.app.usage.UsageStatsManager
+        val endTime = System.currentTimeMillis()
+        val beginTime = endTime - TimeUnit.DAYS.toMillis(1)
+        val usageStatsList = usageStatsManager.queryUsageStats(
+            android.app.usage.UsageStatsManager.INTERVAL_DAILY,
+            beginTime,
+            endTime
+        )
+        var totalScreenOnTime = 0L
+        for (usageStats in usageStatsList) {
+            totalScreenOnTime += usageStats.totalTimeInForeground
+        }
+        val hours = TimeUnit.MILLISECONDS.toHours(totalScreenOnTime)
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(totalScreenOnTime) % 60
+        tvScreenOnTime.text = "${hours}小时${minutes}分钟"
     }
     
     /**

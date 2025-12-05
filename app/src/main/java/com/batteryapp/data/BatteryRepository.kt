@@ -231,7 +231,7 @@ class BatteryRepository(private val context: Context) {
         val oneDayAgo = System.currentTimeMillis() - 24 * 60 * 60 * 1000 // 过去24小时（TODO 理论上要从开机时间开始的）
         when (rankType) {
             // 总耗电量
-            BatteryUsageRankType.TOTAL_USAGE -> batteryDao.getAppBatteryUsageBackgroundAndScreenOffByPackage(oneDayAgo)
+            BatteryUsageRankType.TIME_USAGE -> batteryDao.getAppBatteryUsageBackgroundAndScreenOffByPackage(oneDayAgo)
             // 后台耗电量
             BatteryUsageRankType.BACKGROUND_USAGE -> batteryDao.getAppBatteryUsageBackgroundByPackage(oneDayAgo)
             // 唤醒锁时间
@@ -257,7 +257,7 @@ class BatteryRepository(private val context: Context) {
     }
     
     enum class BatteryUsageRankType {
-        TOTAL_USAGE,
+        TIME_USAGE,
         BACKGROUND_USAGE,
         WAKELOCK_TIME,
         ESTIMATED_CONSUMPTION

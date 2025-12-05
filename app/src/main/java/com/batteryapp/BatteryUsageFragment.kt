@@ -31,7 +31,7 @@ class BatteryUsageFragment : Fragment() {
     private val tabTitles = arrayOf("总耗电量", "按预估电量")
     
     private var appUsageLists = mapOf(
-        BatteryRepository.BatteryUsageRankType.TOTAL_USAGE to emptyList<AppBatteryUsage>(),
+        BatteryRepository.BatteryUsageRankType.TIME_USAGE to emptyList<AppBatteryUsage>(),
         BatteryRepository.BatteryUsageRankType.ESTIMATED_CONSUMPTION to emptyList<AppBatteryUsage>()
     )
     
@@ -76,7 +76,7 @@ class BatteryUsageFragment : Fragment() {
             
             // 更新总耗电量标签页的数据
             val newMap = appUsageLists.toMutableMap()
-            newMap[BatteryRepository.BatteryUsageRankType.TOTAL_USAGE] = it
+            newMap[BatteryRepository.BatteryUsageRankType.TIME_USAGE] = it
             
             // 简单估算应用耗电量：基于使用时长和唤醒锁时间
             // 计算方法：(totalUsage * 0.7) + (wakelockTime / 1000.0 * 0.3)
@@ -113,9 +113,9 @@ class BatteryUsageFragment : Fragment() {
     private fun loadAppUsageDataByPosition(position: Int) {
         // 根据位置选择对应的排名类型
         val rankType = when (position) {
-            0 -> BatteryRepository.BatteryUsageRankType.TOTAL_USAGE
+            0 -> BatteryRepository.BatteryUsageRankType.TIME_USAGE
             1 -> BatteryRepository.BatteryUsageRankType.ESTIMATED_CONSUMPTION
-            else -> BatteryRepository.BatteryUsageRankType.TOTAL_USAGE
+            else -> BatteryRepository.BatteryUsageRankType.TIME_USAGE
         }
         viewModel.loadAppBatteryUsageRanking(rankType)
     }
@@ -134,9 +134,9 @@ class BatteryUsageFragment : Fragment() {
         override fun createFragment(position: Int): Fragment {
             // 根据位置选择对应的排名类型
             val rankType = when (position) {
-                0 -> BatteryRepository.BatteryUsageRankType.TOTAL_USAGE
+                0 -> BatteryRepository.BatteryUsageRankType.TIME_USAGE
                 1 -> BatteryRepository.BatteryUsageRankType.ESTIMATED_CONSUMPTION
-                else -> BatteryRepository.BatteryUsageRankType.TOTAL_USAGE
+                else -> BatteryRepository.BatteryUsageRankType.TIME_USAGE
             }
             val fragment = AppUsageListFragment.newInstance(data[rankType] ?: emptyList(), rankType)
             fragmentMap[position] = fragment
@@ -150,9 +150,9 @@ class BatteryUsageFragment : Fragment() {
             fragmentMap.forEach { (position, fragment) ->
                 // 根据位置选择对应的排名类型
                 val rankType = when (position) {
-                    0 -> BatteryRepository.BatteryUsageRankType.TOTAL_USAGE
+                    0 -> BatteryRepository.BatteryUsageRankType.TIME_USAGE
                     1 -> BatteryRepository.BatteryUsageRankType.ESTIMATED_CONSUMPTION
-                    else -> BatteryRepository.BatteryUsageRankType.TOTAL_USAGE
+                    else -> BatteryRepository.BatteryUsageRankType.TIME_USAGE
                 }
                 val updatedData = data[rankType] ?: emptyList()
                 fragment.updateData(updatedData, rankType)

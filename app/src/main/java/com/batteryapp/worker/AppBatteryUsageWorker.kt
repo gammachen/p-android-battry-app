@@ -16,6 +16,9 @@ import com.batteryapp.data.BatteryRepository
 import com.batteryapp.model.AppBatteryUsage
 import java.lang.reflect.Method
 import java.util.concurrent.TimeUnit
+import android.app.usage.NetworkStats
+import android.app.usage.NetworkStatsManager
+import android.net.NetworkCapabilities
 
 /**
  * 应用耗电统计Worker，用于定时采集应用耗电数据
@@ -152,7 +155,7 @@ class AppBatteryUsageWorker(
                     val idleUsage = screenOffUsage * 0.5 // 假设50%的后台时间是空闲状态
                     
                     // 获取应用WLAN使用情况
-                    val (wlanUpload, wlanDownload) = getAppWlanUsage(packageName)
+                    val (wlanUpload, wlanDownload) = getAppWlanUsageNew(applicationContext, packageName)
                     
                     // 获取应用耗电量（mAh）
                     val totalUsage = appBatteryConsumptionMap[packageName] ?: calculateBatteryUsageFromTime(
@@ -275,6 +278,56 @@ class AppBatteryUsageWorker(
         }
     }
 
+    private fun getAppWlanUsageNew(context: Context, packageName: String): Pair<Double, Double> {
+        // 1. 获取UID
+        val uid = getUidForPackage(packageName)
+        if (uid == -1) {
+            Log.e("AppBatteryUsageWorker", "无法获取应用UID: $packageName")
+            return Pair(0.0, 0.0)
+        }
+
+        val networkStatsManager = context.getSystemService(Context.NETWORK_STATS_SERVICE) as NetworkStatsManager
+        var rxBytes = 0L
+        var txBytes = 0L
+
+        // 2. 查询WLAN流量（TRANSPORT_WIFI）
+        // 注意：此API需要Android 6.0 (API 23) 或更高版本
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            try {
+                // 查询从设备启动至今的所有WLAN流量
+                val bucket = networkStatsManager.queryDetailsForUid(
+                    NetworkCapabilities.TRANSPORT_WIFI, // 指定WLAN网络
+                    null, // 所有子网络接口
+                    0, // 开始时间：0表示从最早的数据开始
+                    System.currentTimeMillis(), // 结束时间：当前时间
+                    uid // 目标应用UID
+                )
+
+                // 3. 遍历查询结果并汇总
+                while (bucket.hasNextBucket()) {
+                    val statsBucket = NetworkStats.Bucket()
+                    bucket.getNextBucket(statsBucket)
+                    rxBytes += statsBucket.rxBytes
+                    txBytes += statsBucket.txBytes
+                }
+                bucket.close()
+            } catch (e: Exception) {
+                Log.e("AppBatteryUsageWorker", "查询NetworkStats失败: ${e.message}")
+                return Pair(0.0, 0.0)
+            }
+        } else {
+            // 对于Android 6.0以下的设备，可以回退到TrafficStats，但可能同样不支持
+            Log.w("AppBatteryUsageWorker", "Android版本低于6.0，回退至TrafficStats")
+            return getAppWlanUsage(packageName) // 调用你原来的方法
+        }
+
+        // 4. 转换为MB并返回
+        val rxMB = rxBytes / (1024.0 * 1024.0)
+        val txMB = txBytes / (1024.0 * 1024.0)
+        Log.d("AppBatteryUsageWorker", "应用 $packageName 网络使用情况 (NetworkStatsManager): 上传 ${txMB}MB, 下载 ${rxMB}MB")
+        return Pair(txMB, rxMB)
+    }
+
     /**
      * 基于使用时间估算应用耗电量
      * @param foregroundTime 前台使用时间（秒）
@@ -302,7 +355,8 @@ class AppBatteryUsageWorker(
             val totalUsage = (foregroundTime * foregroundConsumptionRate) + 
                            (backgroundTime * backgroundConsumptionRate) + 
                            ((wlanUpload + wlanDownload) * wlanConsumptionRate)
-            
+
+            Log.d("AppBatteryUsageWorker", "基于时间估算的耗电量: 前台时间：${foregroundTime}秒（乘以比例：${foregroundConsumptionRate}），后台时间：${backgroundTime}秒（乘以比例：${backgroundConsumptionRate}），WLAN上传：${wlanUpload}MB（乘以比例：${wlanConsumptionRate}），WLAN下载：${wlanDownload}MB（乘以比例：${wlanConsumptionRate}），总耗电量： $totalUsage mAh")
             // 确保耗电量为正数
             return Math.max(totalUsage, 0.0)
         } catch (e: Exception) {

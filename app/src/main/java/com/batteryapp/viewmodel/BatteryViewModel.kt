@@ -252,7 +252,7 @@ class BatteryViewModel(application: Application) : AndroidViewModel(application)
     fun refreshAllData() {
         loadRecentBatteryData()
         loadBatteryHealthData()
-        loadAppBatteryUsageRanking(BatteryRepository.BatteryUsageRankType.TOTAL_USAGE)
+        loadAppBatteryUsageRanking(BatteryRepository.BatteryUsageRankType.TIME_USAGE)
         loadAppBatteryUsageByScene(BatteryRepository.BatteryUsageSceneType.SCREEN_ON)
         loadRecentBatteryHistory()
     }

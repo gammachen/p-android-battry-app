@@ -40,7 +40,7 @@ class AppUsageListFragment : Fragment() {
     private fun setupRecyclerView() {
         // 计算总使用量，根据不同的排序类型使用不同的字段
         val totalUsage = when (rankType) {
-            BatteryRepository.BatteryUsageRankType.TOTAL_USAGE -> appUsageList.sumOf { it.totalUsage }
+            BatteryRepository.BatteryUsageRankType.TIME_USAGE -> appUsageList.sumOf { it.totalUsage }
             BatteryRepository.BatteryUsageRankType.BACKGROUND_USAGE -> appUsageList.sumOf { it.backgroundUsage }
             BatteryRepository.BatteryUsageRankType.WAKELOCK_TIME -> appUsageList.sumOf { it.wakelockTime.toDouble() }
             BatteryRepository.BatteryUsageRankType.ESTIMATED_CONSUMPTION -> appUsageList.sumOf { it.totalUsage }
@@ -55,7 +55,7 @@ class AppUsageListFragment : Fragment() {
         rankType = newRankType
         // 计算总使用量，根据不同的排序类型使用不同的字段
         val totalUsage = when (rankType) {
-            BatteryRepository.BatteryUsageRankType.TOTAL_USAGE -> appUsageList.sumOf { it.totalUsage }
+            BatteryRepository.BatteryUsageRankType.TIME_USAGE -> appUsageList.sumOf { it.totalUsage }
             BatteryRepository.BatteryUsageRankType.BACKGROUND_USAGE -> appUsageList.sumOf { it.backgroundUsage }
             BatteryRepository.BatteryUsageRankType.WAKELOCK_TIME -> appUsageList.sumOf { it.wakelockTime.toDouble() }
             BatteryRepository.BatteryUsageRankType.ESTIMATED_CONSUMPTION -> appUsageList.sumOf { it.totalUsage }
@@ -68,7 +68,7 @@ class AppUsageListFragment : Fragment() {
         appUsageList = newData
         // 计算总使用量，根据不同的排序类型使用不同的字段
         val totalUsage = when (rankType) {
-            BatteryRepository.BatteryUsageRankType.TOTAL_USAGE -> appUsageList.sumOf { it.totalUsage }
+            BatteryRepository.BatteryUsageRankType.TIME_USAGE -> appUsageList.sumOf { it.totalUsage }
             BatteryRepository.BatteryUsageRankType.BACKGROUND_USAGE -> appUsageList.sumOf { it.backgroundUsage }
             BatteryRepository.BatteryUsageRankType.WAKELOCK_TIME -> appUsageList.sumOf { it.wakelockTime.toDouble() }
             BatteryRepository.BatteryUsageRankType.ESTIMATED_CONSUMPTION -> appUsageList.sumOf { it.totalUsage }

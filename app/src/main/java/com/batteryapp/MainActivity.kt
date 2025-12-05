@@ -1,20 +1,26 @@
 package com.batteryapp
 
+import android.app.ActivityManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.app.usage.UsageStatsManager
 import android.util.Log
+import android.widget.Button
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
     private val TAG = "MainActivity"
+    private lateinit var btnSystemAccelerate: Button
+    private var currentFragment: Fragment? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -22,6 +28,12 @@ class MainActivity : AppCompatActivity() {
         // 设置Toolbar
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
+
+        // 初始化系统加速按钮
+        btnSystemAccelerate = findViewById(R.id.btn_system_accelerate)
+        btnSystemAccelerate.setOnClickListener {
+            handleSystemAccelerate()
+        }
 
         // 检查并请求UsageStats权限
         checkUsageStatsPermission()
@@ -33,7 +45,8 @@ class MainActivity : AppCompatActivity() {
             when (it.itemId) {
                 R.id.nav_charging -> {
                     toolbar.title = "实时监控"
-                    replaceFragment(ChargingFragment())
+                    currentFragment = ChargingFragment()
+                    replaceFragment(currentFragment!!)
                     true
                 }
                 R.id.nav_battery_usage -> {
@@ -46,7 +59,8 @@ class MainActivity : AppCompatActivity() {
                             // TrafficStats API不可用，显示提示信息
                             Log.w(TAG, "无法获取应用网络流量数据，预估电量可能不准确")
                         }
-                        replaceFragment(BatteryUsageFragment())
+                        currentFragment = BatteryUsageFragment()
+                        replaceFragment(currentFragment!!)
                     } else {
                         requestUsageStatsPermission()
                     }
@@ -54,12 +68,14 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.nav_health -> {
                     toolbar.title = "健康评估"
-                    replaceFragment(HealthFragment())
+                    currentFragment = HealthFragment()
+                    replaceFragment(currentFragment!!)
                     true
                 }
                 R.id.nav_system_info -> {
                     toolbar.title = "系统信息"
-                    replaceFragment(SystemInfoFragment())
+                    currentFragment = SystemInfoFragment()
+                    replaceFragment(currentFragment!!)
                     true
                 }
                 else -> false
@@ -68,7 +84,112 @@ class MainActivity : AppCompatActivity() {
 
         // 默认显示实时监控页面
         toolbar.title = "实时监控"
-        replaceFragment(ChargingFragment())
+        currentFragment = ChargingFragment()
+        replaceFragment(currentFragment!!)
+    }
+
+    /**
+     * 处理系统加速按钮点击事件
+     */
+    private fun handleSystemAccelerate() {
+        // 只有在耗电排行页面才显示加速功能
+        if (currentFragment is BatteryUsageFragment) {
+            try {
+                // 检查是否有 PACKAGE_USAGE_STATS 权限
+                if (!hasPermission()) {
+                    // 没有权限，引导用户去设置中授予
+                    requestUsageStatsPermission()
+                    return
+                }
+                
+                // 初始化 ActivityManager
+                val activityManager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
+                
+                // 初始化 UsageStatsManager
+                val usageStatsManager = getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
+                
+                // 获取过去24小时的应用使用情况
+                val endTime = System.currentTimeMillis()
+                val startTime = endTime - TimeUnit.DAYS.toMillis(1)
+                val usageStatsList = usageStatsManager.queryUsageStats(
+                    UsageStatsManager.INTERVAL_DAILY,
+                    startTime,
+                    endTime
+                )
+                
+                Log.d(TAG, "获取到的应用使用情况数量: ${usageStatsList.size}")
+                
+                // 过滤掉系统应用和当前应用
+                val userApps = usageStatsList.filter {
+                    it.packageName != packageName &&
+                    !it.packageName.startsWith("system") &&
+                    !it.packageName.startsWith("com.android")
+                }
+                
+                // 按使用时间排序，取前3个
+                val top3Apps = userApps.sortedByDescending { it.totalTimeInForeground }
+                    .take(3)
+                
+                Log.d(TAG, "准备结束的前3个应用: ${top3Apps.joinToString { it.packageName }}")
+                
+                var killedCount = 0
+                val killedApps = mutableListOf<String>()
+                
+                // 结束这些应用
+                top3Apps.forEach {
+                    try {
+                        Log.d(TAG, "准备结束应用: ${it.packageName}")
+                        
+                        // 结束应用
+                        activityManager.killBackgroundProcesses(it.packageName)
+                        killedCount++
+                        killedApps.add(it.packageName)
+                        Log.d(TAG, "已结束应用: ${it.packageName}")
+                        
+                    } catch (e: Exception) {
+                        Log.e(TAG, "结束应用失败: ${it.packageName}, ${e.message}")
+                    }
+                }
+                
+                // 显示结果浮层
+                showAccelerateResultDialog(killedCount, killedApps)
+                
+            } catch (e: Exception) {
+                Log.e(TAG, "系统加速失败: ${e.message}", e)
+                // 显示错误提示
+                AlertDialog.Builder(this)
+                    .setTitle("加速失败")
+                    .setMessage("系统加速过程中发生错误: ${e.message}")
+                    .setPositiveButton("确定", null)
+                    .show()
+            }
+        } else {
+            // 不是耗电排行页面，提示用户
+            AlertDialog.Builder(this)
+                .setTitle("提示")
+                .setMessage("请先切换到耗电排行页面，再使用系统加速功能")
+                .setPositiveButton("确定", null)
+                .show()
+        }
+    }
+
+    /**
+     * 显示加速结果浮层
+     */
+    private fun showAccelerateResultDialog(killedCount: Int, killedApps: List<String>) {
+        val message = if (killedCount > 0) {
+            val appsString = killedApps.joinToString("\n")
+            "系统加速完成！\n\n已结束 $killedCount 个应用：\n$appsString\n\n系统运行更流畅了！"
+        } else {
+            "当前没有可加速的应用\n\n系统已经处于最佳状态！"
+        }
+        
+        AlertDialog.Builder(this)
+            .setTitle("加速结果")
+            .setMessage(message)
+            .setPositiveButton("确定", null)
+            .setCancelable(false)
+            .show()
     }
 
     /**

@@ -398,6 +398,8 @@
     </com.google.android.material.card.MaterialCardView>
 
     <!-- 性能模式区块 -->
+    <!-- TODO: 暂时注释掉性能模式区块，后续处理 -->
+    <!-- 暂时不去掉，否则会导致整个页面错乱，干 -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_performance_mode"
         android:layout_width="match_parent"
@@ -448,13 +450,14 @@
                     android:id="@+id/tv_performance_mode_tip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="预计继续使用 0小时30分钟，可提升设备性能，但会增加耗电和发热"
+                    android:text="可提升设备性能，但会增加耗电和发热"
                     android:textColor="@color/gray_600"
                     android:textSize="14sp"
                     android:lineSpacingExtra="4dp" />
             </LinearLayout>
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView> 
+    <!-- 暂时不去掉，否则会导致整个页面错乱，干 -->
 
     <!-- 省电模式区块 -->
     <com.google.android.material.card.MaterialCardView
@@ -490,10 +493,10 @@
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
-                    <com.google.android.material.switchmaterial.SwitchMaterial
+                    <!-- <com.google.android.material.switchmaterial.SwitchMaterial
                         android:id="@+id/switch_power_saving_mode"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content" /> -->
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -507,7 +510,7 @@
                     android:id="@+id/tv_power_saving_mode_tip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="预计继续使用 2小时30分钟，可提升续航时间，但会关闭：熄屏显示、关闭自动同步、关闭触感反馈、关闭系统提示音、减弱显示视觉效果、调整超时灭屏时间、显示应用后台活动、降低系统运行性能、关闭智能语音助手唤醒等"
+                    android:text="可提升续航时间，建议：\n 关闭熄屏显示 \n 关闭自动同步 \n 关闭触感反馈 \n 关闭系统提示音 \n 减弱显示视觉效果 \n 调整超时灭屏时间 \n 显示应用后台活动 \n 降低系统运行性能 \n 关闭智能语音助手唤醒 \n 关闭允许唤醒前台应用 \n 关闭允许后台启动 \n 关闭允许应用自启动 \n 关闭应用关联启动 \n "
                     android:textColor="@color/gray_600"
                     android:textSize="14sp"
                     android:lineSpacingExtra="4dp" />
@@ -563,7 +566,7 @@
     </com.google.android.material.card.MaterialCardView>
 
     <!-- 耗电排行区块 -->
-    <com.google.android.material.card.MaterialCardView
+    <!-- <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_battery_usage_rank"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -616,7 +619,7 @@
                     android:minHeight="200dp" />
             </LinearLayout>
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView> -->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

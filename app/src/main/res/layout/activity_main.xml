@@ -23,11 +23,11 @@
             app:titleTextColor="@color/gray_800">
 
             <Button
-                android:id="@+id/btn_settings"
+                android:id="@+id/btn_system_accelerate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:text="设置"
+                android:text="系统加速"
                 android:textColor="@color/gray_600" />
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
