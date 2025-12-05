@@ -3,11 +3,11 @@ package com.batteryapp.worker
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.net.TrafficStats
 import android.os.BatteryManager
 import android.os.Build
 import android.util.Log
 import android.app.usage.UsageStatsManager
-import android.net.TrafficStats
 import android.os.PersistableBundle
 import androidx.annotation.RequiresApi
 import androidx.work.CoroutineWorker
@@ -43,12 +43,12 @@ class AppBatteryUsageWorker(
             
             appUsageList.forEach { appUsage ->
                 try {
-                    Log.d("AppBatteryUsageWorker", "准备插入应用耗电数据: ${appUsage.appName} (${appUsage.packageName}), 使用时间: ${appUsage.totalUsage}秒, 后台使用: ${appUsage.backgroundUsage}秒, 唤醒锁时间: ${appUsage.wakelockTime}ms")
+                    Log.d("AppBatteryUsageWorker", "准备插入应用耗电数据: ${appUsage.appName} (${appUsage.packageName}), 使用时间: ${appUsage.totalUsage}秒, 后台使用: ${appUsage.backgroundUsage}秒, 唤醒锁时间: ${appUsage.wakelockTime}ms 后台使用: ${appUsage.backgroundUsage}秒, 屏幕关闭使用: ${appUsage.screenOffUsage}秒, 屏幕开启时使用: ${appUsage.screenOnUsage}秒, ")
                     
                     // 执行插入操作
                     batteryRepository.insertAppBatteryUsage(appUsage)
                     
-                    Log.d("AppBatteryUsageWorker", "成功插入应用耗电数据: ${appUsage.appName} (${appUsage.packageName})")
+                    Log.d("AppBatteryUsageWorker", "成功插入应用耗电数据: ${appUsage.appName} (${appUsage.packageName}), 使用时间: ${appUsage.totalUsage}秒, 后台使用: ${appUsage.backgroundUsage}秒, 唤醒锁时间: ${appUsage.wakelockTime}ms 后台使用: ${appUsage.backgroundUsage}秒, 屏幕关闭使用: ${appUsage.screenOffUsage}秒, 屏幕开启时使用: ${appUsage.screenOnUsage}秒, ")
                     successCount++
                 } catch (e: Exception) {
                     Log.e("AppBatteryUsageWorker", "插入应用耗电数据失败: ${appUsage.appName} (${appUsage.packageName}), 错误信息: ${e.message}")
@@ -232,13 +232,27 @@ class AppBatteryUsageWorker(
         try {
             val uid = getUidForPackage(packageName)
             if (uid == -1) {
+                Log.e("AppBatteryUsageWorker", "无法获取应用UID: $packageName")
                 return Pair(0.0, 0.0)
             }
 
             // 使用TrafficStats获取应用的网络流量数据
-            // 注意：TrafficStats返回的是从设备启动以来的累计流量
             val totalRxBytes = TrafficStats.getUidRxBytes(uid)
             val totalTxBytes = TrafficStats.getUidTxBytes(uid)
+
+            // 检查是否完全不支持获取网络流量数据
+            if (totalRxBytes == TrafficStats.UNSUPPORTED.toLong() && totalTxBytes == TrafficStats.UNSUPPORTED.toLong()) {
+                Log.w("AppBatteryUsageWorker", "TrafficStats完全不支持获取应用网络流量数据: $packageName")
+                return Pair(0.0, 0.0)
+            }
+            
+            // 部分支持时的日志
+            if (totalRxBytes == TrafficStats.UNSUPPORTED.toLong()) {
+                Log.w("AppBatteryUsageWorker", "TrafficStats不支持获取应用下载流量数据: $packageName")
+            }
+            if (totalTxBytes == TrafficStats.UNSUPPORTED.toLong()) {
+                Log.w("AppBatteryUsageWorker", "TrafficStats不支持获取应用上传流量数据: $packageName")
+            }
 
             // 转换为MB
             val rxMB = if (totalRxBytes != TrafficStats.UNSUPPORTED.toLong()) {
@@ -253,10 +267,10 @@ class AppBatteryUsageWorker(
                 0.0
             }
 
-            Log.d("AppBatteryUsageWorker", "应用${packageName} WLAN使用情况: 上传${txMB}MB, 下载${rxMB}MB")
+            Log.d("AppBatteryUsageWorker", "应用${packageName} 网络使用情况: 上传${txMB}MB, 下载${rxMB}MB")
             return Pair(txMB, rxMB)
         } catch (e: Exception) {
-            Log.e("AppBatteryUsageWorker", "获取应用WLAN使用情况失败: $packageName, ${e.message}")
+            Log.e("AppBatteryUsageWorker", "获取应用网络使用情况失败: $packageName, ${e.message}")
             return Pair(0.0, 0.0)
         }
     }

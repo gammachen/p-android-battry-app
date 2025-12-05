@@ -15,7 +15,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 class MainActivity : AppCompatActivity() {
 
     private val TAG = "MainActivity"
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -26,6 +25,8 @@ class MainActivity : AppCompatActivity() {
 
         // 检查并请求UsageStats权限
         checkUsageStatsPermission()
+        // 检查NetworkStats API是否可用
+        checkNetworkStatsPermission()
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bottomNavigationView.setOnItemSelectedListener {
@@ -39,6 +40,12 @@ class MainActivity : AppCompatActivity() {
                     toolbar.title = "耗电排行"
                     // 跳转到耗电排行前再次检查权限
                     if (checkUsageStatsPermission()) {
+                        // 检查NetworkStats API是否可用
+                        val isNetworkStatsAvailable = checkNetworkStatsPermission()
+                        if (!isNetworkStatsAvailable) {
+                            // TrafficStats API不可用，显示提示信息
+                            Log.w(TAG, "无法获取应用网络流量数据，预估电量可能不准确")
+                        }
                         replaceFragment(BatteryUsageFragment())
                     } else {
                         requestUsageStatsPermission()
@@ -72,6 +79,27 @@ class MainActivity : AppCompatActivity() {
         val packageManager = packageManager
         val resolveInfoList = packageManager.queryIntentActivities(intent, 0)
         return resolveInfoList.isNotEmpty() && hasPermission()
+    }
+
+    /**
+     * 检查是否有NETWORK_STATS和READ_NETWORK_USAGE_HISTORY权限
+     */
+    private fun checkNetworkStatsPermission(): Boolean {
+        // 对于NETWORK_STATS和READ_NETWORK_USAGE_HISTORY权限，需要系统权限，普通应用无法通过常规方式获取
+        // 这里主要检查TrafficStats是否可用
+        val testUid = android.os.Process.myUid()
+        val rxBytes = android.net.TrafficStats.getUidRxBytes(testUid)
+        val txBytes = android.net.TrafficStats.getUidTxBytes(testUid)
+        
+        // 如果获取到的值不是UNSUPPORTED，说明TrafficStats基本可用
+        val isAvailable = rxBytes != android.net.TrafficStats.UNSUPPORTED.toLong() || 
+                          txBytes != android.net.TrafficStats.UNSUPPORTED.toLong()
+        
+        if (!isAvailable) {
+            Log.w(TAG, "TrafficStats API不可用，无法获取应用网络流量数据")
+        }
+        
+        return isAvailable
     }
 
     /**

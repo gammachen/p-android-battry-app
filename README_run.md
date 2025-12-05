@@ -784,3 +784,86 @@ class AppBatteryUsageWorker(
 
 
 ```
+
+```bash
+FK 不同的手机上的不同的android的版本导致获取的数据完全不一样
+
+简单的代码就变的非常的操蛋！！！兼容性代码就非常的多！！！
+```
+
+```bash
+为了在vsconsole中开发android项目，需要配置一下：
+{
+    "java.home": "/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home",
+     "java.configuration.runtimes": [
+        {
+        "name": "JavaSE-21",
+        "path": "/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home"
+        }
+    ],
+    "java.configuration.updateBuildConfiguration": "automatic"
+}
+
+openjdk@25并不是好的选择，貌似android与ktlin的插件支持的jdk版本是8-21（只是之前选择的17也不对），这里面更新的就是这个java profile的配置，在设置中奖java home切换成了openjdk@21，之后java和android相关的链接在ide中就可以正常使用了，中间似乎gradle相关的插件似乎也自己更新了一把）
+
+之前更新成openjdk@25时，提示目前的gradle使用的是8，需要更新到9以上，这里面更新的就是gradle的版本，在build.gradle中更新一下gradle的版本就可以了。
+```
+
+### android avd 虚拟机
+
+```bash
+(base) shhaofu@shhaofudeMacBook-Pro p-android-battry-app % sdkmanager
+Usage:
+  sdkmanager [--uninstall] [<common args>] [--package_file=<file>] [<packages>...]
+  sdkmanager --update [<common args>]
+  sdkmanager --list [<common args>]
+  sdkmanager --list_installed [<common args>]
+  sdkmanager --licenses [<common args>]
+  sdkmanager --version
+
+With --install (optional), installs or updates packages.
+    By default, the listed packages are installed or (if already installed)
+    updated to the latest version.
+
+## 列出可用的虚拟机（只是列出），有需要的情况下还是要安装
+sdkmanager --list | grep "system-images"
+
+sdkmanager --install "system-images;android-33;google_apis_playstore;x86_64"
+
+# Intel Mac（推荐 x86_64 + HAXM 加速）
+sdkmanager "system-images;android-34;google_apis;x86_64"
+
+# Apple Silicon Mac（必须用 arm64）
+sdkmanager "system-images;android-34;google_apis;arm64-v8a"
+
+(base) shhaofu@shhaofudeMacBook-Pro p-android-battry-app % sdkmanager "system-images;android-34;google_apis;arm64-v8a"
+[====                                   ] 10% Downloading arm64-v8a-34_r14.zip..
+
+查看可用的设备型号（硬件配置）
+avdmanager list device
+
+avdmanager create avd \
+  -n Pixel6_API35_ARM \
+  -k "system-images;android-35;google_apis;arm64-v8a" \
+  -d "pixel_6"
+
+```
+
+```bash
+干，gradle的8.7.3版本不支持openjdk@21，需要降级到17
+
+否则将导致编译失败：
+Caused by: java.lang.IllegalAccessError: superclass access check failed: class org.jetbrains.kotlin.kapt3.base.javac.KaptJavaCompiler (in unnamed module @0x2e76df7c) cannot access class com.sun.tools.javac.main.JavaCompiler (in module jdk.compiler) because module jdk.compiler does not export com.sun.tools.javac.main to unnamed module @0x2e76df7c
+        at org.jetbrains.kotlin.kapt3.base.KaptContext.<init>(KaptContext.kt:55)
+        at org.jetbrains.kotlin.kapt3.base.Kapt.kapt(Kapt.kt:35)
+        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+        ... 30 more
+
+(TraeAI-15) ~/Code/cursor-projects/p-android-battry-app [0] $ export JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.14
+
+(TraeAI-15) ~/Code/cursor-projects/p-android-battry-app [0] $ export PATH=$JAVA_HOME/bin:$PATH
+
+(TraeAI-15) ~/Code/cursor-projects/p-android-battry-app [0] $ ./gradlew clean assembleDebug --stacktrace 
+
+
+```

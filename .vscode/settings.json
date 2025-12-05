@@ -1,3 +1,10 @@
 {
+    "java.home": "/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home",
+     "java.configuration.runtimes": [
+        {
+        "name": "JavaSE-21",
+        "path": "/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home"
+        }
+    ],
     "java.configuration.updateBuildConfiguration": "automatic"
 }
