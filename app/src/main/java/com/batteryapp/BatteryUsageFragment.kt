@@ -16,6 +16,7 @@ import com.batteryapp.data.BatteryRepository
 import com.batteryapp.viewmodel.BatteryViewModel
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.batteryapp.RunningAppFragment
 
 /**
  * 电池耗电排行榜Fragment，显示应用耗电情况
@@ -27,8 +28,8 @@ class BatteryUsageFragment : Fragment() {
     private lateinit var tabLayout: TabLayout
     private lateinit var progressBar: ProgressBar
     private lateinit var adapter: AppUsagePagerAdapter
-    // 添加"按预估电量"标签页
-    private val tabTitles = arrayOf("总耗电量", "按预估电量")
+    // 添加"按预估电量"标签页和"运行中的APP"标签页
+    private val tabTitles = arrayOf("总耗电量", "按预估电量", "运行中的APP（实时）")
     
     private var appUsageLists = mapOf(
         BatteryRepository.BatteryUsageRankType.TIME_USAGE to emptyList<AppBatteryUsage>(),
@@ -111,13 +112,16 @@ class BatteryUsageFragment : Fragment() {
     }
     
     private fun loadAppUsageDataByPosition(position: Int) {
-        // 根据位置选择对应的排名类型
-        val rankType = when (position) {
-            0 -> BatteryRepository.BatteryUsageRankType.TIME_USAGE
-            1 -> BatteryRepository.BatteryUsageRankType.ESTIMATED_CONSUMPTION
-            else -> BatteryRepository.BatteryUsageRankType.TIME_USAGE
+        // 只在第一和第二个Tab加载电池使用数据，第三个Tab（运行中的APP）不需要
+        if (position <= 1) {
+            // 根据位置选择对应的排名类型
+            val rankType = when (position) {
+                0 -> BatteryRepository.BatteryUsageRankType.TIME_USAGE
+                1 -> BatteryRepository.BatteryUsageRankType.ESTIMATED_CONSUMPTION
+                else -> BatteryRepository.BatteryUsageRankType.TIME_USAGE
+            }
+            viewModel.loadAppBatteryUsageRanking(rankType)
         }
-        viewModel.loadAppBatteryUsageRanking(rankType)
     }
     
     // ViewPager2适配器
@@ -127,20 +131,36 @@ class BatteryUsageFragment : Fragment() {
     ) : FragmentStateAdapter(fragmentActivity) {
         
         // 保存已创建的Fragment实例
-        private val fragmentMap = mutableMapOf<Int, AppUsageListFragment>()
+        private val fragmentMap = mutableMapOf<Int, Fragment>()
         
-        override fun getItemCount(): Int = data.size
+        override fun getItemCount(): Int = tabTitles.size
         
         override fun createFragment(position: Int): Fragment {
-            // 根据位置选择对应的排名类型
-            val rankType = when (position) {
-                0 -> BatteryRepository.BatteryUsageRankType.TIME_USAGE
-                1 -> BatteryRepository.BatteryUsageRankType.ESTIMATED_CONSUMPTION
-                else -> BatteryRepository.BatteryUsageRankType.TIME_USAGE
+            return when (position) {
+                0, 1 -> {
+                    // 根据位置选择对应的排名类型
+                    val rankType = when (position) {
+                        0 -> BatteryRepository.BatteryUsageRankType.TIME_USAGE
+                        1 -> BatteryRepository.BatteryUsageRankType.ESTIMATED_CONSUMPTION
+                        else -> BatteryRepository.BatteryUsageRankType.TIME_USAGE
+                    }
+                    val fragment = AppUsageListFragment.newInstance(data[rankType] ?: emptyList(), rankType)
+                    fragmentMap[position] = fragment
+                    fragment
+                }
+                2 -> {
+                    // 运行中的APP Fragment
+                    val fragment = RunningAppFragment()
+                    fragmentMap[position] = fragment
+                    fragment
+                }
+                else -> {
+                    // 默认返回第一个标签页的Fragment
+                    val fragment = AppUsageListFragment.newInstance(data[BatteryRepository.BatteryUsageRankType.TIME_USAGE] ?: emptyList(), BatteryRepository.BatteryUsageRankType.TIME_USAGE)
+                    fragmentMap[position] = fragment
+                    fragment
+                }
             }
-            val fragment = AppUsageListFragment.newInstance(data[rankType] ?: emptyList(), rankType)
-            fragmentMap[position] = fragment
-            return fragment
         }
         
         fun updateData(newData: Map<BatteryRepository.BatteryUsageRankType, List<AppBatteryUsage>>) {
@@ -148,14 +168,17 @@ class BatteryUsageFragment : Fragment() {
             
             // 更新已创建的Fragment实例的数据
             fragmentMap.forEach { (position, fragment) ->
-                // 根据位置选择对应的排名类型
-                val rankType = when (position) {
-                    0 -> BatteryRepository.BatteryUsageRankType.TIME_USAGE
-                    1 -> BatteryRepository.BatteryUsageRankType.ESTIMATED_CONSUMPTION
-                    else -> BatteryRepository.BatteryUsageRankType.TIME_USAGE
+                if (position <= 1 && fragment is AppUsageListFragment) {
+                    // 根据位置选择对应的排名类型
+                    val rankType = when (position) {
+                        0 -> BatteryRepository.BatteryUsageRankType.TIME_USAGE
+                        1 -> BatteryRepository.BatteryUsageRankType.ESTIMATED_CONSUMPTION
+                        else -> BatteryRepository.BatteryUsageRankType.TIME_USAGE
+                    }
+                    val updatedData = data[rankType] ?: emptyList()
+                    fragment.updateData(updatedData, rankType)
                 }
-                val updatedData = data[rankType] ?: emptyList()
-                fragment.updateData(updatedData, rankType)
+                // 第三个标签页是RunningAppFragment，不需要更新数据，它会自己刷新
             }
             
             notifyDataSetChanged()
