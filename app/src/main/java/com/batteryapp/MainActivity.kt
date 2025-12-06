@@ -126,28 +126,83 @@ class MainActivity : AppCompatActivity() {
                     !it.packageName.startsWith("com.android")
                 }
                 
-                // 按使用时间排序，取前3个
-                val top3Apps = userApps.sortedByDescending { it.totalTimeInForeground }
-                    .take(3)
+                // 按使用时间排序，取前10个最常用的应用
+                val topApps = userApps.sortedByDescending { it.totalTimeInForeground }
+                    .take(10)
                 
-                Log.d(TAG, "准备结束的前3个应用: ${top3Apps.joinToString { it.packageName }}")
+                Log.d(TAG, "前10个最常用的应用: ${topApps.joinToString { it.packageName }}")
+                
+                // 获取这些应用的内存使用情况
+                val appMemoryMap = mutableMapOf<String, Int>()
+                
+                // 获取所有运行的进程
+                val runningProcesses = activityManager.runningAppProcesses
+                
+                topApps.forEach { usageStats ->
+                    try {
+                        // 查找该应用的进程
+                        val appProcesses = runningProcesses.filter { process ->
+                            process.pkgList.contains(usageStats.packageName)
+                        }
+                        
+                        // 计算该应用的总内存消耗
+                        var totalPss = 0
+                        appProcesses.forEach {
+                            try {
+                                val memoryInfoArray = activityManager.getProcessMemoryInfo(intArrayOf(it.pid))
+                                if (memoryInfoArray.isNotEmpty()) {
+                                    totalPss += memoryInfoArray[0].totalPss
+                                } else {
+                                    Log.w(TAG, "通过ActivityManager.getProcessMemoryInfo(intArrayOf(it.pid)) 获取进程内存信息为空: ${it.pid} ${it.processName}")
+                                }
+                            } catch (e: Exception) {
+                                Log.e(TAG, "获取进程内存失败: ${it.processName}, ${e.message}")
+                            }
+                        }
+                        
+                        if (totalPss > 0) {
+                            appMemoryMap[usageStats.packageName] = totalPss
+                            Log.d(TAG, "应用: ${usageStats.packageName}, 总PSS内存: ${totalPss}KB")
+                        }
+                    } catch (e: Exception) {
+                        Log.e(TAG, "获取应用内存失败: ${usageStats.packageName}, ${e.message}")
+                    }
+                }
+                
+                // 如果没有获取到内存信息，回退到按使用时间排序
+                val finalApps: List<Pair<String, Int>> = if (appMemoryMap.isNotEmpty()) {
+                    // 按内存消耗排序，取前3个
+                    appMemoryMap.entries
+                        .sortedByDescending { it.value }
+                        .take(3)
+                        .map { Pair(it.key, it.value) }
+                } else {
+                    // 回退到按使用时间排序
+                    Log.w(TAG, "无法获取应用内存信息，回退到按使用时间排序")
+                    topApps.take(3).map { usageStats ->
+                        Pair(usageStats.packageName, 0)
+                    }
+                }
+                
+                Log.d(TAG, "准备结束的前3个应用: ${finalApps.joinToString { "${it.first}(${it.second}KB)" }}")
                 
                 var killedCount = 0
                 val killedApps = mutableListOf<String>()
                 
                 // 结束这些应用
-                top3Apps.forEach {
+                finalApps.forEach {
                     try {
-                        Log.d(TAG, "准备结束应用: ${it.packageName}")
+                        val packageName = it.first
+                        Log.d(TAG, "准备结束应用: $packageName")
                         
                         // 结束应用
-                        activityManager.killBackgroundProcesses(it.packageName)
+                        activityManager.killBackgroundProcesses(packageName)
                         killedCount++
-                        killedApps.add(it.packageName)
-                        Log.d(TAG, "已结束应用: ${it.packageName}")
+                        killedApps.add(packageName)
+                        Log.d(TAG, "已结束应用: $packageName")
                         
                     } catch (e: Exception) {
-                        Log.e(TAG, "结束应用失败: ${it.packageName}, ${e.message}")
+                        Log.e(TAG, "结束应用失败: ${it.first}, ${e.message}")
                     }
                 }
                 
