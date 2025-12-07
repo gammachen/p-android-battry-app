@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -31,6 +32,15 @@ class ChargingFragment : Fragment() {
     private lateinit var tvEstimatedCapacityValue: TextView
     private lateinit var tvCardPower: TextView
     private lateinit var tvEstimatedChargingTime: TextView
+
+    companion object {
+        // 日志标签
+        private const val TAG = "BatteryInfo"
+        
+        // 典型的电池容量范围（mAh）
+        private const val MIN_BATTERY_CAPACITY_MAH = 1000  // 最小电池容量 1000mAh
+        private const val MAX_BATTERY_CAPACITY_MAH = 10000  // 最大电池容量 10000mAh
+    }
     
     // 性能模式相关
     // private lateinit var switchPerformanceMode: SwitchMaterial
@@ -148,28 +158,155 @@ class ChargingFragment : Fragment() {
             updateBatteryStatus(it)
         }
     }
-    
-    private fun updateBatteryStatus(intent: Intent) {
-        // 打印intent中的所有额外数据，用于调试
-        Log.d("BatteryInfo", "Intent extras: ${intent.extras}")
+
+    /**
+     * 智能标准化：检测并转换为 µAh
+     */
+    private fun normalizeChargeCounter(rawValue: Long): Long {
+        if (rawValue <= 0) return rawValue
         
+        // 检测当前值的可能单位
+        return when (detectChargeCounterUnit(rawValue)) {
+            ChargeCounterUnit.NANO_AMP_HOURS -> {
+                Log.d(TAG, "Detected nAh, converting to µAh: ${rawValue / 1000L}")
+                rawValue / 1000L  // nAh → µAh
+            }
+            ChargeCounterUnit.MILLI_AMP_HOURS -> {
+                Log.d(TAG, "Detected mAh, converting to µAh: ${rawValue * 1000L}")
+                rawValue * 1000L  // mAh → µAh
+            }
+            ChargeCounterUnit.MICRO_AMP_HOURS -> {
+                Log.d(TAG, "Detected µAh, using as-is: $rawValue")
+                rawValue  // 已经是 µAh
+            }
+            ChargeCounterUnit.UNKNOWN -> {
+                // 启发式猜测：基于常见的电池容量范围
+                guessAndConvert(rawValue)
+            }
+        }
+    }
+
+    /**
+     * 单位枚举
+     */
+    private enum class ChargeCounterUnit {
+        NANO_AMP_HOURS,   // nAh
+        MICRO_AMP_HOURS,  // µAh
+        MILLI_AMP_HOURS,  // mAh
+        UNKNOWN
+    }
+    
+    /**
+     * 检测原始值的单位
+     */
+    private fun detectChargeCounterUnit(rawValue: Long): ChargeCounterUnit {
+        // 将原始值转换为 mAh 范围进行判断
+        val valueInMah = rawValue.toDouble() / 1000.0  // 假设是 µAh
+        
+        when {
+            // 如果是 nAh 单位：值会很小（如 1650 nAh = 1.65 µAh = 0.00165 mAh）
+            rawValue < 1000 -> {
+                return ChargeCounterUnit.NANO_AMP_HOURS
+            }
+            
+            // 如果是 µAh 单位：应该在合理电池容量范围内
+            valueInMah in MIN_BATTERY_CAPACITY_MAH.toDouble()..MAX_BATTERY_CAPACITY_MAH.toDouble() -> {
+                return ChargeCounterUnit.MICRO_AMP_HOURS
+            }
+            
+            // 如果是 mAh 单位：值会很大（如 4861440 mAh 不合理，但可能是 µAh）
+            rawValue > MAX_BATTERY_CAPACITY_MAH * 1000 -> {
+                // 如果以 mAh 计算的值远大于最大电池容量，说明它实际上可能是 µAh
+                // 例如：4861440 > 6000*1000，所以它不是 mAh
+                return if (rawValue > MAX_BATTERY_CAPACITY_MAH * 1000L) {
+                    ChargeCounterUnit.MICRO_AMP_HOURS
+                } else {
+                    ChargeCounterUnit.MILLI_AMP_HOURS
+                }
+            }
+            
+            // 其他情况：可能是 mAh
+            else -> {
+                return ChargeCounterUnit.MILLI_AMP_HOURS
+            }
+        }
+    }
+    
+    /**
+     * 启发式猜测与转换
+     */
+    private fun guessAndConvert(rawValue: Long): Long {
+        // 基于 Android 版本的经验规则
+        return when (Build.VERSION.SDK_INT) {
+            in Build.VERSION_CODES.M..Build.VERSION_CODES.P -> {
+                // Android 6.0-9.0：通常是 µAh
+                Log.d(TAG, "API ${Build.VERSION.SDK_INT}: Assuming µAh")
+                rawValue
+            }
+            Build.VERSION_CODES.Q -> {
+                // Android 10：存在不一致，但大多数是 µAh
+                Log.d(TAG, "API 29: Most devices use µAh")
+                rawValue
+            }
+            Build.VERSION_CODES.R -> {
+                // Android 11：有些设备可能改为 mAh
+                Log.d(TAG, "API 30: Checking if mAh...")
+                if (rawValue in 1000L..6000L) rawValue * 1000L else rawValue
+            }
+            Build.VERSION_CODES.S -> {
+                // Android 12 (API 31)：你的设备返回 1650，很可能是 nAh
+                Log.d(TAG, "API 31: Suspected nAh, converting to µAh")
+                rawValue / 1000L
+            }
+            Build.VERSION_CODES.S_V2, Build.VERSION_CODES.TIRAMISU -> {
+                // Android 12L/13：可能已修复，假设 µAh
+                Log.d(TAG, "API ${Build.VERSION.SDK_INT}: Assuming µAh")
+                rawValue
+            }
+            else -> {
+                // 默认假设为 µAh
+                Log.d(TAG, "Unknown API ${Build.VERSION.SDK_INT}: Assuming µAh")
+                rawValue
+            }
+        }
+    }
+
+    private fun updateBatteryStatus(intent: Intent) {     
         // 使用BatteryManager API估计电池容量
         val batteryManager = requireContext().getSystemService(Context.BATTERY_SERVICE) as BatteryManager
         
         // 获取当前剩余电荷（微安时 µAh）
-        val chargeCounter = try {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                Log.d("BatteryInfo", "charge_counter_1: ${batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)}")
-                batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
-            } else {
-                // 旧版本使用intent获取
-                Log.d("BatteryInfo", "charge_counter_2: ${intent.getLongExtra("charge_counter", -1)}")
-                intent.getLongExtra("charge_counter", -1)
+        val chargeCounter = when {
+            // 方案1：优先使用 BatteryManager API（Android 6.0+）
+            android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M && batteryManager != null -> {
+                val value = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
+                Log.d("BatteryInfo", "Using BatteryManager API ${android.os.Build.VERSION.SDK_INT}, charge_counter: $value")
+                value
             }
-        } catch (e: Exception) {
-            // 兜底方案
-            Log.d("BatteryInfo", "charge_counter_3: ${intent.getLongExtra("charge_counter", -1)}")
-            intent.getLongExtra("charge_counter", -1)
+            
+            // 方案2：使用 Intent 附加数据（全版本支持）
+            intent != null && intent.hasExtra("charge_counter") -> {
+                // 注意：有些设备使用 Integer，有些使用 Long
+                val value = when {
+                    intent.hasExtra("charge_counter") -> {
+                        // 尝试获取 Long 类型
+                        intent.getLongExtra("charge_counter", -1L)
+                    }
+                    intent.hasExtra("charge_counter") -> {
+                        // 如果失败，尝试获取 Int 类型并转换
+                        intent.getIntExtra("charge_counter", -1).toLong()
+                    }
+                    else -> -1L
+                }
+                Log.d("BatteryInfo", "Using Intent API, charge_counter: $value")
+                value
+            }
+            
+            // 方案3：所有方法都失败
+            else -> {
+                Log.w("BatteryInfo", "All charge counter retrieval methods failed")
+                -1L
+            }
         }
         
         // 获取当前电量百分比
@@ -198,11 +335,13 @@ class ChargingFragment : Fragment() {
         }
         
         Log.d("BatteryInfo", "chargeCounter: $chargeCounter μAh, percentage: $percentage%")
+
+        val normalizedChargeCounter = normalizeChargeCounter(chargeCounter)
         
         // 基于电量百分比估算总容量：估算总容量 = (当前电荷 / 当前百分比) * 100% 
-        estimatedCapacity = if (chargeCounter > 0 && percentage > 0) {
+        estimatedCapacity = if (normalizedChargeCounter > 0 && percentage > 0) {
             // 转换为mAh：μAh / 1000 = mAh
-            val chargeInmAh = chargeCounter / 1000.0
+            val chargeInmAh = normalizedChargeCounter / 1000.0
             // 计算总容量
             ((chargeInmAh / percentage) * 100).toInt()
         } else {
@@ -227,12 +366,12 @@ class ChargingFragment : Fragment() {
         // 尝试获取所有可能的电流相关数据
         val currentNow = intent.getIntExtra("current_now", -1)
         val currentRaw = intent.getIntExtra("current", -1)
-        // 使用已经通过BatteryManager API获取的chargeCounter值
-        // 注意：上面已经定义了chargeCounter变量
+        // 使用已经通过BatteryManager normalizeChargeCounter
+        // 注意：上面已经定义了normalizeChargeCounter变量
         
         Log.d("BatteryInfo", "current_now: $currentNow μA")
         Log.d("BatteryInfo", "current: $currentRaw mA")
-        Log.d("BatteryInfo", "charge_counter: $chargeCounter μA")
+        Log.d("BatteryInfo", "charge_counter: $normalizedChargeCounter μA")
         Log.d("BatteryInfo", "isCharging: $isCharging")
 
         // 12-02 09:50:58.151 27293 27293 D BatteryInfo: Intent extras: Bundle[mParcelledData.dataSize=1120]
@@ -251,10 +390,10 @@ class ChargingFragment : Fragment() {
         // 获取温度（°C）   
         val temperature = intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1) / 10.0
         
-        // 电流（mA），如果获取不到实际值则使用备选方案或默认值（TODO 这里面进行了多个值的选择，其实很容易导致问题）
+        // 电流（mA），如果获取不到实际值则使用备选方案或默认值（TODO 这里面进行了多个值的选择，其实很容易导致后续使用哪一个值才是对的情况的问题，或者说会导致后续有些情况适用currentRaw有些使用currentNow，有些时候使用current，导致上下逻辑不一致的混乱）
         val current = when {
             currentNow != -1 -> currentNow.toDouble() / 1000.0
-            chargeCounter != -1L -> chargeCounter.toDouble() / 1000.0
+            normalizedChargeCounter != -1L -> normalizedChargeCounter.toDouble() / 1000.0
             currentRaw != -1 -> currentRaw.toDouble()
             else -> {
                 // 如果获取不到实际电流值，根据充电状态使用合理的默认值

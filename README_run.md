@@ -975,3 +975,45 @@ java    5535 shhaofu   82r   REG               1,13     42921           23528230
 java    5535 shhaofu   83r   REG               1,13     79637           235282300 /Users/shhaofu/.gradle/caches/8.9/transforms/2d35401b443c4c23cc5bd348c06f8cec/transformed/jetified-lifecycle-runtime-ktx-2.7.0-api.jar
 ```
 
+```bash
+获取电池状态，电压、电流
+12-07 14:46:25.558 D/BatteryInfo(26278): Using BatteryManager API 29, charge_counter: 4861440
+12-07 14:46:25.559 D/BatteryInfo(26278): chargeCounter: 4861440 μAh, percentage: 95%
+12-07 14:46:25.560 D/BatteryInfo(26278): estimatedCapacity: 5117 mAh
+12-07 14:46:25.560 D/BatteryInfo(26278): current_now: -1 μA
+12-07 14:46:25.560 D/BatteryInfo(26278): current: -1 mA
+12-07 14:46:25.560 D/BatteryInfo(26278): charge_counter: 4861440 μA
+12-07 14:46:25.560 D/BatteryInfo(26278): isCharging: false
+12-07 14:46:25.560 D/BatteryInfo(26278): voltageRaw: 4234 mV
+12-07 14:46:25.560 D/BatteryInfo(26278): Final voltage: 4.234 V
+12-07 14:46:25.560 D/BatteryInfo(26278): Final current: 4861.44 mA
+12-07 14:46:25.572 D/BatteryInfo(26278): speedText: -81.0 mAh/min 
+12-07 14:46:25.572 D/BatteryInfo(26278):  预估续航：0时59分59秒
+
+--------- beginning of main
+12-07 14:46:47.504 D/BatteryInfo(26101): Using BatteryManager API 31, charge_counter: 1650
+12-07 14:46:47.506 D/BatteryInfo(26101): chargeCounter: 1650 μAh, percentage: 59%
+12-07 14:46:47.506 D/BatteryInfo(26101): estimatedCapacity: 2 mAh
+12-07 14:46:47.506 D/BatteryInfo(26101): current_now: -1 μA
+12-07 14:46:47.506 D/BatteryInfo(26101): current: -1 mA
+12-07 14:46:47.506 D/BatteryInfo(26101): charge_counter: 1650 μA
+12-07 14:46:47.506 D/BatteryInfo(26101): isCharging: false
+12-07 14:46:47.507 D/BatteryInfo(26101): voltageRaw: 3841 mV
+12-07 14:46:47.507 D/BatteryInfo(26101): Final voltage: 3.841 V
+12-07 14:46:47.507 D/BatteryInfo(26101): Final current: 1.65 mA
+12-07 14:46:47.528 D/BatteryInfo(26101): speedText: -0.0 mAh/min 
+12-07 14:46:47.528 D/BatteryInfo(26101):  预估续航：0时42分54秒
+
+12-07 14:45:56.122 D/BatteryInfo(29704): Using BatteryManager API 33, charge_counter: 4245600
+12-07 14:45:56.123 D/BatteryInfo(29704): chargeCounter: 4245600 μAh, percentage: 87%
+12-07 14:45:56.123 D/BatteryInfo(29704): estimatedCapacity: 4880 mAh
+12-07 14:45:56.123 D/BatteryInfo(29704): current_now: -1 μA
+12-07 14:45:56.123 D/BatteryInfo(29704): current: -1 mA
+12-07 14:45:56.123 D/BatteryInfo(29704): charge_counter: 4245600 μA
+12-07 14:45:56.123 D/BatteryInfo(29704): isCharging: false
+12-07 14:45:56.123 D/BatteryInfo(29704): voltageRaw: 4 mV
+12-07 14:45:56.123 D/BatteryInfo(29704): Final voltage: 0.004 V
+12-07 14:45:56.123 D/BatteryInfo(29704): Final current: 4245.6 mA
+12-07 14:45:56.124 D/BatteryInfo(29704): speedText: -70.8 mAh/min 
+12-07 14:45:56.124 D/BatteryInfo(29704):  预估续航：1时0分0秒
+```
