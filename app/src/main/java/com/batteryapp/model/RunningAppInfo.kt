@@ -7,6 +7,7 @@ data class RunningAppInfo(
     val packageName: String,
     val appName: String,
     val isForeground: Boolean,
+    val isRunning: Boolean,
     val pid: Int,
     val uid: Int
 )

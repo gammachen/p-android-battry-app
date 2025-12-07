@@ -28,7 +28,12 @@ class RunningAppAdapter(private var runningApps: List<RunningAppInfo>) : Recycle
         val app = runningApps[position]
         holder.tvRank.text = (position + 1).toString()
         holder.tvAppName.text = app.appName
-        holder.tvStatus.text = if (app.isForeground) "前台" else "后台"
+        // holder.tvStatus.text = if (app.isForeground) "运行中" else "..."
+        holder.tvStatus.text = if (app.isRunning) {
+            if (app.isForeground) "前台运行" else "后台x运行"
+        } else {
+            "未运行"
+        }
     }
     
     override fun getItemCount() = runningApps.size
