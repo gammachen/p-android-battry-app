@@ -8,7 +8,9 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.batteryapp.model.BatteryHealthData
 import com.batteryapp.viewmodel.BatteryViewModel
+
 
 /**
  * 电池健康评估Fragment，显示电池健康度评估与预测
@@ -16,13 +18,14 @@ import com.batteryapp.viewmodel.BatteryViewModel
 class HealthFragment : Fragment() {
     
     private lateinit var viewModel: BatteryViewModel
-    // private lateinit var healthScoreProgressBar: ProgressBar
-    // private lateinit var healthScoreTextView: TextView
+    private lateinit var healthScoreProgressBar: ProgressBar
+    private lateinit var healthScoreTextView: TextView
     private lateinit var cycleCountTextView: TextView
     private lateinit var actualCapacityTextView: TextView
     private lateinit var chargeHabitScoreTextView: TextView
     private lateinit var temperatureTextView: TextView
     private lateinit var healthAdviceTextView: TextView
+    private lateinit var healthCalculationTextView: TextView
     
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,13 +35,15 @@ class HealthFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_health, container, false)
         
         // 初始化UI组件
-        // healthScoreProgressBar = view.findViewById(R.id.health_score_progress)
-        // healthScoreTextView = view.findViewById(R.id.health_score_text)
+        healthScoreProgressBar = view.findViewById(R.id.health_score_progress)
+        healthScoreTextView = view.findViewById(R.id.health_score_text)
         cycleCountTextView = view.findViewById(R.id.cycle_count_text)
-        actualCapacityTextView = view.findViewById(R.id.actual_capacity_text)
+        // TODO 暂时去掉这个内容的定义与透出
+        // actualCapacityTextView = view.findViewById(R.id.actual_capacity_text)
         chargeHabitScoreTextView = view.findViewById(R.id.charge_habit_score_text)
         temperatureTextView = view.findViewById(R.id.temperature_text)
         healthAdviceTextView = view.findViewById(R.id.health_advice_text)
+        healthCalculationTextView = view.findViewById(R.id.health_calculation_text)
         
         // 初始化ViewModel
         viewModel = ViewModelProvider(requireActivity()).get(BatteryViewModel::class.java)
@@ -55,38 +60,241 @@ class HealthFragment : Fragment() {
     private fun observeViewModel() {
         viewModel.batteryHealthData.observe(viewLifecycleOwner) {
             it?.let { healthData ->
-                // 将电池健康状态映射为百分比显示
-                val healthPercentage = when (healthData.batteryHealth) {
-                    2 -> 95 // BATTERY_HEALTH_GOOD
-                    3 -> 60 // BATTERY_HEALTH_OVERHEAT
-                    4 -> 20 // BATTERY_HEALTH_DEAD
-                    5 -> 50 // BATTERY_HEALTH_OVER_VOLTAGE
-                    6 -> 40 // BATTERY_HEALTH_UNSPECIFIED_FAILURE
-                    7 -> 80 // BATTERY_HEALTH_COLD
-                    else -> 70 // 默认值
-                }
+                // 综合计算电池健康度百分比
+                val healthPercentage = calculateHealthPercentage(healthData)
                 
                 // 更新UI组件
-                // healthScoreProgressBar.progress = healthPercentage
-                // healthScoreTextView.text = "${healthPercentage}%"
+                healthScoreProgressBar.progress = healthPercentage
+                healthScoreTextView.text = "${healthPercentage}%"
                 cycleCountTextView.text = "${healthData.cycleCount}"
-                actualCapacityTextView.text = "${healthData.actualCapacity} mAh"
+                // actualCapacityTextView.text = "${healthData.actualCapacity} mAh"
                 chargeHabitScoreTextView.text = "${healthData.chargeHabitScore}"
                 temperatureTextView.text = "${healthData.temperature}°C"
                 
                 // 根据健康度提供建议
-                val advice = getHealthAdvice(healthPercentage)
+                val advice = getHealthAdvice(healthPercentage, healthData)
                 healthAdviceTextView.text = advice
+                
+                // 显示健康度计算说明
+                val calculationExplanation = getHealthCalculationExplanation(healthData, healthPercentage)
+                healthCalculationTextView.text = calculationExplanation
             }
         }
     }
     
-    private fun getHealthAdvice(healthScore: Int): String {
-        return when {
-            healthScore >= 90 -> "电池健康状况良好，请继续保持良好的充电习惯。"
-            healthScore >= 70 -> "电池健康状况一般，建议减少快充次数，避免过度充电。"
-            healthScore >= 50 -> "电池健康状况较差，建议避免高温环境，及时更换电池。"
-            else -> "电池健康状况严重不良，建议尽快更换电池。"
+    /**
+     * 综合计算电池健康度百分比
+     */
+    private fun calculateHealthPercentage(healthData: BatteryHealthData): Int {
+        // 基于电池健康状态的基础得分
+        val baseScore = when (healthData.batteryHealth) {
+            2 -> 95.0 // BATTERY_HEALTH_GOOD
+            3 -> 60.0 // BATTERY_HEALTH_OVERHEAT
+            4 -> 20.0 // BATTERY_HEALTH_DEAD
+            5 -> 50.0 // BATTERY_HEALTH_OVER_VOLTAGE
+            6 -> 40.0 // BATTERY_HEALTH_UNSPECIFIED_FAILURE
+            7 -> 80.0 // BATTERY_HEALTH_COLD
+            else -> 70.0 // 默认值
         }
+        
+        // 充电循环次数影响 (假设设计寿命为500次循环)
+        val cycleFactor = when {
+            healthData.cycleCount <= 100 -> 1.0
+            healthData.cycleCount <= 300 -> 0.95
+            healthData.cycleCount <= 500 -> 0.85
+            else -> 0.7
+        }
+        
+        // 实际容量影响 (从设备获取设计容量)
+        val designCapacity = viewModel.getBatteryDesignCapacity()
+        val capacityFactor = minOf(healthData.actualCapacity.toDouble() / designCapacity, 1.0)
+        
+        // 温度影响 (理想温度范围: 20-30°C)
+        val temperatureFactor = when {
+            healthData.temperature < 0 || healthData.temperature > 45 -> 0.7
+            healthData.temperature < 10 || healthData.temperature > 40 -> 0.85
+            healthData.temperature < 20 || healthData.temperature > 30 -> 0.95
+            else -> 1.0
+        }
+        
+        // 充电习惯影响
+        val chargeHabitFactor = healthData.chargeHabitScore / 100.0
+        
+        // 综合计算最终得分
+        var finalScore = baseScore * cycleFactor * capacityFactor * temperatureFactor * chargeHabitFactor
+        
+        // 确保得分在0-100之间
+        finalScore = Math.max(0.0, Math.min(100.0, finalScore))
+        
+        return finalScore.toInt()
+    }
+    
+    /**
+     * 生成电池健康度计算过程的详细说明
+     */
+    private fun getHealthCalculationExplanation(healthData: BatteryHealthData, finalScore: Int): String {
+        val explanationBuilder = StringBuilder()
+        
+        // 计算各个因素的具体值
+        val baseScore = when (healthData.batteryHealth) {
+            2 -> 95.0 // BATTERY_HEALTH_GOOD
+            3 -> 60.0 // BATTERY_HEALTH_OVERHEAT
+            4 -> 20.0 // BATTERY_HEALTH_DEAD
+            5 -> 50.0 // BATTERY_HEALTH_OVER_VOLTAGE
+            6 -> 40.0 // BATTERY_HEALTH_UNSPECIFIED_FAILURE
+            7 -> 80.0 // BATTERY_HEALTH_COLD
+            else -> 70.0 // 默认值
+        }
+        
+        val cycleFactor = when {
+            healthData.cycleCount <= 100 -> 1.0
+            healthData.cycleCount <= 300 -> 0.95
+            healthData.cycleCount <= 500 -> 0.85
+            else -> 0.7
+        }
+        
+        val designCapacity = viewModel.getBatteryDesignCapacity()
+        val capacityFactor = Math.min(healthData.actualCapacity.toDouble() / designCapacity, 1.0)
+        
+        val temperatureFactor = when {
+            healthData.temperature < 0 || healthData.temperature > 45 -> 0.7
+            healthData.temperature < 10 || healthData.temperature > 40 -> 0.85
+            healthData.temperature < 20 || healthData.temperature > 30 -> 0.95
+            else -> 1.0
+        }
+        
+        val chargeHabitFactor = healthData.chargeHabitScore / 100.0
+        
+        // 构建说明文本
+        explanationBuilder.append("电池健康度计算过程：\n\n")
+        
+        // 1. 基础得分
+        explanationBuilder.append("1. 基础得分：${baseScore.toInt()}分\n")
+        explanationBuilder.append("   - 基于电池健康状态评估\n")
+        explanationBuilder.append("   - 当前状态：")
+        explanationBuilder.append(when (healthData.batteryHealth) {
+            2 -> "健康（BATTERY_HEALTH_GOOD）\n"
+            3 -> "过热（BATTERY_HEALTH_OVERHEAT）\n"
+            4 -> "损坏（BATTERY_HEALTH_DEAD）\n"
+            5 -> "过电压（BATTERY_HEALTH_OVER_VOLTAGE）\n"
+            6 -> "不明故障（BATTERY_HEALTH_UNSPECIFIED_FAILURE）\n"
+            7 -> "低温（BATTERY_HEALTH_COLD）\n"
+            else -> "未知状态\n"
+        })
+        
+        // 2. 充电循环次数影响
+        explanationBuilder.append("\n2. 充电循环次数影响：${(cycleFactor * 100).toInt()}%\n")
+        explanationBuilder.append("   - 当前循环次数：${healthData.cycleCount}次\n")
+        explanationBuilder.append("   - 影响程度：")
+        explanationBuilder.append(when {
+            healthData.cycleCount <= 100 -> "无影响（≤100次）\n"
+            healthData.cycleCount <= 300 -> "轻微影响（101-300次）\n"
+            healthData.cycleCount <= 500 -> "中等影响（301-500次）\n"
+            else -> "显著影响（>500次）\n"
+        })
+        
+        // 3. 实际容量影响
+        explanationBuilder.append("\n3. 实际容量影响：${(capacityFactor * 100).toInt()}%\n")
+        explanationBuilder.append("   - 当前实际容量：${healthData.actualCapacity} mAh\n")
+        explanationBuilder.append("   - 设计容量：${designCapacity.toInt()} mAh\n")
+        explanationBuilder.append("   - 容量保持率：${(capacityFactor * 100).toInt()}%\n")
+        
+        // 4. 温度影响
+        explanationBuilder.append("\n4. 温度影响：${(temperatureFactor * 100).toInt()}%\n")
+        explanationBuilder.append("   - 当前温度：${healthData.temperature}°C\n")
+        explanationBuilder.append("   - 影响程度：")
+        explanationBuilder.append(when {
+            healthData.temperature < 0 || healthData.temperature > 45 -> "严重影响（<0°C或>45°C）\n"
+            healthData.temperature < 10 || healthData.temperature > 40 -> "中等影响（<10°C或>40°C）\n"
+            healthData.temperature < 20 || healthData.temperature > 30 -> "轻微影响（<20°C或>30°C）\n"
+            else -> "无影响（20-30°C，理想范围）\n"
+        })
+        
+        // 5. 充电习惯影响
+        explanationBuilder.append("\n5. 充电习惯影响：${healthData.chargeHabitScore}%\n")
+        explanationBuilder.append("   - 基于您的充电行为模式评估\n")
+        explanationBuilder.append("   - 评估维度：充电频率、充电时间、充电速率等\n")
+        
+        // 6. 综合计算
+        explanationBuilder.append("\n6. 综合计算：\n")
+        explanationBuilder.append("   - 基础得分 × 循环次数系数 × 容量系数 × 温度系数 × 充电习惯系数\n")
+        explanationBuilder.append("   - ${baseScore.toInt()} × ${String.format("%.2f", cycleFactor)} × ${String.format("%.2f", capacityFactor)} × ${String.format("%.2f", temperatureFactor)} × ${String.format("%.2f", chargeHabitFactor)}\n")
+        explanationBuilder.append("   - = ${String.format("%.2f", baseScore * cycleFactor * capacityFactor * temperatureFactor * chargeHabitFactor)}\n")
+        explanationBuilder.append("   - 最终得分：${finalScore}分\n")
+        
+        return explanationBuilder.toString()
+    }
+    
+    private fun getHealthAdvice(healthScore: Int, healthData: BatteryHealthData): String {
+        val adviceBuilder = StringBuilder()
+        
+        // 基本健康状况建议
+        when {
+            healthScore >= 90 -> adviceBuilder.append("电池健康状况良好，")
+            healthScore >= 70 -> adviceBuilder.append("电池健康状况一般，")
+            healthScore >= 50 -> adviceBuilder.append("电池健康状况较差，")
+            else -> adviceBuilder.append("电池健康状况严重不良，")
+        }
+        
+        // 基于温度的建议
+        when {
+            healthData.temperature < 0 || healthData.temperature > 45 -> 
+                adviceBuilder.append("当前温度过高/过低，建议在20-30°C的环境中使用手机。")
+            healthData.temperature < 10 || healthData.temperature > 40 -> 
+                adviceBuilder.append("当前温度偏离理想范围，尽量避免在极端温度下使用手机。")
+            else -> adviceBuilder.append("当前温度处于理想范围。")
+        }
+        
+        adviceBuilder.append("\n\n")
+        
+        // 基于循环次数的建议
+        when {
+            healthData.cycleCount > 500 -> 
+                adviceBuilder.append("充电循环次数已超过500次，电池性能可能明显下降，建议考虑更换电池。")
+            healthData.cycleCount > 300 -> 
+                adviceBuilder.append("充电循环次数已超过300次，建议减少电池深度放电，尽量保持20%-80%电量。")
+            healthData.cycleCount > 100 -> 
+                adviceBuilder.append("充电循环次数正常，继续保持良好的充电习惯。")
+            else -> 
+                adviceBuilder.append("充电循环次数较少，电池处于最佳状态。")
+        }
+        
+        adviceBuilder.append("\n\n")
+        
+        // 基于实际容量的建议
+        val designCapacity = viewModel.getBatteryDesignCapacity()
+        val capacityPercentage = (healthData.actualCapacity / designCapacity * 100).toInt()
+        
+        when {
+            capacityPercentage < 70 -> 
+                adviceBuilder.append("电池实际容量已降至设计容量的${capacityPercentage}%，建议更换电池以获得更好的续航体验。")
+            capacityPercentage < 85 -> 
+                adviceBuilder.append("电池实际容量为设计容量的${capacityPercentage}%，建议减少后台应用运行，优化电池使用。")
+            else -> 
+                adviceBuilder.append("电池实际容量保持良好，继续保持现有的使用习惯。")
+        }
+        
+        adviceBuilder.append("\n\n")
+        
+        // 基于充电习惯的建议
+        when {
+            healthData.chargeHabitScore < 60 -> 
+                adviceBuilder.append("充电习惯评分较低，建议避免整夜充电、过度放电和频繁快充。")
+            healthData.chargeHabitScore < 80 -> 
+                adviceBuilder.append("充电习惯评分一般，建议尽量使用原装充电器，避免在充电时玩大型游戏。")
+            else -> 
+                adviceBuilder.append("充电习惯良好，请继续保持。")
+        }
+        
+        // 通用建议
+        adviceBuilder.append("\n\n")
+        adviceBuilder.append("通用建议：")
+        adviceBuilder.append("\n1. 避免将手机暴露在高温或低温环境中")
+        adviceBuilder.append("\n2. 尽量使用原装充电器和数据线")
+        adviceBuilder.append("\n3. 避免长时间深度放电（电量低于20%）")
+        adviceBuilder.append("\n4. 减少快充次数，优先使用标准充电")
+        adviceBuilder.append("\n5. 充电时尽量避免使用手机")
+        
+        return adviceBuilder.toString()
     }
 }

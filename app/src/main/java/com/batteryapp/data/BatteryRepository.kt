@@ -16,6 +16,20 @@ import android.os.Build
  * 电池数据仓库，用于处理数据库操作和业务逻辑
  */
 class BatteryRepository(private val context: Context) {
+
+    companion object {
+        // 日志标签
+        private const val TAG = "BatteryInfo"
+        
+        // 典型的电池容量范围（mAh）
+        private const val MIN_BATTERY_CAPACITY_MAH = 1000  // 最小电池容量 1000mAh
+        private const val MAX_BATTERY_CAPACITY_MAH = 10000  // 最大电池容量 10000mAh
+
+        // 合理的电池电压范围（毫伏）
+        private const val MIN_VALID_VOLTAGE_MV = 3000  // 3.0V（极低电量）
+        private const val MAX_VALID_VOLTAGE_MV = 10000  // 10.0V（满电）
+    }    
+
     private val database by lazy {
         BatteryDatabase.getInstance(context)
     }
@@ -91,12 +105,14 @@ class BatteryRepository(private val context: Context) {
         
         // 获取实际容量（mAh）
         val actualCapacity = getBatteryActualCapacity()
+
+        Log.w("BatteryApp_x", "actualCapacity:$actualCapacity")
         
         // 获取充电循环次数和电池健康状态
         val (cycleCount, batteryHealth) = getBatteryCycleCount()
         
         // 计算充电习惯得分（0-100）
-        val chargeHabitScore = 85 // 暂时返回一个合理的默认值
+        val chargeHabitScore = calculateChargeHabitScore()
         
         BatteryHealthData(
             timestamp = System.currentTimeMillis(),
@@ -104,8 +120,160 @@ class BatteryRepository(private val context: Context) {
             actualCapacity = actualCapacity,
             chargeHabitScore = chargeHabitScore,
             temperature = temperature,
-            batteryHealth = batteryHealth
+            batteryHealth = batteryHealth,
+            designCapacity = getBatteryDesignCapacity(context)
         )
+    }
+    
+    /**
+     * 计算充电习惯得分（0-100）
+     * 基于用户的充电行为模式评估充电习惯的健康程度
+     */
+    private suspend fun calculateChargeHabitScore(): Int {
+        try {
+            // 检查是否有充电记录数据
+            val recentHealthData = batteryDao.getRecentBatteryHealthData()
+            
+            if (recentHealthData.isNotEmpty()) {
+                // 基于历史数据评估充电习惯
+                // 这里可以实现更复杂的算法，基于充电频率、充电时间、充电速率等
+                // 暂时使用一个基于温度和容量变化的简单算法
+                
+                val latestData = recentHealthData.first()
+                var score = 85 // 基础分数
+                
+                // 基于温度调整得分
+                if (latestData.temperature < 10 || latestData.temperature > 40) {
+                    score -= 10
+                }
+                
+                // 基于容量变化调整得分
+                val designCapacity = getBatteryDesignCapacity(context)
+                val capacityPercentage = latestData.actualCapacity / designCapacity * 100
+                if (capacityPercentage < 80) {
+                    score -= 5
+                }
+                
+                return maxOf(60, minOf(100, score))
+            }
+        } catch (e: Exception) {
+            Log.e("BatteryRepository", "计算充电习惯得分失败: ${e.message}")
+        }
+        
+        // 默认返回一个合理的分数
+        return 85
+    }
+
+    /**
+     * 智能标准化：检测并转换为 µAh
+     */
+    private fun normalizeChargeCounter(rawValue: Long): Long {
+        if (rawValue <= 0) return rawValue
+        
+        // 检测当前值的可能单位
+        return when (detectChargeCounterUnit(rawValue)) {
+            ChargeCounterUnit.NANO_AMP_HOURS -> {
+                Log.d("BatteryRepository", "Detected nAh, converting to µAh: ${rawValue / 1000L}")
+                rawValue / 1000L  // nAh → µAh
+            }
+            ChargeCounterUnit.MILLI_AMP_HOURS -> {
+                Log.d("BatteryRepository", "Detected mAh, converting to µAh: ${rawValue * 1000L}")
+                rawValue * 1000L  // mAh → µAh
+            }
+            ChargeCounterUnit.MICRO_AMP_HOURS -> {
+                Log.d("BatteryRepository", "Detected µAh, using as-is: $rawValue")
+                rawValue  // 已经是 µAh
+            }
+            ChargeCounterUnit.UNKNOWN -> {
+                // 启发式猜测：基于常见的电池容量范围
+                guessAndConvert(rawValue)
+            }
+        }
+    }
+
+    /**
+     * 单位枚举
+     */
+    private enum class ChargeCounterUnit {
+        NANO_AMP_HOURS,   // nAh
+        MICRO_AMP_HOURS,  // µAh
+        MILLI_AMP_HOURS,  // mAh
+        UNKNOWN
+    }
+    
+    /**
+     * 检测原始值的单位
+     */
+    private fun detectChargeCounterUnit(rawValue: Long): ChargeCounterUnit {
+        // 将原始值转换为 mAh 范围进行判断
+        val valueInMah = rawValue.toDouble() / 1000.0  // 假设是 µAh
+        
+        when {
+            // 如果是 nAh 单位：值会很小（如 1650 nAh = 1.65 µAh = 0.00165 mAh）
+            rawValue < 1000 -> {
+                return ChargeCounterUnit.NANO_AMP_HOURS
+            }
+            
+            // 如果是 µAh 单位：应该在合理电池容量范围内
+            valueInMah in MIN_BATTERY_CAPACITY_MAH.toDouble()..MAX_BATTERY_CAPACITY_MAH.toDouble() -> {
+                return ChargeCounterUnit.MICRO_AMP_HOURS
+            }
+            
+            // 如果是 mAh 单位：值会很大（如 4861440 mAh 不合理，但可能是 µAh）
+            rawValue > MAX_BATTERY_CAPACITY_MAH * 1000 -> {
+                // 如果以 mAh 计算的值远大于最大电池容量，说明它实际上可能是 µAh
+                // 例如：4861440 > 6000*1000，所以它不是 mAh
+                return if (rawValue > MAX_BATTERY_CAPACITY_MAH * 1000L) {
+                    ChargeCounterUnit.MICRO_AMP_HOURS
+                } else {
+                    ChargeCounterUnit.MILLI_AMP_HOURS
+                }
+            }
+            
+            // 其他情况：可能是 mAh
+            else -> {
+                return ChargeCounterUnit.MILLI_AMP_HOURS
+            }
+        }
+    }
+    
+    /**
+     * 启发式猜测与转换
+     */
+    private fun guessAndConvert(rawValue: Long): Long {
+        // 基于 Android 版本的经验规则
+        return when (Build.VERSION.SDK_INT) {
+            in Build.VERSION_CODES.M..Build.VERSION_CODES.P -> {
+                // Android 6.0-9.0：通常是 µAh
+                Log.d(TAG, "API ${Build.VERSION.SDK_INT}: Assuming µAh")
+                rawValue
+            }
+            Build.VERSION_CODES.Q -> {
+                // Android 10：存在不一致，但大多数是 µAh
+                Log.d(TAG, "API 29: Most devices use µAh")
+                rawValue
+            }
+            Build.VERSION_CODES.R -> {
+                // Android 11：有些设备可能改为 mAh
+                Log.d(TAG, "API 30: Checking if mAh...")
+                if (rawValue in 1000L..6000L) rawValue * 1000L else rawValue
+            }
+            Build.VERSION_CODES.S -> {
+                // Android 12 (API 31)：你的设备返回 1650，很可能是 nAh
+                Log.d(TAG, "API 31: Suspected nAh, converting to µAh")
+                rawValue / 1000L
+            }
+            Build.VERSION_CODES.S_V2, Build.VERSION_CODES.TIRAMISU -> {
+                // Android 12L/13：可能已修复，假设 µAh
+                Log.d(TAG, "API ${Build.VERSION.SDK_INT}: Assuming µAh")
+                rawValue
+            }
+            else -> {
+                // 默认假设为 µAh
+                Log.d(TAG, "Unknown API ${Build.VERSION.SDK_INT}: Assuming µAh")
+                rawValue
+            }
+        }
     }
     
     /**
@@ -118,19 +286,38 @@ class BatteryRepository(private val context: Context) {
             val batteryManager = context.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
             
             // 获取当前剩余电荷（微安时 µAh）
-            val chargeCounter = try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
-                } else {
-                    // 旧版本使用intent获取
-                    val intent = context.registerReceiver(null, android.content.IntentFilter(android.content.Intent.ACTION_BATTERY_CHANGED))
-                    intent?.getLongExtra("charge_counter", -1) ?: -1
+            val chargeCounter = when {
+                // 方案1：优先使用 BatteryManager API（Android 6.0+）
+                android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M -> {
+                    val value = batteryManager.getLongProperty(BatteryManager.BATTERY_PROPERTY_CHARGE_COUNTER)
+                    Log.d("BatteryInfo", "Using BatteryManager API ${android.os.Build.VERSION.SDK_INT}, charge_counter: $value")
+                    value
                 }
-            } catch (e: Exception) {
-                // 兜底方案
-                val intent = context.registerReceiver(null, android.content.IntentFilter(android.content.Intent.ACTION_BATTERY_CHANGED))
-                intent?.getLongExtra("charge_counter", -1) ?: -1
+                
+                // 方案2：使用 Intent 附加数据（全版本支持）
+                else -> {
+                    // 获取电池状态Intent
+                    val intent = context.registerReceiver(null, android.content.IntentFilter(android.content.Intent.ACTION_BATTERY_CHANGED))
+                    
+                    if (intent != null) {
+                        // 注意：有些设备使用 Integer，有些使用 Long
+                        val value = try {
+                            // 尝试获取 Long 类型
+                            intent.getLongExtra("charge_counter", -1L)
+                        } catch (e: Exception) {
+                            // 如果失败，尝试获取 Int 类型并转换
+                            intent.getIntExtra("charge_counter", -1).toLong()
+                        }
+                        Log.d("BatteryInfo", "Using Intent API, charge_counter: $value")
+                        value
+                    } else {
+                        // 方案3：所有方法都失败
+                        Log.w("BatteryInfo", "All charge counter retrieval methods failed")
+                        -1L
+                    }
+                }
             }
+            Log.d("BatteryRepository", "chargeCounter: $chargeCounter μAh")
             
             // 获取当前电量百分比
             val percentage = try {
@@ -160,11 +347,13 @@ class BatteryRepository(private val context: Context) {
             }
             
             Log.d("BatteryRepository", "chargeCounter: $chargeCounter μAh, percentage: $percentage%")
+
+            val normalizedChargeCounter = normalizeChargeCounter(chargeCounter.toLong())
             
             // 基于电量百分比估算总容量：估算总容量 = (当前电荷 / 当前百分比) * 100% 
-            val estimatedCapacity = if (chargeCounter > 0 && percentage > 0) {
+            val estimatedCapacity = if (normalizedChargeCounter > 0 && percentage > 0) {
                 // 转换为mAh：μAh / 1000 = mAh
-                val chargeInmAh = chargeCounter / 1000.0
+                val chargeInmAh = normalizedChargeCounter / 1000.0
                 // 计算总容量
                 ((chargeInmAh / percentage) * 100).toInt()
             } else {
@@ -187,25 +376,64 @@ class BatteryRepository(private val context: Context) {
      */
     private fun getBatteryCycleCount(): Pair<Int, Int> {
         try {
+            val batteryManager = context.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
+            
             // 获取电池健康状态
             val intent = context.registerReceiver(null, android.content.IntentFilter(android.content.Intent.ACTION_BATTERY_CHANGED))
             val batteryHealth = intent?.getIntExtra(BatteryManager.EXTRA_HEALTH, BatteryManager.BATTERY_HEALTH_GOOD) ?: BatteryManager.BATTERY_HEALTH_GOOD
             
-            // 根据电池健康状态估算充电循环次数
-            val cycleCount = when (batteryHealth) {
-                BatteryManager.BATTERY_HEALTH_GOOD -> 50 // 健康状态良好，循环次数较少
-                BatteryManager.BATTERY_HEALTH_OVERHEAT -> 200 // 过热，循环次数较多
-                BatteryManager.BATTERY_HEALTH_DEAD -> 500 // 电池已损坏，循环次数很多
-                BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> 150 // 过电压，循环次数较多
-                BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE -> 300 // 不明故障，循环次数较多
-                BatteryManager.BATTERY_HEALTH_COLD -> 80 // 低温，循环次数适中
-                else -> 50
+            // 尝试获取真实的充电循环次数
+            var cycleCount = -1
+            
+            // Android O及以上版本尝试使用BatteryManager API
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                try {
+                    // 使用反射获取BATTERY_PROPERTY_CYCLE_COUNT常量
+                    val propertyField = BatteryManager::class.java.getField("BATTERY_PROPERTY_CYCLE_COUNT")
+                    val property = propertyField.getInt(null)
+                    cycleCount = batteryManager.getLongProperty(property).toInt()
+                    Log.d("BatteryRepository", "成功获取真实充电循环次数: $cycleCount")
+                } catch (e: Exception) {
+                    Log.w("BatteryRepository", "通过API获取真实充电循环次数失败: ${e.message}")
+                    
+                    // 尝试通过反射调用getLongProperty方法
+                    try {
+                        val method = batteryManager.javaClass.getMethod("getLongProperty", Int::class.javaPrimitiveType)
+                        // BATTERY_PROPERTY_CYCLE_COUNT的值为2
+                        cycleCount = (method.invoke(batteryManager, 2) as Long).toInt()
+                        Log.d("BatteryRepository", "通过反射获取真实充电循环次数: $cycleCount")
+                    } catch (reflectException: Exception) {
+                        Log.w("BatteryRepository", "通过反射获取真实充电循环次数失败: ${reflectException.message}")
+                    }
+                }
+            } else {
+                Log.d("BatteryRepository", "当前Android版本(${Build.VERSION.RELEASE})不支持获取真实充电循环次数")
             }
             
+            // 如果无法获取真实循环次数，则根据电池健康状态估算
+            if (cycleCount <= 0) {
+                Log.w("BatteryRepository", "无法获取真实充电循环次数，将使用电池健康状态来估算")
+
+                cycleCount = when (batteryHealth) {
+                    BatteryManager.BATTERY_HEALTH_GOOD -> 50 // 健康状态良好，循环次数较少
+                    BatteryManager.BATTERY_HEALTH_OVERHEAT -> 200 // 过热，循环次数较多
+                    BatteryManager.BATTERY_HEALTH_DEAD -> 500 // 电池已损坏，循环次数很多
+                    BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE -> 150 // 过电压，循环次数较多
+                    BatteryManager.BATTERY_HEALTH_UNSPECIFIED_FAILURE -> 300 // 不明故障，循环次数较多
+                    BatteryManager.BATTERY_HEALTH_COLD -> 80 // 低温，循环次数适中
+                    else -> 50
+                }
+                Log.d("BatteryRepository", "使用估算的充电循环次数: $cycleCount (基于电池健康状态: $batteryHealth)")
+            }
+            
+            Log.d("BatteryRepository", "最终获取的充电循环次数: $cycleCount, 电池健康状态: $batteryHealth")
             return Pair(cycleCount, batteryHealth)
         } catch (e: Exception) {
-            Log.e("BatteryRepository", "获取充电循环次数失败: ${e.message}")
-            return Pair(50, BatteryManager.BATTERY_HEALTH_GOOD) // 默认返回50次和良好健康状态
+            Log.e("BatteryRepository", "获取充电循环次数过程中发生异常: ${e.message}", e)
+            val defaultCycleCount = 50
+            val defaultHealth = BatteryManager.BATTERY_HEALTH_GOOD
+            Log.d("BatteryRepository", "使用默认值: 充电循环次数=$defaultCycleCount, 电池健康状态=$defaultHealth")
+            return Pair(defaultCycleCount, defaultHealth) // 默认返回50次和良好健康状态
         }
     }
     
@@ -221,6 +449,37 @@ class BatteryRepository(private val context: Context) {
         } catch (e: Exception) {
             Log.e("BatteryRepository", "获取电池温度失败: ${e.message}")
             return 25.0
+        }
+    }
+    
+    /**
+     * 通过 PowerProfile 类获取电池设计容量
+     * 这个类包含了设备的各种电源消耗配置，包括电池容量
+     */
+    fun getBatteryDesignCapacity(context: Context): Double {
+        return try {
+            // 获取 PowerProfile 类
+            val powerProfileClass = Class.forName("com.android.internal.os.PowerProfile")
+            
+            // 创建实例
+            val constructor = powerProfileClass.getConstructor(Context::class.java)
+            val powerProfile = constructor.newInstance(context)
+            
+            // 调用 getBatteryCapacity 方法
+            val method = powerProfileClass.getMethod("getBatteryCapacity")
+            val capacity = method.invoke(powerProfile) as Double
+            
+            // 返回的是 Wh（瓦时），需要转换为 mAh
+            // 假设平均电压为 3.85V
+            val avgVoltage = 3.85
+            val capacityMah = (capacity / avgVoltage * 1000).toLong()
+            
+            Log.d("BatteryInfo", "PowerProfile capacity: $capacity Wh ≈ $capacityMah mAh")
+            capacityMah.toDouble()
+        } catch (e: Exception) {
+            Log.e("BatteryInfo", "Failed to get capacity from PowerProfile", e)
+            // 默认返回4000mAh
+            4000.0
         }
     }
     

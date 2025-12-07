@@ -1017,3 +1017,12 @@ java    5535 shhaofu   83r   REG               1,13     79637           23528230
 12-07 14:45:56.124 D/BatteryInfo(29704): speedText: -70.8 mAh/min 
 12-07 14:45:56.124 D/BatteryInfo(29704):  预估续航：1时0分0秒
 ```
+
+
+./gradlew clean assembleDebug && ./gradlew installDebug && adb -s 192.168.31.106:5555 shell am start -n com.batteryapp/.MainActivity && adb -s 192.168.31.236:5555 shell am start -n com.batteryapp/.MainActivity && adb -s 192.168.31.38:5555 shell am start -n com.batteryapp/.MainActivity
+
+adb -s 192.168.31.236:5555 logcat -v time -s dBatteryApp_x
+adb -s 192.168.31.106:5555 logcat -v time -s dBatteryApp_x
+adb -s 192.168.31.38:5555 logcat -v time -s dBatteryApp_x
+
+

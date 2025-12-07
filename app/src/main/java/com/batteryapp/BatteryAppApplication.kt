@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.work.*
 import com.batteryapp.worker.AppBatteryUsageWorker
+import com.batteryapp.worker.BatteryHealthWorker
 import com.batteryapp.worker.BatteryUsageWorker
 import java.util.concurrent.TimeUnit
 
@@ -65,7 +66,19 @@ class BatteryAppApplication : Application() {
             .setConstraints(appUsageConstraints)
             .build()
 
-        // 3. 加入调度队列
+        // 3. 电池健康数据采集任务配置
+        val healthConstraints = Constraints.Builder()
+            .setRequiresBatteryNotLow(false) // 降低约束条件，更容易被触发
+            .build()
+
+        val healthWorkRequest = PeriodicWorkRequestBuilder<BatteryHealthWorker>(
+            repeatInterval = 1,
+            repeatIntervalTimeUnit = TimeUnit.MINUTES
+        )
+            .setConstraints(healthConstraints)
+            .build()
+
+        // 4. 加入调度队列
         val workManager = WorkManager.getInstance(this)
         workManager.apply {
             // 电池状态采集 - 每2分钟执行一次
@@ -81,6 +94,13 @@ class BatteryAppApplication : Application() {
                 ExistingPeriodicWorkPolicy.KEEP,
                 appUsageWorkRequest
             )
+            
+            // 电池健康数据采集 - 每5分钟执行一次
+            enqueueUniquePeriodicWork(
+                "BatteryHealthWork",
+                ExistingPeriodicWorkPolicy.KEEP,
+                healthWorkRequest
+            )
         }
         
         // 立即触发一次应用耗电统计任务，用于测试
@@ -93,5 +113,6 @@ class BatteryAppApplication : Application() {
         Log.d("BatteryAppApplication", "WorkManager初始化完成")
         Log.d("BatteryAppApplication", "电池状态采集任务配置: 每2分钟执行一次")
         Log.d("BatteryAppApplication", "应用耗电统计任务配置: 每3分钟执行一次")
+        Log.d("BatteryAppApplication", "电池健康数据采集任务配置: 每5分钟执行一次")
     }
 }

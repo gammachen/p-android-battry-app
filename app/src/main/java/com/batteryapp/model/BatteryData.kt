@@ -150,7 +150,8 @@ data class BatteryHealthData(
         actualCapacity: Int,
         chargeHabitScore: Int,
         temperature: Double,
-        batteryHealth: Int
+        batteryHealth: Int,
+        designCapacity: Double = 4000.0
     ) : this(
         0,
         timestamp,
@@ -158,9 +159,64 @@ data class BatteryHealthData(
         actualCapacity,
         chargeHabitScore,
         temperature,
-        batteryHealth, // 使用电池健康状态作为健康分数
+        calculateHealthScore(batteryHealth, cycleCount, actualCapacity, temperature, chargeHabitScore, designCapacity),
         batteryHealth
     )
+    
+    companion object {
+        /**
+         * 计算综合健康分数
+         */
+        private fun calculateHealthScore(
+            batteryHealth: Int,
+            cycleCount: Int,
+            actualCapacity: Int,
+            temperature: Double,
+            chargeHabitScore: Int,
+            designCapacity: Double = 4000.0
+        ): Int {
+            // 基于电池健康状态的基础得分
+            val baseScore = when (batteryHealth) {
+                2 -> 95.0 // BATTERY_HEALTH_GOOD
+                3 -> 60.0 // BATTERY_HEALTH_OVERHEAT
+                4 -> 20.0 // BATTERY_HEALTH_DEAD
+                5 -> 50.0 // BATTERY_HEALTH_OVER_VOLTAGE
+                6 -> 40.0 // BATTERY_HEALTH_UNSPECIFIED_FAILURE
+                7 -> 80.0 // BATTERY_HEALTH_COLD
+                else -> 70.0 // 默认值
+            }
+            
+            // 充电循环次数影响 (假设设计寿命为500次循环)
+            val cycleFactor = when {
+                cycleCount <= 100 -> 1.0
+                cycleCount <= 300 -> 0.95
+                cycleCount <= 500 -> 0.85
+                else -> 0.7
+            }
+            
+            // 实际容量影响
+            val capacityFactor = minOf(actualCapacity / designCapacity, 1.0)
+            
+            // 温度影响 (理想温度范围: 20-30°C)
+            val temperatureFactor = when {
+                temperature < 0 || temperature > 45 -> 0.7
+                temperature < 10 || temperature > 40 -> 0.85
+                temperature < 20 || temperature > 30 -> 0.95
+                else -> 1.0
+            }
+            
+            // 充电习惯影响
+            val chargeHabitFactor = chargeHabitScore / 100.0
+            
+            // 综合计算最终得分
+            var finalScore = baseScore * cycleFactor * capacityFactor * temperatureFactor * chargeHabitFactor
+            
+            // 确保得分在0-100之间
+            finalScore = maxOf(0.0, minOf(100.0, finalScore))
+            
+            return finalScore.toInt()
+        }
+    }
 }
 
 /**

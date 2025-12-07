@@ -267,4 +267,11 @@ class BatteryViewModel(application: Application) : AndroidViewModel(application)
             }
         }
     }
+    
+    /**
+     * 获取电池设计容量
+     */
+    fun getBatteryDesignCapacity(): Double {
+        return repository.getBatteryDesignCapacity(getApplication())
+    }
 }
