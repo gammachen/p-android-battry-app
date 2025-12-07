@@ -469,13 +469,7 @@ class BatteryRepository(private val context: Context) {
             val method = powerProfileClass.getMethod("getBatteryCapacity")
             val capacity = method.invoke(powerProfile) as Double
             
-            // 返回的是 Wh（瓦时），需要转换为 mAh
-            // 假设平均电压为 3.85V
-            val avgVoltage = 3.85
-            val capacityMah = (capacity / avgVoltage * 1000).toLong()
-            
-            Log.d("BatteryInfo", "PowerProfile capacity: $capacity Wh ≈ $capacityMah mAh")
-            capacityMah.toDouble()
+            capacity.toDouble()
         } catch (e: Exception) {
             Log.e("BatteryInfo", "Failed to get capacity from PowerProfile", e)
             // 默认返回4000mAh
