@@ -42,6 +42,9 @@ class MainActivity : AppCompatActivity() {
         checkUsageStatsPermission()
         // 检查NetworkStats API是否可用
         checkNetworkStatsPermission()
+        
+        // 启动电池监控服务
+        startBatteryMonitorService()
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bottomNavigationView.setOnItemSelectedListener {
@@ -357,5 +360,14 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .commit()
+    }
+    
+    /**
+     * 启动电池监控服务
+     */
+    private fun startBatteryMonitorService() {
+        val serviceIntent = Intent(this, BatteryMonitorService::class.java)
+        startService(serviceIntent)
+        Log.d(TAG, "电池监控服务已启动")
     }
 }

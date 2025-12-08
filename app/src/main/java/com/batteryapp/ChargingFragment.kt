@@ -661,7 +661,18 @@ class ChargingFragment : Fragment() {
         
         // 更新充电状态
         val stateText = if (isCharging) {
-            getString(R.string.charging_state)
+            // 判断充电模式
+            val chargingMode = com.batteryapp.data.BatteryRepository(requireContext()).determineChargingMode(displayPower.toFloat(), current.toFloat())
+            val modeText = when (chargingMode.mode) {
+                com.batteryapp.model.ChargingMode.Mode.TRICKLE -> "涓流充电"
+                com.batteryapp.model.ChargingMode.Mode.SLOW -> "慢充"
+                com.batteryapp.model.ChargingMode.Mode.NORMAL -> "普通充电"
+                com.batteryapp.model.ChargingMode.Mode.FAST -> "快充"
+                com.batteryapp.model.ChargingMode.Mode.SUPER_FAST -> "超级快充"
+                com.batteryapp.model.ChargingMode.Mode.ULTRA_FAST -> "极速快充"
+                else -> getString(R.string.charging_state)
+            }
+            "${getString(R.string.charging_state)} (${modeText})"
         } else {
             getString(R.string.discharging_state)
         }

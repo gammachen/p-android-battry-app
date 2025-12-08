@@ -26,6 +26,19 @@ class HealthFragment : Fragment() {
     private lateinit var temperatureTextView: TextView
     private lateinit var healthAdviceTextView: TextView
     private lateinit var healthCalculationTextView: TextView
+    private lateinit var chargingTypeExplanationTextView: TextView
+    
+    // 充电习惯分析相关组件
+    private lateinit var totalSessionsTextView: TextView
+    private lateinit var avgChargingTimeTextView: TextView
+    private lateinit var avgStartLevelTextView: TextView
+    private lateinit var avgEndLevelTextView: TextView
+    private lateinit var peakHourTextView: TextView
+    private lateinit var overnightPercentageTextView: TextView
+    private lateinit var chargingRecommendationsTextView: TextView
+    
+    // 充电记录列表相关组件
+    private lateinit var chargingSessionsRecyclerView: androidx.recyclerview.widget.RecyclerView
     
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,6 +57,20 @@ class HealthFragment : Fragment() {
         temperatureTextView = view.findViewById(R.id.temperature_text)
         healthAdviceTextView = view.findViewById(R.id.health_advice_text)
         healthCalculationTextView = view.findViewById(R.id.health_calculation_text)
+        chargingTypeExplanationTextView = view.findViewById(R.id.charging_type_explanation)
+        
+        // 初始化充电习惯分析相关组件
+        totalSessionsTextView = view.findViewById(R.id.total_sessions_text)
+        avgChargingTimeTextView = view.findViewById(R.id.avg_charging_time_text)
+        avgStartLevelTextView = view.findViewById(R.id.avg_start_level_text)
+        avgEndLevelTextView = view.findViewById(R.id.avg_end_level_text)
+        peakHourTextView = view.findViewById(R.id.peak_hour_text)
+        overnightPercentageTextView = view.findViewById(R.id.overnight_percentage_text)
+        chargingRecommendationsTextView = view.findViewById(R.id.charging_recommendations_text)
+        
+        // 初始化充电记录列表组件
+        chargingSessionsRecyclerView = view.findViewById(R.id.charging_sessions_recycler_view)
+        chargingSessionsRecyclerView.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext())
         
         // 初始化ViewModel
         viewModel = ViewModelProvider(requireActivity()).get(BatteryViewModel::class.java)
@@ -53,6 +80,13 @@ class HealthFragment : Fragment() {
         
         // 加载电池健康度数据
         viewModel.loadBatteryHealthData()
+        
+        // 加载充电习惯分析数据
+        viewModel.loadRecentChargingSessions()
+        viewModel.analyzeChargingHabits()
+        
+        // 设置充电类型说明
+        chargingTypeExplanationTextView.text = getChargingTypeExplanation()
         
         return view
     }
@@ -80,6 +114,50 @@ class HealthFragment : Fragment() {
                 healthCalculationTextView.text = calculationExplanation
             }
         }
+        
+        // 观察充电习惯分析数据
+        viewModel.chargingHabitsAnalysis.observe(viewLifecycleOwner) {
+            updateChargingHabitsAnalysisUI(it)
+        }
+        
+        // 观察充电会话数据
+        viewModel.chargingSessions.observe(viewLifecycleOwner) {
+            updateChargingSessionsUI(it)
+        }
+    }
+    
+    /**
+     * 更新充电习惯分析UI
+     */
+    private fun updateChargingHabitsAnalysisUI(analysis: com.batteryapp.model.ChargingHabitsAnalysis) {
+        // 更新充电习惯统计数据
+        totalSessionsTextView.text = analysis.totalSessions.toString()
+        
+        // 格式化充电时间（毫秒转分钟）
+        val avgMinutes = (analysis.avgChargingTime / (60 * 1000)).toInt()
+        avgChargingTimeTextView.text = "${avgMinutes}分钟"
+        
+        avgStartLevelTextView.text = "${analysis.avgStartLevel.toInt()}%"
+        avgEndLevelTextView.text = "${analysis.avgEndLevel.toInt()}%"
+        peakHourTextView.text = "${analysis.peakChargingHour}点"
+        overnightPercentageTextView.text = "${analysis.overnightChargePercentage.toInt()}%"
+        
+        // 更新充电建议
+        if (analysis.recommendations.isEmpty()) {
+            chargingRecommendationsTextView.text = "暂无充电记录，无法提供建议"
+        } else {
+            val recommendationsText = analysis.recommendations.joinToString("\n• ", prefix = "• ")
+            chargingRecommendationsTextView.text = recommendationsText
+        }
+    }
+    
+    /**
+     * 更新充电记录列表UI
+     */
+    private fun updateChargingSessionsUI(sessions: List<com.batteryapp.model.ChargingSession>) {
+        // 创建并设置适配器
+        val adapter = ChargingSessionAdapter(sessions)
+        chargingSessionsRecyclerView.adapter = adapter
     }
     
     /**
@@ -221,6 +299,42 @@ class HealthFragment : Fragment() {
         explanationBuilder.append("   - ${baseScore.toInt()} × ${String.format("%.2f", cycleFactor)} × ${String.format("%.2f", capacityFactor)} × ${String.format("%.2f", temperatureFactor)} × ${String.format("%.2f", chargeHabitFactor)}\n")
         explanationBuilder.append("   - = ${String.format("%.2f", baseScore * cycleFactor * capacityFactor * temperatureFactor * chargeHabitFactor)}\n")
         explanationBuilder.append("   - 最终得分：${finalScore}分\n")
+        
+        return explanationBuilder.toString()
+    }
+    
+    private fun getChargingTypeExplanation(): String {
+        val explanationBuilder = StringBuilder()
+        
+        explanationBuilder.append("1. 慢充 (Trickle Charge / Standard Charge)\n")
+        explanationBuilder.append("   类比：用一根小水管，以恒定、平缓的水流注水。\n")
+        explanationBuilder.append("   技术解释：通常指功率在10W-15W以下的充电。使用标准的5V电压和较低的电流，整个过程电压电流基本不变，直到快满时才略微调整。\n")
+        explanationBuilder.append("   优点：发热小，对电池的化学压力最小，有利于长期电池健康。\n")
+        explanationBuilder.append("   缺点：速度慢。\n")
+        explanationBuilder.append("   何时发生：使用不支持快充的旧充电器；或手机/充电器有一方不支持对方的快充协议时，会自动回落到5V慢充。\n\n")
+        
+        explanationBuilder.append("2. 快充 (Quick Charge / Fast Charge)\n")
+        explanationBuilder.append("   类比：前期用消防水管猛灌，当水位快满时，自动换回小水管。\n")
+        explanationBuilder.append("   技术解释：指通过提升电压和/或电流，将充电功率提升到18W以上的技术。它不是从头到尾全功率，而是一个智能的、多阶段的过程：\n")
+        explanationBuilder.append("   - 阶段1：恒流预充：如果电池电量极低，会以小电流先激活。\n")
+        explanationBuilder.append("   - 阶段2：恒流快充 (核心阶段)：充电器和手机协商出一个最高的安全功率（如27W、65W），在此阶段以最大功率充电，电量从0%迅速冲到50%-70%。\n")
+        explanationBuilder.append("   - 阶段3：恒压减流：当电池电压达到上限（约4.2V-4.4V），充电器保持电压不变，电流开始逐渐减小。功率也随之下降。此阶段电量从70%充到90%以上。\n")
+        explanationBuilder.append("   优点：极大缩短充电时间，解决续航焦虑。\n")
+        explanationBuilder.append("   缺点：相对慢充会产生更多热量，对电池的长期健康有轻微影响（但现代手机的管理系统已将其控制在安全范围内）。\n\n")
+        
+        explanationBuilder.append("3. 涓流充电 (Trickle Charge / Maintenance Charge)\n")
+        explanationBuilder.append("   类比：水池即将灌满，改用滴管一滴一滴地加，直到完全精确满盈。\n")
+        explanationBuilder.append("   技术解释：这是充电的最后阶段（通常是95%或98%以后）。此时充电功率极低（可能只有1-2W），以非常微小的电流慢慢将电池充至100%。\n")
+        explanationBuilder.append("   目的：\n")
+        explanationBuilder.append("   - 保护电池：避免在电池已接近满电时继续大电流冲击，减少电池压力和发热。\n")
+        explanationBuilder.append("   - 校准电量计：让手机更精确地判断\"100%\"这个点。\n")
+        explanationBuilder.append("   智能运用：手机的\"优化电池充电\"功能，就是利用了涓流充电的原理。它先快速充到80%，然后暂停，在你起床前再用涓流慢慢充满最后20%，从而缩短电池处于100%高压状态的时间。\n\n")
+        
+        explanationBuilder.append("核心结论与建议：\n")
+        explanationBuilder.append("1. 协议匹配是关键：想要实现快充，必须确保手机支持、充电器支持、数据线也支持同一快充协议。否则会自动降级为慢充。\n")
+        explanationBuilder.append("2. 看功率(W)比单独看V或A更有意义：功率直接反映了充电速度。一个30W的充电器通常比18W的快。\n")
+        explanationBuilder.append("3. 通用性选择：目前USB PD (含PPS) 协议是最通用、前景最广的快充标准，被苹果、谷歌、三星及众多笔记本厂商支持。\n")
+        explanationBuilder.append("4. 不必恐惧快充伤电池：在手机厂商严格的温控和智能管理下，快充对电池寿命的额外损耗非常有限。")
         
         return explanationBuilder.toString()
     }

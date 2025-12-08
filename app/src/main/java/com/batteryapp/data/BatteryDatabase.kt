@@ -4,10 +4,13 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.batteryapp.model.BatteryData
 import com.batteryapp.model.BatteryHealthData
 import com.batteryapp.model.BatteryHistory
 import com.batteryapp.model.AppBatteryUsage
+import com.batteryapp.model.ChargingSession
+import com.batteryapp.model.ChargingMode
 
 /**
  * 电池数据库类，用于管理数据库的创建和版本控制
@@ -17,9 +20,10 @@ import com.batteryapp.model.AppBatteryUsage
         BatteryData::class,
         BatteryHealthData::class,
         AppBatteryUsage::class,
-        BatteryHistory::class
+        BatteryHistory::class,
+        ChargingSession::class
     ],
-    version = 5,
+    version = 7,
     exportSchema = false
 )
 abstract class BatteryDatabase : RoomDatabase() {

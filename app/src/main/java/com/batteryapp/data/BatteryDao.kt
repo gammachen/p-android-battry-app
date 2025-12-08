@@ -7,6 +7,7 @@ import com.batteryapp.model.BatteryData
 import com.batteryapp.model.BatteryHealthData
 import com.batteryapp.model.BatteryHistory
 import com.batteryapp.model.AppBatteryUsage
+import com.batteryapp.model.ChargingSession
 
 /**
  * 电池数据访问对象，用于数据库操作
@@ -74,6 +75,19 @@ interface BatteryDao {
     @Query("SELECT * FROM BatteryHistory WHERE date BETWEEN :startDate AND :endDate ORDER BY date")
     suspend fun getBatteryHistoryByDateRange(startDate: Long, endDate: Long): List<BatteryHistory>
     
+    // ChargingSession相关操作
+    @Insert
+    suspend fun insertChargingSession(session: ChargingSession)
+    
+    @Query("SELECT * FROM charging_sessions ORDER BY startTime DESC")
+    suspend fun getAllChargingSessions(): List<ChargingSession>
+    
+    @Query("SELECT * FROM charging_sessions ORDER BY startTime DESC LIMIT 30")
+    suspend fun getRecentChargingSessions(): List<ChargingSession>
+    
+    @Query("SELECT * FROM charging_sessions WHERE startTime > :cutoffTime ORDER BY startTime")
+    suspend fun getChargingSessionsAfter(cutoffTime: Long): List<ChargingSession>
+    
     // 清空数据相关操作
     @Query("DELETE FROM BatteryData")
     suspend fun clearBatteryData()
@@ -86,4 +100,7 @@ interface BatteryDao {
     
     @Query("DELETE FROM BatteryHistory")
     suspend fun clearBatteryHistory()
+    
+    @Query("DELETE FROM charging_sessions")
+    suspend fun clearChargingSessions()
 }

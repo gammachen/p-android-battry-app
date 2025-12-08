@@ -174,6 +174,7 @@ toolName: run_command
 status: success
           
 command: adb -s 192.168.31.236:5555 install -r ./app/build/outputs/apk/debug/app-debug.apk undefined
+adb -s 192.168.31.38:5555 install -r ./app/build/outputs/apk/debug/app-debug.apk
           
 APK已经成功安装到设备上，现在我需要启动应用并测试所有修复是否生效。
         

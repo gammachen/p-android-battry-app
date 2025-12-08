@@ -9,6 +9,8 @@ import com.batteryapp.model.BatteryData
 import com.batteryapp.model.BatteryHealthData
 import com.batteryapp.model.AppBatteryUsage
 import com.batteryapp.model.BatteryHistory
+import com.batteryapp.model.ChargingSession
+import com.batteryapp.model.ChargingHabitsAnalysis
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -46,6 +48,13 @@ class BatteryViewModel(application: Application) : AndroidViewModel(application)
     // 历史数据相关
     private val _recentBatteryHistory = MutableLiveData<List<BatteryHistory>>(emptyList())
     val recentBatteryHistory: LiveData<List<BatteryHistory>> = _recentBatteryHistory
+    
+    // 充电会话相关
+    private val _chargingSessions = MutableLiveData<List<ChargingSession>>(emptyList())
+    val chargingSessions: LiveData<List<ChargingSession>> = _chargingSessions
+    
+    private val _chargingHabitsAnalysis = MutableLiveData<ChargingHabitsAnalysis>(ChargingHabitsAnalysis.empty())
+    val chargingHabitsAnalysis: LiveData<ChargingHabitsAnalysis> = _chargingHabitsAnalysis
     
     // 加载状态相关
     private val _isLoading = MutableLiveData(false)
@@ -255,6 +264,32 @@ class BatteryViewModel(application: Application) : AndroidViewModel(application)
         loadAppBatteryUsageRanking(BatteryRepository.BatteryUsageRankType.TIME_USAGE)
         loadAppBatteryUsageByScene(BatteryRepository.BatteryUsageSceneType.SCREEN_ON)
         loadRecentBatteryHistory()
+        loadRecentChargingSessions()
+        analyzeChargingHabits()
+    }
+    
+    // 加载最近的充电会话
+    fun loadRecentChargingSessions() {
+        viewModelScope.launch {
+            try {
+                val sessions = repository.getRecentChargingSessions()
+                _chargingSessions.value = sessions
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+    
+    // 分析充电习惯
+    fun analyzeChargingHabits() {
+        viewModelScope.launch {
+            try {
+                val analysis = repository.analyzeChargingHabits()
+                _chargingHabitsAnalysis.value = analysis
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
     
     // 清空所有数据

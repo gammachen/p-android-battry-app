@@ -8,6 +8,12 @@ import android.content.IntentFilter
 import android.os.BatteryManager
 import android.os.IBinder
 import android.util.Log
+import com.batteryapp.data.BatteryRepository
+import com.batteryapp.model.ChargingSession
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import androidx.core.content.ContextCompat
 
 class BatteryMonitorService : Service() {
 
@@ -15,6 +21,16 @@ class BatteryMonitorService : Service() {
     private var isRunning = false
     private lateinit var batteryReceiver: BroadcastReceiver
     private var batteryStatusListener: ((BatteryStatus) -> Unit)? = null
+    
+    // 充电会话跟踪相关
+    private lateinit var batteryRepository: BatteryRepository
+    private var isChargingSessionActive = false
+    private var chargingSessionStartTime: Long = 0
+    private var chargingSessionStartLevel: Int = 0
+    private var chargingSessionMaxTemperature: Float = 0.0f
+    private var chargingSessionMaxPowerW: Float = 0.0f
+    private var chargingSessionChargerType: String = "未知"
+    private var previousIsCharging = false
 
     data class BatteryStatus(
         val percentage: Int,
@@ -34,6 +50,7 @@ class BatteryMonitorService : Service() {
         super.onCreate()
         Log.d(TAG, "Service created")
         isRunning = true
+        batteryRepository = BatteryRepository(this)
         registerBatteryReceiver()
     }
 
@@ -46,9 +63,58 @@ class BatteryMonitorService : Service() {
         batteryReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (intent?.action == Intent.ACTION_BATTERY_CHANGED) {
-                    val batteryStatus = getBatteryStatus(intent)
+                    val batteryIntentx = ContextCompat.registerReceiver(
+                        this@BatteryMonitorService,
+                        null,
+                        IntentFilter(Intent.ACTION_BATTERY_CHANGED),
+                        ContextCompat.RECEIVER_NOT_EXPORTED
+                    )
+                    if (batteryIntentx != null) {
+                        val x = batteryIntentx.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1)
+                        Log.d(TAG, "xxxxxxxxxxxxxxxxxxxxxxxx: $x")
+                    }                    
+
+                    val batteryIntent = intent
+                    
+                    val chargePlug = batteryIntent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1)
+                    Log.d(TAG, "充电类型: $chargePlug")
+
+                    val batteryStatus = getBatteryStatus(batteryIntent)
                     Log.d(TAG, "Battery Status Updated: $batteryStatus")
                     batteryStatusListener?.invoke(batteryStatus)
+                    
+                    // 充电会话跟踪逻辑
+                    val isCharging = batteryStatus.isCharging
+                    
+                    // 检测充电状态变化
+                    if (isCharging && !previousIsCharging) {
+                        // 获取充电类型
+                        val chargerType = when {
+                            chargePlug == BatteryManager.BATTERY_PLUGGED_USB -> "USB"
+                            chargePlug == BatteryManager.BATTERY_PLUGGED_AC -> "AC"
+                            chargePlug == BatteryManager.BATTERY_PLUGGED_WIRELESS -> "无线"
+                            chargePlug == BatteryManager.BATTERY_PLUGGED_DOCK -> "dock"
+                            else -> "未知（${chargePlug}）"
+                        }
+                        // 开始新的充电会话
+                        startChargingSession(batteryStatus.percentage, batteryStatus.temperature.toFloat(), chargerType)
+                    } else if (!isCharging && previousIsCharging) {
+                        // 结束当前充电会话
+                        endChargingSession(batteryStatus.percentage, batteryStatus.temperature.toFloat())
+                    } else if (isCharging) {
+                        // 更新充电会话中的最高温度
+                        if (batteryStatus.temperature.toFloat() > chargingSessionMaxTemperature) {
+                            chargingSessionMaxTemperature = batteryStatus.temperature.toFloat()
+                        }
+                        // 更新充电会话中的最大充电功率
+                        val currentPower = batteryStatus.power.toFloat()
+                        if (currentPower > chargingSessionMaxPowerW) {
+                            chargingSessionMaxPowerW = currentPower
+                        }
+                    }
+                    
+                    // 更新之前的充电状态
+                    previousIsCharging = isCharging
                 }
             }
         }
@@ -80,6 +146,64 @@ class BatteryMonitorService : Service() {
 
     fun setBatteryStatusListener(listener: ((BatteryStatus) -> Unit)?) {
         this.batteryStatusListener = listener
+    }
+    
+    /**
+     * 开始充电会话
+     */
+    private fun startChargingSession(startLevel: Int, initialTemperature: Float, chargerType: String) {
+        Log.d(TAG, "Starting charging session at $startLevel% with charger type: $chargerType")
+        isChargingSessionActive = true
+        chargingSessionStartTime = System.currentTimeMillis()
+        chargingSessionStartLevel = startLevel
+        chargingSessionMaxTemperature = initialTemperature
+        chargingSessionMaxPowerW = 0.0f
+        chargingSessionChargerType = chargerType
+    }
+    
+    /**
+     * 结束充电会话并保存到数据库
+     */
+    private fun endChargingSession(endLevel: Int, finalTemperature: Float) {
+        if (!isChargingSessionActive) return
+        
+        Log.d(TAG, "Ending charging session at $endLevel% with charger type: $chargingSessionChargerType")
+        
+        // 更新最高温度
+        if (finalTemperature > chargingSessionMaxTemperature) {
+            chargingSessionMaxTemperature = finalTemperature
+        }
+        
+        // 判断充电模式
+        val chargingMode = batteryRepository.determineChargingMode(chargingSessionMaxPowerW)
+        
+        // 创建充电会话对象
+        val chargingSession = ChargingSession(
+            startTime = chargingSessionStartTime,
+            endTime = System.currentTimeMillis(),
+            startLevel = chargingSessionStartLevel,
+            endLevel = endLevel,
+            maxTemperature = chargingSessionMaxTemperature,
+            chargerType = chargingSessionChargerType,
+            chargingMode = chargingMode.mode.name
+        )
+        
+        // 保存到数据库
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                batteryRepository.insertChargingSession(chargingSession)
+                Log.d(TAG, "Charging session saved to database")
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to save charging session: ${e.message}")
+            }
+        }
+        
+        // 重置充电会话状态
+        isChargingSessionActive = false
+        chargingSessionStartTime = 0
+        chargingSessionStartLevel = 0
+        chargingSessionMaxTemperature = 0.0f
+        chargingSessionMaxPowerW = 0.0f
     }
 
     override fun onDestroy() {

@@ -6,6 +6,8 @@ import com.batteryapp.model.BatteryData
 import com.batteryapp.model.BatteryHealthData
 import com.batteryapp.model.AppBatteryUsage
 import com.batteryapp.model.BatteryHistory
+import com.batteryapp.model.ChargingSession
+import com.batteryapp.model.ChargingHabitsAnalysis
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import android.util.Log
@@ -28,7 +30,9 @@ class BatteryRepository(private val context: Context) {
         // 合理的电池电压范围（毫伏）
         private const val MIN_VALID_VOLTAGE_MV = 3000  // 3.0V（极低电量）
         private const val MAX_VALID_VOLTAGE_MV = 10000  // 10.0V（满电）
-    }    
+    }
+
+
 
     private val database by lazy {
         BatteryDatabase.getInstance(context)
@@ -452,6 +456,8 @@ class BatteryRepository(private val context: Context) {
         }
     }
     
+
+
     /**
      * 通过 PowerProfile 类获取电池设计容量
      * 这个类包含了设备的各种电源消耗配置，包括电池容量
@@ -507,6 +513,129 @@ class BatteryRepository(private val context: Context) {
         batteryDao.clearBatteryHealthData()
         batteryDao.clearAppBatteryUsage()
         batteryDao.clearBatteryHistory()
+        batteryDao.clearChargingSessions()
+    }
+    
+    // ChargingSession相关操作
+    /**
+     * 插入充电会话数据
+     */
+    suspend fun insertChargingSession(session: ChargingSession) {
+        withContext(Dispatchers.IO) {
+            batteryDao.insertChargingSession(session)
+        }
+    }
+    
+    /**
+     * 获取最近的充电会话记录
+     */
+    suspend fun getRecentChargingSessions(): List<ChargingSession> {
+        return withContext(Dispatchers.IO) {
+            batteryDao.getRecentChargingSessions()
+        }
+    }
+    
+    /**
+     * 获取所有充电会话记录
+     */
+    suspend fun getAllChargingSessions(): List<ChargingSession> {
+        return withContext(Dispatchers.IO) {
+            batteryDao.getAllChargingSessions()
+        }
+    }
+    
+    /**
+     * 获取指定时间之后的充电会话记录
+     */
+    suspend fun getChargingSessionsAfter(cutoffTime: Long): List<ChargingSession> {
+        return withContext(Dispatchers.IO) {
+            batteryDao.getChargingSessionsAfter(cutoffTime)
+        }
+    }
+    
+    /**
+     * 分析充电习惯
+     */
+    suspend fun analyzeChargingHabits(): ChargingHabitsAnalysis {
+        val sessions = getAllChargingSessions()
+        
+        if (sessions.isEmpty()) {
+            return ChargingHabitsAnalysis.empty()
+        }
+        
+        // 计算平均充电时间
+        val avgChargingTime = sessions.map { it.duration }.average()
+        
+        // 计算平均起始电量
+        val avgStartLevel = sessions.map { it.startLevel }.average()
+        
+        // 计算平均结束电量
+        val avgEndLevel = sessions.map { it.endLevel }.average()
+        
+        // 找出最常见的充电时间段
+        val hourlyDistribution = sessions.groupBy { 
+            java.util.Calendar.getInstance().apply { timeInMillis = it.startTime }.get(java.util.Calendar.HOUR_OF_DAY)
+        }.mapValues { it.value.size }
+        
+        val peakHour = hourlyDistribution.maxByOrNull { it.value }?.key ?: 0
+        
+        // 分析是否经常过夜充电
+        val overnightCharges = sessions.count { session ->
+            val startHour = java.util.Calendar.getInstance().apply { timeInMillis = session.startTime }.get(java.util.Calendar.HOUR_OF_DAY)
+            val endHour = java.util.Calendar.getInstance().apply { timeInMillis = session.endTime }.get(java.util.Calendar.HOUR_OF_DAY)
+            (startHour in 22..23 || startHour in 0..6) && 
+            (endHour in 6..12) && session.duration > 6 * 60 * 60 * 1000
+        }
+        
+        val overnightPercentage = overnightCharges.toDouble() / sessions.size * 100
+        
+        return ChargingHabitsAnalysis(
+            totalSessions = sessions.size,
+            avgChargingTime = avgChargingTime,
+            avgStartLevel = avgStartLevel,
+            avgEndLevel = avgEndLevel,
+            peakChargingHour = peakHour,
+            overnightChargePercentage = overnightPercentage,
+            recommendations = generateRecommendations(
+                avgStartLevel, avgEndLevel, avgChargingTime, overnightPercentage
+            )
+        )
+    }
+    
+    private fun generateRecommendations(
+        avgStart: Double,
+        avgEnd: Double,
+        avgTime: Double,
+        overnightPercent: Double
+    ): List<String> {
+        val recommendations = mutableListOf<String>()
+        
+        // 充电起始电量建议
+        when {
+            avgStart < 20 -> recommendations.add("您经常在电量过低（${avgStart.toInt()}%）时充电，建议在电量高于20%时开始充电")
+            avgStart in 20.0..40.0 -> recommendations.add("充电习惯良好，起始电量合适")
+            else -> recommendations.add("您习惯在高电量时充电，可以尝试在电量更低时再充电")
+        }
+        
+        // 充电结束电量建议
+        when {
+            avgEnd > 90 -> recommendations.add("您经常充满电（${avgEnd.toInt()}%），建议充至80%即可延长电池寿命")
+            avgEnd in 70.0..90.0 -> recommendations.add("充电结束电量合适，有助于保护电池")
+            else -> recommendations.add("充电结束电量较低，可能影响使用体验")
+        }
+        
+        // 过夜充电建议
+        if (overnightPercent > 30) {
+            recommendations.add("您经常过夜充电（${overnightPercent.toInt()}%的充电会话），建议使用智能充电提醒功能")
+        }
+        
+        // 充电时长建议
+        val hours = avgTime / (60 * 60 * 1000)
+        if (hours > 3) {
+            recommendations.add("平均充电时间较长（${hours.toInt()}小时），建议检查充电器功率或充电时减少使用手机")
+        }
+        
+        return recommendations
     }
     
     enum class BatteryUsageRankType {
@@ -520,5 +649,99 @@ class BatteryRepository(private val context: Context) {
         SCREEN_ON,
         SCREEN_OFF,
         IDLE
+    }
+
+    /**
+     * 功率阈值定义（单位：瓦特）
+     */
+    private object PowerThresholds {
+        // 涓流充电：通常 < 5W
+        const val TRICKLE_MAX = 5f
+        
+        // 慢充/普通充电：5W - 10W
+        const val SLOW_MIN = 5f
+        const val SLOW_MAX = 10f
+        
+        // 快充：10W - 25W
+        const val FAST_MIN = 10f
+        const val FAST_MAX = 25f
+        
+        // 超级快充：> 25W
+        const val SUPER_FAST_MIN = 25f
+        
+        // 极速快充（如120W）：> 65W
+        const val ULTRA_FAST_MIN = 65f
+    }
+
+    /**
+     * 电流阈值定义（单位：毫安）
+     */
+    private object CurrentThresholds {
+        // 涓流充电最大电流
+        const val TRICKLE_MAX = 100f
+        
+        // USB标准充电最大电流
+        const val USB_STANDARD_MAX = 500f
+    }
+
+    /**
+     * 根据功率和电流判断充电模式
+     */
+    fun determineChargingMode(powerW: Float, currentMa: Float = 0f): com.batteryapp.model.ChargingMode {
+        val mode = when {
+            // 首先检查是否在放电
+            powerW <= 0 -> com.batteryapp.model.ChargingMode.Mode.DISCHARGING
+            
+            // 涓流充电判断
+            powerW < PowerThresholds.TRICKLE_MAX -> {
+                // 结合电流进一步确认是否为真正的涓流充电
+                com.batteryapp.model.ChargingMode.Mode.TRICKLE
+            }
+            
+            // 慢充
+            powerW in PowerThresholds.SLOW_MIN..PowerThresholds.SLOW_MAX -> {
+                com.batteryapp.model.ChargingMode.Mode.SLOW
+            }
+            
+            // 普通充电
+            powerW in PowerThresholds.FAST_MIN..18f -> {
+                com.batteryapp.model.ChargingMode.Mode.NORMAL
+            }
+            
+            // 快充
+            powerW in 18f..PowerThresholds.FAST_MAX -> {
+                com.batteryapp.model.ChargingMode.Mode.FAST
+            }
+            
+            // 超级快充
+            powerW in PowerThresholds.SUPER_FAST_MIN..PowerThresholds.ULTRA_FAST_MIN -> {
+                com.batteryapp.model.ChargingMode.Mode.SUPER_FAST
+            }
+            
+            // 极速快充
+            powerW > PowerThresholds.ULTRA_FAST_MIN -> {
+                com.batteryapp.model.ChargingMode.Mode.ULTRA_FAST
+            }
+            
+            // 未知模式
+            else -> com.batteryapp.model.ChargingMode.Mode.UNKNOWN
+        }
+        
+        return com.batteryapp.model.ChargingMode(mode, powerW)
+    }
+
+    /**
+     * 计算涓流充电置信度
+     */
+    private fun calculateTrickleConfidence(currentMa: Float): Float {
+        return when {
+            // 涓流特征：小电流 + 高电量（>95%）
+            currentMa < CurrentThresholds.TRICKLE_MAX -> 0.9f
+            
+            // 可能只是弱充电器
+            currentMa < CurrentThresholds.USB_STANDARD_MAX -> 0.6f
+            
+            else -> 0.3f
+        }
     }
 }

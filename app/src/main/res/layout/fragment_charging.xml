@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/green_100"
-        app:title="充电中"
+        app:title="实时状态"
         app:titleTextColor="@color/gray_800"
         app:layout_constraintTop_toTopOf="parent" />
 
