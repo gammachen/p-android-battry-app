@@ -16,4 +16,8 @@
         android:id="@+id/nav_system_info"
         android:icon="@drawable/ic_discovery"
         android:title="系统信息" />
+    <item
+        android:id="@+id/nav_image_compression"
+        android:icon="@android:drawable/ic_menu_gallery"
+        android:title="图片压缩" />
 </menu>

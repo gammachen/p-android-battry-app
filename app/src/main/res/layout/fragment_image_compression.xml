@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".ImageCompressionFragment">
+
+    <!-- 压缩介绍 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="?attr/colorSurface"
+        android:elevation="2dp"
+        android:layout_marginBottom="16dp"
+        android:radius="8dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="图片压缩介绍"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="我们提供高效的图片压缩功能，可以帮助您减小图片文件大小，节省存储空间和网络流量。支持多种压缩选项和模式。"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <!-- 压缩模式选择 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="?attr/colorSurface"
+        android:elevation="2dp"
+        android:layout_marginBottom="16dp"
+        android:radius="8dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="压缩模式"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <RadioGroup
+            android:id="@+id/radio_group_compression_mode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/radio_keep_original"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="保留源图片，压缩图片存储到子目录"
+                android:checked="true" />
+
+            <RadioButton
+                android:id="@+id/radio_delete_original"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="删除源图片，只保留压缩文件" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <!-- 目录选择 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="?attr/colorSurface"
+        android:elevation="2dp"
+        android:layout_marginBottom="16dp"
+        android:radius="8dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="选择目录"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btn_select_directory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="选择图片目录" />
+
+        <TextView
+            android:id="@+id/tv_selected_directory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="未选择目录"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp"
+            android:textColor="@android:color/secondary_text_light" />
+    </LinearLayout>
+
+    <!-- 压缩按钮 -->
+    <Button
+        android:id="@+id/btn_start_compression"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="开始压缩"
+        android:textSize="18sp"
+        android:backgroundTint="@android:color/holo_blue_dark"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="16dp" />
+
+    <!-- 压缩结果 -->
+    <LinearLayout
+        android:id="@+id/layout_compression_result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="?attr/colorSurface"
+        android:elevation="2dp"
+        android:layout_marginTop="16dp"
+        android:radius="8dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="压缩结果"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tv_compression_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+</LinearLayout>

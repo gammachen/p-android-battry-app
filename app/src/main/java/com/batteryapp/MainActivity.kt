@@ -84,6 +84,12 @@ class MainActivity : AppCompatActivity() {
                     replaceFragment(currentFragment!!)
                     true
                 }
+                R.id.nav_image_compression -> {
+                    toolbar.title = "图片压缩"
+                    currentFragment = ImageCompressionFragment()
+                    replaceFragment(currentFragment!!)
+                    true
+                }
                 else -> false
             }
         }

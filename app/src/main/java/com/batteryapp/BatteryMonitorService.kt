@@ -23,13 +23,21 @@ class BatteryMonitorService : Service() {
     private var batteryStatusListener: ((BatteryStatus) -> Unit)? = null
     
     // 充电会话跟踪相关
+    // 电池数据仓库，用于保存充电会话等数据
     private lateinit var batteryRepository: BatteryRepository
+    // 标记当前是否处于活跃的充电会话中
     private var isChargingSessionActive = false
+    // 当前充电会话的开始时间（毫秒）
     private var chargingSessionStartTime: Long = 0
+    // 当前充电会话开始时的电量百分比
     private var chargingSessionStartLevel: Int = 0
+    // 当前充电会话中记录到的最高温度（摄氏度）
     private var chargingSessionMaxTemperature: Float = 0.0f
+    // 当前充电会话中记录到的最大功率（瓦）
     private var chargingSessionMaxPowerW: Float = 0.0f
+    // 当前充电会话的充电器类型（如 USB、AC、无线等）
     private var chargingSessionChargerType: String = "未知"
+    // 上一次广播接收时的充电状态，用于检测充电开始/结束事件
     private var previousIsCharging = false
 
     data class BatteryStatus(
@@ -87,8 +95,10 @@ class BatteryMonitorService : Service() {
                     val isCharging = batteryStatus.isCharging
                     
                     // 检测充电状态变化
-                    if (isCharging && !previousIsCharging) {
+                    if (isCharging && !previousIsCharging && chargePlug > 0) {
                         // 获取充电类型
+                        val chargePlug = batteryIntent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1)
+                        Log.d(TAG, "再次获取充电类型: $chargePlug BatteryManager.BATTERY_PLUGGED_USB: ${BatteryManager.BATTERY_PLUGGED_USB} BatteryManager.BATTERY_PLUGGED_AC: ${BatteryManager.BATTERY_PLUGGED_AC} BatteryManager.BATTERY_PLUGGED_WIRELESS: ${BatteryManager.BATTERY_PLUGGED_WIRELESS} BatteryManager.BATTERY_PLUGGED_DOCK: ${BatteryManager.BATTERY_PLUGGED_DOCK}")
                         val chargerType = when {
                             chargePlug == BatteryManager.BATTERY_PLUGGED_USB -> "USB"
                             chargePlug == BatteryManager.BATTERY_PLUGGED_AC -> "AC"
@@ -127,7 +137,21 @@ class BatteryMonitorService : Service() {
         val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
         val percentage = (level * 100 / scale)
         
+        // 获取电池当前状态（充电中、充满、未充电等）
         val status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1)
+        /** 
+        BatteryManager.BATTERY_STATUS_UNKNOWN - 值为 1
+        未知状态
+        BatteryManager.BATTERY_STATUS_CHARGING - 值为 2
+        正在充电（通过交流电、USB等充电器）
+        BatteryManager.BATTERY_STATUS_DISCHARGING - 值为 3
+        未充电，正在放电（使用电池供电）
+        BatteryManager.BATTERY_STATUS_NOT_CHARGING - 值为 4
+        未充电（连接了充电器但未充电）
+        BatteryManager.BATTERY_STATUS_FULL - 值为 5
+        电池已充满
+        */
+        // 判断设备是否处于充电状态：当状态为“正在充电”或“已充满”时视为充电中
         val isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING || 
                          status == BatteryManager.BATTERY_STATUS_FULL
         

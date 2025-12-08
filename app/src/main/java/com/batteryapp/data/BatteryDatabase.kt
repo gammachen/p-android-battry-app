@@ -23,7 +23,7 @@ import com.batteryapp.model.ChargingMode
         BatteryHistory::class,
         ChargingSession::class
     ],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 abstract class BatteryDatabase : RoomDatabase() {

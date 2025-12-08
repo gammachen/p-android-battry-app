@@ -1026,4 +1026,50 @@ adb -s 192.168.31.236:5555 logcat -v time -s dBatteryApp_x
 adb -s 192.168.31.106:5555 logcat -v time -s dBatteryApp_x
 adb -s 192.168.31.38:5555 logcat -v time -s dBatteryApp_x
 
+```bash
+12-08 16:37:19.351 D/BatteryMonitorService( 6809): xxxxxxxxxxxxxxxxxxxxxxxx: 0
+12-08 16:37:19.351 D/BatteryMonitorService( 6809): 充电类型: 0
+12-08 16:37:19.351 D/BatteryMonitorService( 6809): Battery Status Updated: BatteryStatus(percentage=81, isCharging=false, status=3, current=0, voltage=4.239, temperature=27.4, power=0.0)
+12-08 16:37:19.351 D/BatteryMonitorService( 6809): Ending charging session at 81% with charger type: 未知（0）
+12-08 16:37:19.358 D/BatteryMonitorService( 6809): Charging session saved to database
+12-08 16:37:19.385 D/BatteryMonitorService( 6809): xxxxxxxxxxxxxxxxxxxxxxxx: 0
+12-08 16:37:19.385 D/BatteryMonitorService( 6809): 充电类型: 0
+12-08 16:37:19.385 D/BatteryMonitorService( 6809): Battery Status Updated: BatteryStatus(percentage=81, isCharging=false, status=3, current=0, voltage=4.096, temperature=27.4, power=0.0)
 
+
+// 干，先接收到3条message，前面两条得到的isCharging=false，后面一条得到的isCharging=true，但是充电类型还是0（表示是断开充电的），似乎是断开充电之后，没有及时发送出来这个，但是链接充电线之后，却发送了这个message，导致充电类型还是0
+12-08 16:37:27.137 D/BatteryMonitorService( 6809): xxxxxxxxxxxxxxxxxxxxxxxx: 0
+12-08 16:37:27.137 D/BatteryMonitorService( 6809): 充电类型: 0
+12-08 16:37:27.137 D/BatteryMonitorService( 6809): Battery Status Updated: BatteryStatus(percentage=81, isCharging=false, status=4, current=0, voltage=4.09, temperature=27.3, power=0.0)
+12-08 16:37:27.223 D/BatteryMonitorService( 6809): xxxxxxxxxxxxxxxxxxxxxxxx: 0
+12-08 16:37:27.223 D/BatteryMonitorService( 6809): 充电类型: 0
+12-08 16:37:27.223 D/BatteryMonitorService( 6809): Battery Status Updated: BatteryStatus(percentage=81, isCharging=false, status=4, current=0, voltage=4.089, temperature=27.3, power=0.0)
+12-08 16:37:27.420 D/BatteryMonitorService( 6809): xxxxxxxxxxxxxxxxxxxxxxxx: 0
+12-08 16:37:27.420 D/BatteryMonitorService( 6809): 充电类型: 0
+12-08 16:37:27.420 D/BatteryMonitorService( 6809): Battery Status Updated: BatteryStatus(percentage=81, isCharging=true, status=2, current=0, voltage=4.09, temperature=27.3, power=0.0)
+12-08 16:37:27.420 D/BatteryMonitorService( 6809): Starting charging session at 81% with charger type: 未知（0）
+12-08 16:37:27.871 D/BatteryMonitorService( 6809): xxxxxxxxxxxxxxxxxxxxxxxx: 1
+12-08 16:37:27.872 D/BatteryMonitorService( 6809): 充电类型: 1
+12-08 16:37:27.872 D/BatteryMonitorService( 6809): Battery Status Updated: BatteryStatus(percentage=81, isCharging=true, status=2, current=0, voltage=4.089, temperature=27.2, power=0.0)
+12-08 16:37:27.898 D/BatteryMonitorService( 6809): xxxxxxxxxxxxxxxxxxxxxxxx: 1
+12-08 16:37:27.899 D/BatteryMonitorService( 6809): 充电类型: 1
+12-08 16:37:27.899 D/BatteryMonitorService( 6809): Battery Status Updated: BatteryStatus(percentage=81, isCharging=true, status=2, current=0, voltage=4.124, temperature=27.2, power=0.0)
+12-08 16:37:28.393 D/BatteryMonitorService( 6809): xxxxxxxxxxxxxxxxxxxxxxxx: 1
+12-08 16:37:28.393 D/BatteryMonitorService( 6809): 充电类型: 1
+12-08 16:37:28.393 D/BatteryMonitorService( 6809): Battery Status Updated: BatteryStatus(percentage=81, isCharging=true, status=2, current=0, voltage=4.22, temperature=27.1, power=0.0)
+12-08 16:37:29.119 D/BatteryMonitorService( 6809): xxxxxxxxxxxxxxxxxxxxxxxx: 1
+12-08 16:37:29.119 D/BatteryMonitorService( 6809): 充电类型: 1
+12-08 16:37:29.120 D/BatteryMonitorService( 6809): Battery Status Updated: BatteryStatus(percentage=81, isCharging=true, status=2, current=0, voltage=4.228, temperature=27.0, power=0.0)
+12-08 16:37:32.348 D/BatteryMonitorService( 6809): xxxxxxxxxxxxxxxxxxxxxxxx: 1
+12-08 16:37:32.349 D/BatteryMonitorService( 6809): 充电类型: 1
+12-08 16:37:32.349 D/BatteryMonitorService( 6809): Battery Status Updated: BatteryStatus(percentage=81, isCharging=true, status=2, current=0, voltage=4.23, temperature=27.0, power=0.0)
+12-08 16:38:27.882 D/BatteryMonitorService( 6809): xxxxxxxxxxxxxxxxxxxxxxxx: 1
+12-08 16:38:27.882 D/BatteryMonitorService( 6809): 充电类型: 1
+12-08 16:38:27.882 D/BatteryMonitorService( 6809): Battery Status Updated: BatteryStatus(percentage=81, isCharging=true, status=2, current=0, voltage=4.25, temperature=27.0, power=0.0)
+12-08 16:38:30.132 D/BatteryMonitorService( 6809): xxxxxxxxxxxxxxxxxxxxxxxx: 1
+12-08 16:38:30.132 D/BatteryMonitorService( 6809): 充电类型: 1
+12-08 16:38:30.133 D/BatteryMonitorService( 6809): Battery Status Updated: BatteryStatus(percentage=81, isCharging=true, status=2, current=0, voltage=4.254, temperature=27.0, power=0.0)
+12-08 16:38:36.209 D/BatteryMonitorService( 6809): xxxxxxxxxxxxxxxxxxxxxxxx: 1
+12-08 16:38:36.209 D/BatteryMonitorService( 6809): 充电类型: 1
+12-08 16:38:36.209 D/BatteryMonitorService( 6809): Battery Status Updated: BatteryStatus(percentage=81, isCharging=true, status=2, current=0, voltage=4.252, temperature=27.0, power=0.0)
+```

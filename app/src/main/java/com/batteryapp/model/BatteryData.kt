@@ -245,11 +245,39 @@ data class AppBatteryUsage(
 @Entity(tableName = "BatteryHistory")
 data class BatteryHistory(
     @PrimaryKey(autoGenerate = true)
+    /**
+     * 主键，自增
+     * Room 自动生成，确保每条记录唯一
+     */
     val id: Long = 0,
+    /**
+     * 日期时间戳（毫秒）
+     * 记录该条历史数据对应的日期，用于按日聚合统计
+     */
     val date: Long, // 使用Long类型存储时间戳
+    /**
+     * 当日总耗电量（mAh）
+     * 统计当天电池的总消耗量，用于趋势分析
+     */
     val dailyUsage: Double,
+    /**
+     * 当日充电次数
+     * 记录当天用户进行充电的次数，用于评估充电习惯
+     */
     val chargingCount: Int,
+    /**
+     * 平均充电速度（mAh/小时）
+     * 当天所有充电过程的平均充电速率，反映充电效率
+     */
     val averageChargeSpeed: Double,
+    /**
+     * 当日最低温度（°C）
+     * 记录当天电池达到的最低温度，用于评估低温影响
+     */
     val minTemperature: Double,
+    /**
+     * 当日最高温度（°C）
+     * 记录当天电池达到的最高温度，用于评估高温影响
+     */
     val maxTemperature: Double
 )
