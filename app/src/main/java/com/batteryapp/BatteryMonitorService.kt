@@ -79,16 +79,16 @@ class BatteryMonitorService : Service() {
                     )
                     if (batteryIntentx != null) {
                         val x = batteryIntentx.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1)
-                        Log.d(TAG, "xxxxxxxxxxxxxxxxxxxxxxxx: $x")
+                        Log.d(TAG, "batteryIntentx.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1): $x")
                     }                    
 
                     val batteryIntent = intent
                     
                     val chargePlug = batteryIntent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1)
-                    Log.d(TAG, "充电类型: $chargePlug")
+                    Log.d(TAG, "充电类型 chargePlug: $chargePlug")
 
                     val batteryStatus = getBatteryStatus(batteryIntent)
-                    Log.d(TAG, "Battery Status Updated: $batteryStatus")
+                    Log.d(TAG, "Battery Status Updated batteryStatus: $batteryStatus")
                     batteryStatusListener?.invoke(batteryStatus)
                     
                     // 充电会话跟踪逻辑
@@ -98,7 +98,9 @@ class BatteryMonitorService : Service() {
                     if (isCharging && !previousIsCharging && chargePlug > 0) {
                         // 获取充电类型
                         val chargePlug = batteryIntent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1)
-                        Log.d(TAG, "再次获取充电类型: $chargePlug BatteryManager.BATTERY_PLUGGED_USB: ${BatteryManager.BATTERY_PLUGGED_USB} BatteryManager.BATTERY_PLUGGED_AC: ${BatteryManager.BATTERY_PLUGGED_AC} BatteryManager.BATTERY_PLUGGED_WIRELESS: ${BatteryManager.BATTERY_PLUGGED_WIRELESS} BatteryManager.BATTERY_PLUGGED_DOCK: ${BatteryManager.BATTERY_PLUGGED_DOCK}")
+                        
+                        Log.d(TAG, "充电中，并且前一个状态不是充电中，并且能够得到充电类型（USB、AC、无线、dock等），插上电源线并且已经识别出物理电源线的场景: $chargePlug BatteryManager.BATTERY_PLUGGED_USB: ${BatteryManager.BATTERY_PLUGGED_USB} BatteryManager.BATTERY_PLUGGED_AC: ${BatteryManager.BATTERY_PLUGGED_AC} BatteryManager.BATTERY_PLUGGED_WIRELESS: ${BatteryManager.BATTERY_PLUGGED_WIRELESS} BatteryManager.BATTERY_PLUGGED_DOCK: ${BatteryManager.BATTERY_PLUGGED_DOCK}")
+                        
                         val chargerType = when {
                             chargePlug == BatteryManager.BATTERY_PLUGGED_USB -> "USB"
                             chargePlug == BatteryManager.BATTERY_PLUGGED_AC -> "AC"
@@ -109,9 +111,14 @@ class BatteryMonitorService : Service() {
                         // 开始新的充电会话
                         startChargingSession(batteryStatus.percentage, batteryStatus.temperature.toFloat(), chargerType)
                     } else if (!isCharging && previousIsCharging) {
+                        Log.d(TAG, "放电中，并且前一个状态是充电中，拔掉电源充电线的场景!")
                         // 结束当前充电会话
                         endChargingSession(batteryStatus.percentage, batteryStatus.temperature.toFloat())
-                    } else if (isCharging) {
+                    }
+                    
+                    // 持续充电中，更新充电会话数据
+                    if (isCharging) {
+                        Log.d(TAG, "持续充电中.................... chargingSessionMaxTemperature ${chargingSessionMaxTemperature} chargingSessionMaxPowerW ${chargingSessionMaxPowerW}")
                         // 更新充电会话中的最高温度
                         if (batteryStatus.temperature.toFloat() > chargingSessionMaxTemperature) {
                             chargingSessionMaxTemperature = batteryStatus.temperature.toFloat()
@@ -160,10 +167,20 @@ class BatteryMonitorService : Service() {
         
         // 计算电流（mA）
         val currentMicroAmps = intent.getIntExtra("current_now", -1) // 使用字符串常量避免API版本问题
-        val current = if (currentMicroAmps != -1) currentMicroAmps / 1000 else 0
+        var current = if (currentMicroAmps != -1) Math.round(currentMicroAmps / 1000.0).toInt() else 0
+
+        Log.d(TAG, "Battery Status: $percentage %, isCharging: $isCharging, voltage: $voltage V, temperature: $temperature °C, current: $current mA ")
+
+        // 需要 BATTERY_STATS 权限（系统权限）
+        val batteryManager = getSystemService(Context.BATTERY_SERVICE) as BatteryManager
+        val currentNow = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CURRENT_NOW)
+        // 返回的是微安(µA)值，负值表示放电，正值表示充电
+        current = Math.round(currentNow / 1000.0).toInt()
+
+        Log.d(TAG, "Battery Status: $percentage %, isCharging: $isCharging, voltage: $voltage V, temperature: $temperature °C, current: $current mA, currentNow: $currentNow")
         
         // 计算功率（W）
-        val power = if (voltage > 0 && current != 0) (voltage * current) / 1000.0 else 0.0
+        val power = if (voltage > 0) (voltage * current) / 1000.0 else 0.0
         
         return BatteryStatus(percentage, isCharging, status, current, voltage, temperature, power)
     }
@@ -211,12 +228,14 @@ class BatteryMonitorService : Service() {
             chargerType = chargingSessionChargerType,
             chargingMode = chargingMode.mode.name
         )
-        
+
+        Log.d(TAG, "Charging session saved to database with data: $chargingSession")
+
         // 保存到数据库
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 batteryRepository.insertChargingSession(chargingSession)
-                Log.d(TAG, "Charging session saved to database")
+                Log.d(TAG, "Charging session saved to database with data: $chargingSession")
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to save charging session: ${e.message}")
             }
