@@ -36,4 +36,388 @@
     <string name="screen_on">Screen On</string>
     <string name="screen_off">Screen Off</string>
     <string name="battery_drain">Battery Drain</string>
+    <string name="charging_mode_trickle">Trickle Charging</string>
+    <string name="charging_mode_slow">Slow Charging</string>
+    <string name="charging_mode_normal">Normal Charging</string>
+    <string name="charging_mode_fast">Fast Charging</string>
+    <string name="charging_mode_super_fast">Super Fast Charging</string>
+    <string name="charging_mode_ultra_fast">Ultra Fast Charging</string>
+    <string name="unknown">Unknown</string>
+    <string name="charger_type_usb">USB</string>
+    <string name="charger_type_ac">AC</string>
+    <string name="charger_type_wireless">Wireless</string>
+    <string name="charger_type_dock">Dock</string>
+    <string name="selected_directory">Selected Directory: %s</string>
+    <string name="please_select_directory">Please select a directory first</string>
+    <string name="start_compression">Starting compression...</string>
+    <string name="no_image_files">No image files in the directory</string>
+    <string name="compression_complete">Compression complete!</string>
+    <string name="compression_result">Compression complete!\n\nTotal files: %1$d\nSuccess: %2$d\nFailed: %3$d\nOriginal size: %4$s\nCompressed size: %5$s\nSpace saved: %6$s\nAverage compression ratio: %7$.1f%%</string>
+    <string name="compression_failed">Compression failed: %s</string>
+    <string name="cannot_decode_image">Cannot decode image</string>
+    <string name="cannot_decode_png">Cannot decode PNG image</string>
+    <string name="charging_mode_unknown_format">Unknown (%d)</string>
+    <string name="performance_mode">Performance Mode</string>
+    <string name="performance_mode_tip">Improves device performance but increases power consumption and heat</string>
+    <string name="power_saving_mode">Power Saving Mode</string>
+    <string name="power_saving_mode_tip">Improves battery life, recommended actions:
+  Disable always-on display
+  Disable auto-sync
+  Disable haptic feedback
+  Disable system notifications
+  Reduce visual effects
+  Adjust screen timeout
+  Show background app activity
+  Reduce system performance
+  Disable voice assistant wake-up
+  Disable foreground app wake-up
+  Disable background startup
+  Disable app auto-start
+  Disable app associated startup
+</string>
+    <string name="today_screen_on_time">Today_s Screen On Time</string>
+    <string name="estimated_full_charging_time">Estimated Full Charging Time</string>
+    <string name="battery_usage_rank">Battery Usage Rank</string>
+    
+    <!-- Bottom Navigation -->
+    <string name="nav_title_charging">Real-time Monitoring</string>
+    <string name="nav_title_battery_usage">Battery Usage Ranking</string>
+    <string name="nav_title_health">Health Assessment</string>
+    <string name="nav_title_system_info">System Information</string>
+    <string name="nav_title_image_compression">Image Compression</string>
+    
+    <!-- MainActivity -->
+    <string name="message_switch_to_battery_usage">Please switch to the battery usage page first to use the system acceleration function</string>
+    <string name="title_accelerate_failed">Acceleration Failed</string>
+    <string name="message_accelerate_error">An error occurred during system acceleration: %1$s</string>
+    <string name="title_accelerate_result">Acceleration Result</string>
+    <string name="message_accelerate_completed">System acceleration completed!
+
+Ended %1$d apps:
+%2$s
+
+System is running more smoothly now!</string>
+    <string name="message_no_apps_to_accelerate">No apps to accelerate currently
+
+System is already in optimal condition!</string>
+    <string name="title_permission_request">Permission Request</string>
+    <string name="message_usage_stats_permission">To display accurate battery usage rankings, you need to grant "App Usage Access Permission". Please find the "Battery Monitor" app in the settings page and enable the permission.</string>
+    
+    <!-- BatteryUsageFragment -->
+    <string name="tab_title_total_usage">Total Power Consumption</string>
+    <string name="tab_title_estimated_consumption">By Estimated Power</string>
+    <string name="tab_title_running_apps">Running Apps (Real-time)</string>
+    
+    <!-- HealthFragment -->
+    <string name="health_title">Battery Health Assessment</string>
+    <string name="health_charging_type_explanation">Charging Type Explanation</string>
+    <string name="health_battery_advice">Battery Health Advice</string>
+    <string name="health_calculation_explanation">Health Calculation Explanation</string>
+    <string name="health_charging_habits_analysis">Charging Habits Analysis</string>
+    <string name="health_total_charging_sessions">Total Charging Sessions</string>
+    <string name="health_advice_good">Battery health is good, please continue to maintain good charging habits.</string>
+    <string name="health_advice_excellent">Battery health is excellent,</string>
+    <string name="health_advice_good_text">Battery health is good,</string>
+    <string name="health_advice_fair">Battery health is fair,</string>
+    <string name="health_advice_poor">Battery health is poor,</string>
+    <string name="health_advice_temperature_extreme">current temperature is too high/low, it is recommended to use the phone in an environment of 20-30°C.</string>
+    <string name="health_advice_temperature_moderate">current temperature deviates from the ideal range, try to avoid using the phone in extreme temperatures.</string>
+    <string name="health_advice_temperature_ideal">current temperature is in the ideal range.</string>
+    <string name="health_advice_cycle_over_500">The number of charging cycles has exceeded 500, battery performance may decrease significantly, it is recommended to consider replacing the battery.</string>
+    <string name="health_advice_cycle_over_300">The number of charging cycles has exceeded 300, it is recommended to reduce deep battery discharge and try to maintain 20%-80% charge.</string>
+    <string name="health_advice_cycle_normal">The number of charging cycles is normal, continue to maintain good charging habits.</string>
+    <string name="health_advice_cycle_few">The number of charging cycles is small, the battery is in optimal condition.</string>
+    <string name="health_advice_capacity_below_70">The actual battery capacity has dropped to %1$d%% of the design capacity, it is recommended to replace the battery for better battery life experience.</string>
+    <string name="health_advice_capacity_below_85">The actual battery capacity is %1$d%% of the design capacity, it is recommended to reduce background app running and optimize battery usage.</string>
+    <string name="health_advice_capacity_good">The actual battery capacity is well maintained, continue with the existing usage habits.</string>
+    <string name="health_advice_habit_poor">The charging habit score is low, it is recommended to avoid overnight charging, over-discharging and frequent fast charging.</string>
+    <string name="health_advice_habit_fair">The charging habit score is average, it is recommended to use the original charger as much as possible and avoid playing large games while charging.</string>
+    <string name="health_advice_habit_good">Charging habits are good, please continue to maintain.</string>
+    <string name="health_advice_general">General advice:</string>
+    <string name="health_advice_general_1">1. Avoid exposing your phone to high or low temperature environments</string>
+    <string name="health_advice_general_2">2. Try to use original chargers and data cables</string>
+    <string name="health_advice_general_3">3. Avoid long-term deep discharge (battery level below 20%)</string>
+    <string name="health_advice_general_4">4. Reduce the number of fast charges, prioritize standard charging</string>
+    <string name="health_advice_general_5">5. Try to avoid using your phone while charging</string>
+    
+    <!-- Battery health status -->
+    <string name="health_status_good">Good (BATTERY_HEALTH_GOOD)</string>
+    <string name="health_status_overheat">Overheat (BATTERY_HEALTH_OVERHEAT)</string>
+    <string name="health_status_dead">Damaged (BATTERY_HEALTH_DEAD)</string>
+    <string name="health_status_over_voltage">Over Voltage (BATTERY_HEALTH_OVER_VOLTAGE)</string>
+    <string name="health_status_unspecified_failure">Unspecified Failure (BATTERY_HEALTH_UNSPECIFIED_FAILURE)</string>
+    <string name="health_status_cold">Cold (BATTERY_HEALTH_COLD)</string>
+    <string name="health_status_unknown">Unknown Status</string>
+    
+    <!-- Cycle count impact -->
+    <string name="health_cycle_impact_none">No impact (≤100 cycles)</string>
+    <string name="health_cycle_impact_minor">Minor impact (101-300 cycles)</string>
+    <string name="health_cycle_impact_moderate">Moderate impact (301-500 cycles)</string>
+    <string name="health_cycle_impact_significant">Significant impact (>500 cycles)</string>
+    
+    <!-- Temperature impact -->
+    <string name="health_temperature_impact_severe"><![CDATA[Severe impact (<0°C or >45°C)]]></string>
+    <string name="health_temperature_impact_moderate"><![CDATA[Moderate impact (<10°C or >40°C)]]></string>
+    <string name="health_temperature_impact_minor"><![CDATA[Minor impact (<20°C or >30°C)]]></string>
+    <string name="health_temperature_impact_none">No impact (20-30°C, ideal range)</string>
+    
+    <!-- Charging type explanation -->
+    <string name="health_charging_type_slow">Slow Charge (Trickle Charge / Standard Charge)</string>
+    <string name="health_charging_type_fast">Fast Charge (Quick Charge / Fast Charge)</string>
+    <string name="health_charging_type_trickle">Trickle Charge (Trickle Charge / Maintenance Charge)</string>
+    <string name="health_charging_type_slow_analogy">Analogy: Using a small water pipe with constant, gentle water flow to fill the tank.</string>
+    <string name="health_charging_type_slow_tech">Technical explanation: Usually refers to charging with power below 10W-15W. Uses standard 5V voltage and lower current, the voltage and current remain basically unchanged throughout the process, and only slightly adjusts when nearly full.</string>
+    <string name="health_charging_type_slow_advantages">Advantages: Low heat generation, minimal chemical pressure on the battery, beneficial for long-term battery health.</string>
+    <string name="health_charging_type_slow_disadvantages">Disadvantages: Slow charging speed.</string>
+    <string name="health_charging_type_slow_when" formatted="false">When it happens: Using old chargers or incompatible fast charging protocols.</string>
+    <string name="health_charging_type_fast_analogy">Analogy: Using a fire hose to fill quickly initially, then automatically switching back to a small water pipe when the tank is nearly full.</string>
+    <string name="health_charging_type_fast_tech">Technical explanation: Refers to technology that increases charging power to 18W or more by increasing voltage and/or current. It is not full power from beginning to end, but an intelligent, multi-stage process:</string>
+    <string name="health_charging_type_fast_stage1">Stage 1: Constant current pre-charge: If the battery power is extremely low, it will be activated with a small current first.</string>
+    <string name="health_charging_type_fast_stage2" formatted="false">Stage 2: Constant current fast charge (core stage): The charger and phone negotiate the highest safe power (such as 27W, 65W), charging at maximum power during this stage, with power rapidly increasing from 0% to 50%-70%.</string>
+    <string name="health_charging_type_fast_stage3" formatted="false">Stage 3: Constant voltage and decreasing current: When the battery voltage reaches the upper limit (about 4.2V-4.4V), the charger maintains the voltage unchanged, and the current gradually decreases. Power also decreases accordingly. In this stage, power increases from 70% to above 90%.</string>
+    <string name="health_charging_type_fast_advantages">Advantages: Greatly shortens charging time and solves battery anxiety.</string>
+    <string name="health_charging_type_fast_disadvantages">Disadvantages: Generates more heat compared to slow charging, has a slight impact on long-term battery health (but modern phone management systems have controlled this within safe limits).</string>
+    <string name="health_charging_type_trickle_analogy">Analogy: When the tank is about to be full, use a dropper to add one drop at a time until it is completely and precisely full.</string>
+    <string name="health_charging_type_trickle_tech">Technical explanation: This is the final stage of charging (usually after 95% or 98%). At this time, the charging power is extremely low (may only be 1-2W), and the battery is slowly charged to 100% with a very small current.</string>
+    <string name="health_charging_type_trickle_purpose">Purpose:</string>
+    <string name="health_charging_type_trickle_purpose_protect">- Protect the battery: Avoid continuous high-current impact when the battery is nearly full, reducing battery pressure and heat generation.</string>
+    <string name="health_charging_type_trickle_purpose_calibrate">- Calibrate the fuel gauge: Allow the phone to more accurately determine the "100%" point.</string>
+    <string name="health_charging_type_trickle_smart" formatted="false">Smart application: Optimized Battery Charging uses trickle charging principles.</string>
+    <string name="health_charging_type_conclusion">Core Conclusions and Recommendations:</string>
+    <string name="health_charging_type_conclusion_1">1. Protocol matching is key: To achieve fast charging, it is necessary to ensure that the phone supports, the charger supports, and the data cable also supports the same fast charging protocol. Otherwise, it will automatically downgrade to slow charging.</string>
+    <string name="health_charging_type_conclusion_2">2. Looking at power (W) is more meaningful than looking at V or A alone: Power directly reflects charging speed. A 30W charger is usually faster than an 18W one.</string>
+    <string name="health_charging_type_conclusion_3">3. Universal choice: Currently, the USB PD (including PPS) protocol is the most universal and promising fast charging standard, supported by Apple, Google, Samsung, and many laptop manufacturers.</string>
+    <string name="health_charging_type_conclusion_4">4. No need to fear fast charging damaging the battery: Under strict temperature control and intelligent management by phone manufacturers, the additional loss of fast charging on battery life is very limited.</string>
+    
+    <!-- Charging recommendations -->
+    <string name="health_no_charging_data">No charging records available, unable to provide recommendations.</string>
+    
+    <!-- HealthFragment UI elements -->
+    <string name="health_cycle_count">Cycle Count</string>
+    <string name="health_percentage">Health Percentage</string>
+    <string name="health_charge_habit_score">Charging Habit Score</string>
+    <string name="health_current_temperature">Current Temperature</string>
+    
+    <!-- Health calculation explanation -->
+    <string name="health_calc_process">Battery Health Calculation Process:</string>
+    <string name="health_calc_base_score">1. Base Score: %1$d points</string>
+    <string name="health_calc_based_on">Based on battery health status assessment</string>
+    <string name="health_calc_current_status">Current status:</string>
+    <string name="health_calc_cycle_impact">2. Cycle Count Impact: %1$d%%</string>
+    <string name="health_calc_current_cycles">Current cycles: %1$d times</string>
+    <string name="health_calc_impact_level">Impact level:</string>
+    <string name="health_calc_capacity_impact">3. Actual Capacity Impact: %1$d%%</string>
+    <string name="health_calc_current_capacity">Current actual capacity: %1$d mAh</string>
+    <string name="health_calc_design_capacity">Design capacity: %1$d mAh</string>
+    <string name="health_calc_capacity_retention">Capacity retention rate: %1$d%%</string>
+    <string name="health_calc_temperature_impact">4. Temperature Impact: %1$d%%</string>
+    <string name="health_calc_current_temp">Current temperature: %1$.1f°C</string>
+    <string name="health_calc_charge_habit_impact">5. Charging Habit Impact: %1$d%%</string>
+    <string name="health_calc_assessment_based">Based on your charging behavior patterns assessment</string>
+    <string name="health_calc_assessment_dimensions">Assessment dimensions: charging frequency, charging time, charging rate, etc.</string>
+    <string name="health_calc_comprehensive">6. Comprehensive Calculation:</string>
+    <string name="health_calc_formula">Base score × Cycle factor × Capacity factor × Temperature factor × Charging habit factor</string>
+    <string name="health_calc_calculation" formatted="false">%1$d * %.2f * %.2f * %.2f * %.2f</string>
+    <string name="health_calc_result">Result</string>
+    <string name="health_calc_final_score">Final score: %1$d points</string>
+    
+    <!-- Charging recommendations -->
+    <string name="recommendation_start_low">You often charge when the battery is too low (%1$d%%). It is recommended to start charging when the battery is above 20%%</string>
+    <string name="recommendation_start_good">Good charging habit, appropriate starting battery level</string>
+    <string name="recommendation_start_high">You are used to charging at high battery levels. You can try charging when the battery is lower</string>
+    <string name="recommendation_end_high">You often fully charge the battery (%1$d%%). It is recommended to charge to 80%% to extend battery life</string>
+    <string name="recommendation_end_good">Appropriate charging end battery level, helps protect the battery</string>
+    <string name="recommendation_end_low">Charging ends at a low battery level, which may affect user experience</string>
+    <string name="recommendation_overnight">You often charge overnight (%1$d%% of charging sessions). It is recommended to use the smart charging reminder function</string>
+    <string name="recommendation_duration_long">Average charging time is too long (%1$d hours). It is recommended to check charger power or reduce phone usage while charging</string>
+    
+    <!-- Charging type explanation details -->
+    <string name="health_charging_slow_title">1. Slow Charge (Trickle Charge / Standard Charge)</string>
+    <string name="health_charging_slow_analogy">Analogy: Using a small water pipe, filling water with a constant, gentle flow.</string>
+    <string name="health_charging_slow_technical">Technical explanation: Usually refers to charging with power below 10W-15W. Uses standard 5V voltage and lower current, the entire process voltage and current remain basically unchanged, only slightly adjusted when nearly full.</string>
+    <string name="health_charging_slow_advantages">Advantages: Low heat generation, minimal chemical stress on the battery, beneficial for long-term battery health.</string>
+    <string name="health_charging_slow_disadvantages">Disadvantages: Slow speed.</string>
+    <string name="health_charging_slow_when">When it happens: Using an old charger or incompatible devices.</string>
+    
+    <string name="health_charging_fast_title">2. Fast Charge (Quick Charge / Fast Charge)</string>
+    <string name="health_charging_fast_analogy">Analogy: Use a fire hose to fill quickly at the beginning, then automatically switch back to a small hose when the water level is nearly full.</string>
+    <string name="health_charging_fast_technical">Technical explanation: Fast charging technologies increase power above 18W using multi-stage process.</string>
+    <string name="health_charging_fast_stage1">- Stage 1: Constant current pre-charge: If the battery is very low, it will be activated with a small current first.</string>
+    <string name="health_charging_fast_stage2" formatted="false">- Stage 2: Constant current fast charge (core stage): The charger and phone negotiate the highest safe power (such as 27W, 65W), charging at maximum power during this stage, and the battery quickly charges from 0% to 50%-70%.</string>
+    <string name="health_charging_fast_stage3" formatted="false">- Stage 3: Constant voltage reduced current: When the battery voltage reaches the upper limit (about 4.2V-4.4V), the charger keeps the voltage constant, and the current gradually decreases. Power also decreases accordingly. During this stage, the battery charges from 70% to over 90%.</string>
+    <string name="health_charging_fast_advantages">Advantages: Greatly reduces charging time, solves battery anxiety.</string>
+    <string name="health_charging_fast_disadvantages">Disadvantages: Generates more heat than slow charging, has a slight impact on long-term battery health (but modern phone management systems have controlled it within a safe range).</string>
+    
+    <string name="health_charging_trickle_title">3. Trickle Charge (Trickle Charge / Maintenance Charge)</string>
+    <string name="health_charging_trickle_analogy">Analogy: When the water tank is almost full, switch to a dropper to add drop by drop until completely accurate.</string>
+    <string name="health_charging_trickle_technical">Technical explanation: This is the final stage of charging (usually after 95% or 98%). At this time, the charging power is extremely low (maybe only 1-2W), and the battery is slowly charged to 100% with a very small current.</string>
+    <string name="health_charging_trickle_purpose">Purpose:</string>
+    <string name="health_charging_trickle_protect">- Protect the battery: Avoid continuing to charge with high current when the battery is nearly full, reducing battery stress and heat generation.</string>
+    <string name="health_charging_trickle_calibrate">- Calibrate the fuel gauge: Allow the phone to more accurately determine the "100%" point.</string>
+    <string name="health_charging_trickle_smart">Smart application: Optimized Battery Charging reduces high-voltage time.</string>
+
+    <!-- SystemInfoFragment -->
+    <!-- Section titles -->
+    <string name="system_info_section_storage">Storage Information</string>
+    <string name="system_info_section_network">Network Information</string>
+    <string name="system_info_section_system">System Information</string>
+    <string name="system_info_section_camera">Camera Information</string>
+    <string name="system_info_section_screen">Screen Information</string>
+    <string name="system_info_section_sensor">Sensor Information</string>
+
+    <!-- System info labels -->
+    <string name="system_info_device">Device</string>
+    <string name="system_info_model">Model</string>
+    <string name="system_info_model_code">Model Code</string>
+    <string name="system_info_product_code">Product Code</string>
+    <string name="system_info_device_code">Device ID</string>
+    <string name="system_info_board_code">Board Code</string>
+    <string name="system_info_manufacturer">Manufacturer</string>
+    <string name="system_info_brand">Brand</string>
+    <string name="system_info_android_version">Android Version</string>
+    <string name="system_info_api_level">API Level</string>
+    <string name="system_info_security_patch">Security Patch Level</string>
+    <string name="system_info_build_display">Build Display</string>
+    <string name="system_info_build_fingerprint">Build Fingerprint</string>
+    <string name="system_info_build_time">Build Time</string>
+    <string name="system_info_treble_support">Treble Support</string>
+    <string name="system_info_root_status">Root Status</string>
+    <string name="system_info_kernel_version">Kernel Version</string>
+    <string name="system_info_architecture">Architecture</string>
+    <string name="system_info_cpu_abi">CPU ABI</string>
+
+    <!-- Network info labels -->
+    <string name="system_info_bssid">BSSID</string>
+    <string name="system_info_connection_speed">Connection Speed</string>
+    <string name="system_info_signal_strength">Signal Strength</string>
+    <string name="system_info_frequency">Frequency</string>
+    <string name="system_info_band">Band</string>
+    <string name="system_info_ipv4_address">IPv4 Address</string>
+    <string name="system_info_sim_operator">SIM Operator</string>
+
+    <!-- Storage info labels -->
+    <string name="system_info_internal_total">Internal Storage Total</string>
+    <string name="system_info_internal_used">Internal Storage Used</string>
+    <string name="system_info_internal_available">Internal Storage Available</string>
+    <string name="system_info_external_total">External Storage Total</string>
+    <string name="system_info_external_used">External Storage Used</string>
+    <string name="system_info_external_available">External Storage Available</string>
+
+    <!-- Camera info labels -->
+    <string name="system_info_front_camera">Front Camera</string>
+    <string name="system_info_megapixels">Megapixels</string>
+    <string name="system_info_effective_megapixels">Effective Megapixels</string>
+    <string name="system_info_resolution">Resolution</string>
+    <string name="system_info_sensor_size">Sensor Size</string>
+    <string name="system_info_pixel_size">Pixel Size</string>
+    <string name="system_info_color_filter_array">Color Filter Array</string>
+    <string name="system_info_aperture">Aperture</string>
+    <string name="system_info_focal_length">Focal Length</string>
+    <string name="system_info_35mm_equivalent">35mm Equivalent</string>
+    <string name="system_info_crop_factor">Crop Factor</string>
+    <string name="system_info_field_of_view">Field of View</string>
+    <string name="system_info_shutter_speed">Shutter Speed</string>
+    <string name="system_info_iso_range">ISO Range</string>
+    <string name="system_info_flash">Flash</string>
+    <string name="system_info_video_stabilization">Video Stabilization</string>
+    <string name="system_info_optical_stabilization">Optical Stabilization</string>
+    <string name="system_info_ae_lock">AE Lock</string>
+    <string name="system_info_wb_lock">WB Lock</string>
+    <string name="system_info_features">Features</string>
+    <string name="system_info_exposure_modes">Exposure Modes</string>
+    <string name="system_info_autofocus_modes">Autofocus Modes</string>
+    <string name="system_info_white_balance_modes">White Balance Modes</string>
+    <string name="system_info_scene_modes">Scene Modes</string>
+    <string name="system_info_color_effects">Color Effects</string>
+    <string name="system_info_max_face_count">Max Face Count</string>
+    <string name="system_info_face_detection_mode">Face Detection Mode</string>
+    <string name="system_info_camera2_api_support">Camera2 API Support</string>
+    <string name="system_info_rear_camera">Rear Camera</string>
+
+    <!-- Screen info labels -->
+    <string name="system_info_screen_resolution">Resolution</string>
+    <string name="system_info_aspect_ratio">Aspect Ratio</string>
+    <string name="system_info_screen_size">Screen Size</string>
+    <string name="system_info_screen_density">Screen Density</string>
+    <string name="system_info_gpu">GPU</string>
+    <string name="system_info_refresh_rate">Refresh Rate</string>
+
+    <!-- Sensor info labels -->
+    
+    <!-- HealthFragment additional elements -->
+    <string name="health_actual_capacity">Actual Capacity</string>
+    <string name="health_design_capacity">Design Capacity</string>
+    <string name="health_avg_charging_time">Average Charging Time</string>
+    <string name="health_minutes">minutes</string>
+    <string name="health_hour_unit">h</string>
+    <string name="health_avg_start_level">Average Start Level</string>
+    <string name="health_avg_end_level">Average End Level</string>
+    <string name="health_peak_charging_period">Peak Charging Period</string>
+    <string name="health_hour_0">0h</string>
+    <string name="health_overnight_charging_ratio">Overnight Charging Ratio</string>
+    <string name="health_charging_recommendations">Charging Recommendations</string>
+    <string name="health_recent_charging_records">Recent Charging Records</string>
+    <string name="health_charging_records_list">Charging Records List</string>
+    <string name="health_charging_habits_statistics">Charging Habits Statistics</string>
+    <string name="system_info_sensor_count">Number of Sensors</string>
+    <string name="system_info_sensor">Sensor</string>
+    <string name="system_info_sensor_type">Type</string>
+    <string name="system_info_sensor_manufacturer">Manufacturer</string>
+    <string name="system_info_sensor_resolution">Resolution</string>
+    <string name="system_info_sensor_max_range">Max Range</string>
+    <string name="system_info_sensor_power">Power</string>
+    <string name="system_info_sensor_min_delay">Min Delay</string>
+    <string name="system_info_sensor_version">Version</string>
+
+    <!-- Sensor types -->
+    <string name="system_info_sensor_type_accelerometer">Accelerometer</string>
+    <string name="system_info_sensor_type_temperature">Ambient Temperature</string>
+    <string name="system_info_sensor_type_gyroscope">Gyroscope</string>
+    <string name="system_info_sensor_type_light">Light</string>
+    <string name="system_info_sensor_type_magnetic_field">Magnetic Field</string>
+    <string name="system_info_sensor_type_pressure">Pressure</string>
+    <string name="system_info_sensor_type_proximity">Proximity</string>
+    <string name="system_info_sensor_type_humidity">Relative Humidity</string>
+    <string name="system_info_sensor_type_step_counter">Step Counter</string>
+    <string name="system_info_sensor_type_step_detector">Step Detector</string>
+    <string name="system_info_sensor_type_gravity">Gravity</string>
+    <string name="system_info_sensor_type_linear_acceleration">Linear Acceleration</string>
+    <string name="system_info_sensor_type_rotation_vector">Rotation Vector</string>
+    <string name="system_info_sensor_type_heart_rate">Heart Rate</string>
+    <string name="system_info_sensor_type_game_rotation_vector">Game Rotation Vector</string>
+    <string name="system_info_sensor_type_gyroscope_uncalibrated">Gyroscope Uncalibrated</string>
+    <string name="system_info_sensor_type_magnetic_field_uncalibrated">Magnetic Field Uncalibrated</string>
+    <string name="system_info_sensor_type_significant_motion">Significant Motion</string>
+    <string name="system_info_sensor_type_stationary_detect">Stationary Detect</string>
+    <string name="system_info_sensor_type_accelerometer_uncalibrated">Accelerometer Uncalibrated</string>
+    <string name="system_info_sensor_type_low_latency_offbody_detect">Low Latency Offbody Detect</string>
+    <string name="system_info_sensor_type_pose_6dof">Pose 6DOF</string>
+    <string name="system_info_sensor_type_heart_beat">Heart Beat</string>
+    <string name="system_info_sensor_type_hinge_angle">Hinge Angle</string>
+    <string name="system_info_sensor_type_unknown">Unknown Sensor Type</string>
+    
+    <!-- Additional system info strings -->
+    <string name="system_info_not_shown">(Not shown)</string>
+    <string name="system_info_unknown">Unknown</string>
+    <string name="system_info_treble_supported">Supported</string>
+    <string name="system_info_root_not_obtained">Not obtained</string>
+    <string name="system_info_camera_info">Camera Information</string>
+    <string name="system_info_cannot_get_camera_info">Cannot get camera information</string>
+    <string name="system_info_screen_info">Screen Information</string>
+    <string name="system_info_cannot_get_screen_info">Cannot get screen information</string>
+    <string name="system_info_sensor_info">Sensor Information</string>
+    <string name="system_info_cannot_get_sensor_info">Cannot get sensor information</string>
+
+    <!-- ImageCompressionFragment -->
+    <string name="image_compression_title">Image Compression Introduction</string>
+    <string name="image_compression_description">This feature helps you compress images to save storage space. You can choose to keep or delete the original images.</string>
+    <string name="image_compression_detailed_description">We provide efficient image compression functions that can help you reduce image file size, save storage space and network traffic. Supports multiple compression options and modes.</string>
+    <string name="image_compression_mode">Compression Mode</string>
+    <string name="image_compression_option_keep_original">Keep original images, store compressed images in subdirectory</string>
+    <string name="image_compression_option_delete_original">Delete original images, only keep compressed files</string>
+    <string name="image_compression_select_directory">Select Directory</string>
+    <string name="image_compression_select_image_directory">Select Image Directory</string>
+    <string name="image_compression_no_directory_selected">No directory selected</string>
+    <string name="image_compression_start">Start Compression</string>
+    <string name="image_compression_result">Compression Result</string>
 </resources>

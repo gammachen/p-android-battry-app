@@ -50,13 +50,13 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.nav_charging -> {
-                    toolbar.title = "实时监控"
+                    // toolbar.title = getString(R.string.nav_title_charging)
                     currentFragment = ChargingFragment()
                     replaceFragment(currentFragment!!)
                     true
                 }
                 R.id.nav_battery_usage -> {
-                    toolbar.title = "耗电排行"
+                    toolbar.title = getString(R.string.nav_title_battery_usage)
                     // 跳转到耗电排行前再次检查权限
                     if (checkUsageStatsPermission()) {
                         // 检查NetworkStats API是否可用
@@ -73,19 +73,19 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_health -> {
-                    toolbar.title = "健康评估"
+                    toolbar.title = getString(R.string.nav_title_health)
                     currentFragment = HealthFragment()
                     replaceFragment(currentFragment!!)
                     true
                 }
                 R.id.nav_system_info -> {
-                    toolbar.title = "系统信息"
+                    toolbar.title = getString(R.string.nav_title_system_info)
                     currentFragment = SystemInfoFragment()
                     replaceFragment(currentFragment!!)
                     true
                 }
                 R.id.nav_image_compression -> {
-                    toolbar.title = "图片压缩"
+                    toolbar.title = getString(R.string.nav_title_image_compression)
                     currentFragment = ImageCompressionFragment()
                     replaceFragment(currentFragment!!)
                     true
@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // 默认显示实时监控页面
-        toolbar.title = "实时监控"
+        // toolbar.title = getString(R.string.nav_title_charging)
         currentFragment = ChargingFragment()
         replaceFragment(currentFragment!!)
     }
@@ -254,17 +254,17 @@ class MainActivity : AppCompatActivity() {
                     Log.e(TAG, "系统加速失败: ${e.message}", e)
                     // 显示错误提示
                     AlertDialog.Builder(this@MainActivity)
-                        .setTitle("加速失败")
-                        .setMessage("系统加速过程中发生错误: ${e.message}")
-                        .setPositiveButton("确定", null)
-                        .show()
+                .setTitle(getString(R.string.title_accelerate_failed))
+                .setMessage(getString(R.string.message_accelerate_error, e.message))
+                .setPositiveButton("确定", null)
+                .show()
                 }
             }
         } else {
             // 不是耗电排行页面，提示用户
             AlertDialog.Builder(this)
                 .setTitle("提示")
-                .setMessage("请先切换到耗电排行页面，再使用系统加速功能")
+                .setMessage(getString(R.string.message_switch_to_battery_usage))
                 .setPositiveButton("确定", null)
                 .show()
         }
@@ -276,13 +276,13 @@ class MainActivity : AppCompatActivity() {
     private fun showAccelerateResultDialog(killedCount: Int, killedApps: List<String>) {
         val message = if (killedCount > 0) {
             val appsString = killedApps.joinToString("\n")
-            "系统加速完成！\n\n已结束 $killedCount 个应用：\n$appsString\n\n系统运行更流畅了！"
+            getString(R.string.message_accelerate_completed, killedCount, appsString)
         } else {
-            "当前没有可加速的应用\n\n系统已经处于最佳状态！"
+            getString(R.string.message_no_apps_to_accelerate)
         }
         
         AlertDialog.Builder(this)
-            .setTitle("加速结果")
+            .setTitle(getString(R.string.title_accelerate_result))
             .setMessage(message)
             .setPositiveButton("确定", null)
             .setCancelable(false)
@@ -350,9 +350,9 @@ class MainActivity : AppCompatActivity() {
      */
     private fun requestUsageStatsPermission() {
         AlertDialog.Builder(this)
-            .setTitle("权限请求")
-            .setMessage("为了显示准确的应用耗电排行，需要您授予\"应用使用情况访问权限\"。请在设置页面中找到\"电池检测\"应用并启用权限。")
-            .setPositiveButton("去设置") { _, _ ->
+                .setTitle(getString(R.string.title_permission_request))
+                .setMessage(getString(R.string.message_usage_stats_permission))
+                .setPositiveButton("去设置") { _, _ ->
                 // 跳转到应用使用情况设置页面
                 val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
                 intent.data = Uri.parse("package:$packageName")

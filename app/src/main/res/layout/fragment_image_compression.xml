@@ -21,7 +21,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="图片压缩介绍"
+            android:text="@string/image_compression_title"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
@@ -29,7 +29,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="我们提供高效的图片压缩功能，可以帮助您减小图片文件大小，节省存储空间和网络流量。支持多种压缩选项和模式。"
+            android:text="@string/image_compression_detailed_description"
             android:textSize="14sp" />
     </LinearLayout>
 
@@ -47,7 +47,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="压缩模式"
+            android:text="@string/image_compression_mode"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
@@ -62,14 +62,14 @@
                 android:id="@+id/radio_keep_original"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="保留源图片，压缩图片存储到子目录"
+                android:text="@string/image_compression_option_keep_original"
                 android:checked="true" />
 
             <RadioButton
                 android:id="@+id/radio_delete_original"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="删除源图片，只保留压缩文件" />
+                android:text="@string/image_compression_option_delete_original" />
         </RadioGroup>
     </LinearLayout>
 
@@ -87,7 +87,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="选择目录"
+            android:text="@string/image_compression_select_directory"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
@@ -96,13 +96,13 @@
             android:id="@+id/btn_select_directory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="选择图片目录" />
+            android:text="@string/image_compression_select_image_directory" />
 
         <TextView
             android:id="@+id/tv_selected_directory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="未选择目录"
+            android:text="@string/image_compression_no_directory_selected"
             android:textSize="14sp"
             android:layout_marginTop="8dp"
             android:textColor="@android:color/secondary_text_light" />
@@ -113,7 +113,7 @@
         android:id="@+id/btn_start_compression"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="开始压缩"
+        android:text="@string/image_compression_start"
         android:textSize="18sp"
         android:backgroundTint="@android:color/holo_blue_dark"
         android:textColor="@android:color/white"
@@ -135,7 +135,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="压缩结果"
+            android:text="@string/image_compression_result"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />

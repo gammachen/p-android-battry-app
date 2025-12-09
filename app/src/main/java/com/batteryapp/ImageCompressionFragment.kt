@@ -97,7 +97,7 @@ class ImageCompressionFragment : Fragment() {
                     Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                 )
                 // 更新UI
-                tvSelectedDirectory.text = "已选择目录: ${uri.path}"
+                tvSelectedDirectory.text = getString(R.string.selected_directory, uri.path)
             }
         }
     }
@@ -107,12 +107,12 @@ class ImageCompressionFragment : Fragment() {
      */
     private fun startCompression() {
         if (selectedDirectoryUri == null) {
-            Toast.makeText(context, "请先选择目录", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(R.string.please_select_directory), Toast.LENGTH_SHORT).show()
             return
         }
 
         // 显示压缩进度
-        Toast.makeText(context, "开始压缩...", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, getString(R.string.start_compression), Toast.LENGTH_SHORT).show()
 
         // 启动压缩任务
         Thread {
@@ -122,7 +122,7 @@ class ImageCompressionFragment : Fragment() {
                 
                 if (imageFiles.isEmpty()) {
                     activity?.runOnUiThread {
-                        Toast.makeText(context, "目录中没有图片文件", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, getString(R.string.no_image_files), Toast.LENGTH_SHORT).show()
                     }
                     return@Thread
                 }
@@ -196,24 +196,17 @@ class ImageCompressionFragment : Fragment() {
                 }
 
                 // 构建结果消息
-                val resultMessage = "压缩完成！\n\n" +
-                        "总文件数: ${imageFiles.size}\n" +
-                        "成功: $successCount\n" +
-                        "失败: $errorCount\n" +
-                        "原始大小: ${formatFileSize(totalOriginalSize)}\n" +
-                        "压缩后大小: ${formatFileSize(totalCompressedSize)}\n" +
-                        "节省空间: ${formatFileSize(totalSavedSize)}\n" +
-                        "平均压缩率: ${String.format("%.1f", averageCompressionRatio)}%"
+                val resultMessage = getString(R.string.compression_result, imageFiles.size, successCount, errorCount, formatFileSize(totalOriginalSize), formatFileSize(totalCompressedSize), formatFileSize(totalSavedSize), averageCompressionRatio)
 
                 // 更新UI
                 activity?.runOnUiThread {
                     showCompressionResult(resultMessage)
-                    Toast.makeText(context, "压缩完成", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.compression_complete), Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "压缩过程中发生错误: ${e.message}")
                 activity?.runOnUiThread {
-                    Toast.makeText(context, "压缩失败: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.compression_failed, e.message), Toast.LENGTH_SHORT).show()
                 }
             }
         }.start()

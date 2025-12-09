@@ -36,4 +36,388 @@
     <string name="screen_on">屏幕开启</string>
     <string name="screen_off">屏幕关闭</string>
     <string name="battery_drain">耗电</string>
+    <string name="charging_mode_trickle">涓流充电</string>
+    <string name="charging_mode_slow">慢充</string>
+    <string name="charging_mode_normal">普通充电</string>
+    <string name="charging_mode_fast">快充</string>
+    <string name="charging_mode_super_fast">超级快充</string>
+    <string name="charging_mode_ultra_fast">极速快充</string>
+    <string name="unknown">未知</string>
+    <string name="charger_type_usb">USB</string>
+    <string name="charger_type_ac">AC</string>
+    <string name="charger_type_wireless">无线</string>
+    <string name="charger_type_dock">dock</string>
+    <string name="selected_directory">已选择目录: %s</string>
+    <string name="please_select_directory">请先选择目录</string>
+    <string name="start_compression">开始压缩...</string>
+    <string name="no_image_files">目录中没有图片文件</string>
+    <string name="compression_complete">压缩完成！</string>
+    <string name="compression_result">压缩完成！\n\n总文件数: %1$d\n成功: %2$d\n失败: %3$d\n原始大小: %4$s\n压缩后大小: %5$s\n节省空间: %6$s\n平均压缩率: %7$.1f%%</string>
+    <string name="compression_failed">压缩失败: %s</string>
+    <string name="cannot_decode_image">无法解码图片</string>
+    <string name="cannot_decode_png">无法解码PNG图片</string>
+    <string name="charging_mode_unknown_format">未知（%d）</string>
+    <string name="performance_mode">性能模式</string>
+    <string name="performance_mode_tip">可提升设备性能，但会增加耗电和发热</string>
+    <string name="power_saving_mode">省电模式</string>
+    <string name="power_saving_mode_tip">可提升续航时间，建议：
+ 关闭熄屏显示
+ 关闭自动同步
+ 关闭触感反馈
+ 关闭系统提示音
+ 减弱显示视觉效果
+ 调整超时灭屏时间
+ 显示应用后台活动
+ 降低系统运行性能
+ 关闭智能语音助手唤醒
+ 关闭允许唤醒前台应用
+ 关闭允许后台启动
+ 关闭允许应用自启动
+ 关闭应用关联启动
+</string>
+    <string name="today_screen_on_time">今日亮屏时长</string>
+    <string name="estimated_full_charging_time">预估充满时长</string>
+    <string name="battery_usage_rank">耗电排行</string>
+    
+    <!-- Bottom Navigation -->
+    <string name="nav_title_charging">实时监控</string>
+    <string name="nav_title_battery_usage">耗电排行</string>
+    <string name="nav_title_health">健康评估</string>
+    <string name="nav_title_system_info">系统信息</string>
+    <string name="nav_title_image_compression">图片压缩</string>
+    
+    <!-- MainActivity -->
+    <string name="message_switch_to_battery_usage">请先切换到耗电排行页面，再使用系统加速功能</string>
+    <string name="title_accelerate_failed">加速失败</string>
+    <string name="message_accelerate_error">系统加速过程中发生错误: %1$s</string>
+    <string name="title_accelerate_result">加速结果</string>
+    <string name="message_accelerate_completed">系统加速完成！
+
+已结束 %1$d 个应用：
+%2$s
+
+系统运行更流畅了！</string>
+    <string name="message_no_apps_to_accelerate">当前没有可加速的应用
+
+系统已经处于最佳状态！</string>
+    <string name="title_permission_request">权限请求</string>
+    <string name="message_usage_stats_permission">为了显示准确的应用耗电排行，需要您授予"应用使用情况访问权限"。请在设置页面中找到"电池检测"应用并启用权限。</string>
+    
+    <!-- BatteryUsageFragment -->
+    <string name="tab_title_total_usage">总耗电量</string>
+    <string name="tab_title_estimated_consumption">按预估电量</string>
+    <string name="tab_title_running_apps">运行中的APP（实时）</string>
+    
+    <!-- HealthFragment -->
+    <string name="health_title">电池健康评估</string>
+    <string name="health_charging_type_explanation">充电类型说明</string>
+    <string name="health_battery_advice">电池健康建议</string>
+    <string name="health_calculation_explanation">健康度计算说明</string>
+    <string name="health_charging_habits_analysis">充电习惯分析</string>
+    <string name="health_total_charging_sessions">总充电次数</string>
+    <string name="health_advice_good">电池健康状况良好，请继续保持良好的充电习惯。</string>
+    <string name="health_advice_excellent">电池健康状况良好，</string>
+    <string name="health_advice_good_text">电池健康状况良好，</string>
+    <string name="health_advice_fair">电池健康状况一般，</string>
+    <string name="health_advice_poor">电池健康状况较差，</string>
+    <string name="health_advice_temperature_extreme">当前温度过高/过低，建议在20-30°C的环境中使用手机。</string>
+    <string name="health_advice_temperature_moderate">当前温度偏离理想范围，尽量避免在极端温度下使用手机。</string>
+    <string name="health_advice_temperature_ideal">当前温度处于理想范围。</string>
+    <string name="health_advice_cycle_over_500">充电循环次数已超过500次，电池性能可能明显下降，建议考虑更换电池。</string>
+    <string name="health_advice_cycle_over_300">充电循环次数已超过300次，建议减少电池深度放电，尽量保持20%-80%电量。</string>
+    <string name="health_advice_cycle_normal">充电循环次数正常，继续保持良好的充电习惯。</string>
+    <string name="health_advice_cycle_few">充电循环次数较少，电池处于最佳状态。</string>
+    <string name="health_advice_capacity_below_70">电池实际容量已降至设计容量的%1$d%%，建议更换电池以获得更好的续航体验。</string>
+    <string name="health_advice_capacity_below_85">电池实际容量为设计容量的%1$d%%，建议减少后台应用运行，优化电池使用。</string>
+    <string name="health_advice_capacity_good">电池实际容量保持良好，继续保持现有的使用习惯。</string>
+    <string name="health_advice_habit_poor">充电习惯评分较低，建议避免整夜充电、过度放电和频繁快充。</string>
+    <string name="health_advice_habit_fair">充电习惯评分一般，建议尽量使用原装充电器，避免在充电时玩大型游戏。</string>
+    <string name="health_advice_habit_good">充电习惯良好，请继续保持。</string>
+    <string name="health_advice_general">通用建议：</string>
+    <string name="health_advice_general_1">1. 避免将手机暴露在高温或低温环境中</string>
+    <string name="health_advice_general_2">2. 尽量使用原装充电器和数据线</string>
+    <string name="health_advice_general_3">3. 避免长时间深度放电（电量低于20%）</string>
+    <string name="health_advice_general_4">4. 减少快充次数，优先使用标准充电</string>
+    <string name="health_advice_general_5">5. 充电时尽量避免使用手机</string>
+    
+    <!-- Battery health status -->
+    <string name="health_status_good">健康（BATTERY_HEALTH_GOOD）</string>
+    <string name="health_status_overheat">过热（BATTERY_HEALTH_OVERHEAT）</string>
+    <string name="health_status_dead">损坏（BATTERY_HEALTH_DEAD）</string>
+    <string name="health_status_over_voltage">过电压（BATTERY_HEALTH_OVER_VOLTAGE）</string>
+    <string name="health_status_unspecified_failure">不明故障（BATTERY_HEALTH_UNSPECIFIED_FAILURE）</string>
+    <string name="health_status_cold">低温（BATTERY_HEALTH_COLD）</string>
+    <string name="health_status_unknown">未知状态</string>
+    
+    <!-- Cycle count impact -->
+    <string name="health_cycle_impact_none">无影响（≤100次）</string>
+    <string name="health_cycle_impact_minor">轻微影响（101-300次）</string>
+    <string name="health_cycle_impact_moderate">中等影响（301-500次）</string>
+    <string name="health_cycle_impact_significant">显著影响（>500次）</string>
+    
+    <!-- Temperature impact -->
+    <string name="health_temperature_impact_severe"><![CDATA[严重影响（<0°C或>45°C）]]></string>
+    <string name="health_temperature_impact_moderate"><![CDATA[中等影响（<10°C或>40°C）]]></string>
+    <string name="health_temperature_impact_minor"><![CDATA[轻微影响（<20°C或>30°C）]]></string>
+    <string name="health_temperature_impact_none">无影响（20-30°C，理想范围）</string>
+    
+    <!-- Charging type explanation -->
+    <string name="health_charging_type_slow">慢充 (Trickle Charge / Standard Charge)</string>
+    <string name="health_charging_type_fast">快充 (Quick Charge / Fast Charge)</string>
+    <string name="health_charging_type_trickle">涓流充电 (Trickle Charge / Maintenance Charge)</string>
+    <string name="health_charging_type_slow_analogy">类比：用一根小水管，以恒定、平缓的水流注水。</string>
+    <string name="health_charging_type_slow_tech">技术解释：通常指功率在10W-15W以下的充电。使用标准的5V电压和较低的电流，整个过程电压电流基本不变，直到快满时才略微调整。</string>
+    <string name="health_charging_type_slow_advantages">优点：发热小，对电池的化学压力最小，有利于长期电池健康。</string>
+    <string name="health_charging_type_slow_disadvantages">缺点：速度慢。</string>
+    <string name="health_charging_type_slow_when" formatted="false">何时发生：使用旧充电器或不兼容的快充协议时。</string>
+    <string name="health_charging_type_fast_analogy">类比：前期用消防水管猛灌，当水位快满时，自动换回小水管。</string>
+    <string name="health_charging_type_fast_tech">技术解释：指通过提升电压和/或电流，将充电功率提升到18W以上的技术。它不是从头到尾全功率，而是一个智能的、多阶段的过程：</string>
+    <string name="health_charging_type_fast_stage1">- 阶段1：恒流预充：如果电池电量极低，会以小电流先激活。</string>
+    <string name="health_charging_type_fast_stage2" formatted="false">- 阶段2：恒流快充 (核心阶段)：充电器和手机协商出一个最高的安全功率（如27W、65W），在此阶段以最大功率充电，电量从0%迅速冲到50%-70%。</string>
+    <string name="health_charging_type_fast_stage3" formatted="false">- 阶段3：恒压减流：当电池电压达到上限（约4.2V-4.4V），充电器保持电压不变，电流开始逐渐减小。功率也随之下降。此阶段电量从70%充到90%以上。</string>
+    <string name="health_charging_type_fast_advantages">优点：极大缩短充电时间，解决续航焦虑。</string>
+    <string name="health_charging_type_fast_disadvantages">缺点：相对慢充会产生更多热量，对电池的长期健康有轻微影响（但现代手机的管理系统已将其控制在安全范围内）。</string>
+    <string name="health_charging_type_trickle_analogy">类比：水池即将灌满，改用滴管一滴一滴地加，直到完全精确满盈。</string>
+    <string name="health_charging_type_trickle_tech" formatted="false">技术解释：这是充电的最后阶段（通常是95%或98%以后）。此时充电功率极低（可能只有1-2W），以非常微小的电流慢慢将电池充至100%。</string>
+    <string name="health_charging_type_trickle_purpose">目的：</string>
+    <string name="health_charging_type_trickle_purpose_protect">- 保护电池：避免在电池已接近满电时继续大电流冲击，减少电池压力和发热。</string>
+    <string name="health_charging_type_trickle_purpose_calibrate">- 校准电量计：让手机更精确地判断"100%"这个点。</string>
+    <string name="health_charging_type_trickle_smart" formatted="false">智能运用：手机的"优化电池充电"功能，就是利用了涓流充电的原理。它先快速充到80%，然后暂停，在你起床前再用涓流慢慢充满最后20%，从而缩短电池处于100%高压状态的时间。</string>
+    <string name="health_charging_type_conclusion">核心结论与建议：</string>
+    <string name="health_charging_type_conclusion_1">1. 协议匹配是关键：想要实现快充，必须确保手机支持、充电器支持、数据线也支持同一快充协议。否则会自动降级为慢充。</string>
+    <string name="health_charging_type_conclusion_2">2. 看功率(W)比单独看V或A更有意义：功率直接反映了充电速度。一个30W的充电器通常比18W的快。</string>
+    <string name="health_charging_type_conclusion_3">3. 通用性选择：目前USB PD (含PPS) 协议是最通用、前景最广的快充标准，被苹果、谷歌、三星及众多笔记本厂商支持。</string>
+    <string name="health_charging_type_conclusion_4">4. 不必恐惧快充伤电池：在手机厂商严格的温控和智能管理下，快充对电池寿命的额外损耗非常有限。</string>
+    
+    <!-- Charging recommendations -->
+    <string name="health_no_charging_data">暂无充电记录，无法提供建议</string>
+    
+    <!-- HealthFragment UI elements -->
+    <string name="health_cycle_count">充电循环次数</string>
+    <string name="health_percentage">健康度百分比</string>
+    <string name="health_charge_habit_score">充电习惯评分</string>
+    <string name="health_current_temperature">当前温度</string>
+    
+    <!-- Health calculation explanation -->
+    <string name="health_calc_process">电池健康度计算过程：</string>
+    <string name="health_calc_base_score">1. 基础得分：%1$d分</string>
+    <string name="health_calc_based_on">基于电池健康状态评估</string>
+    <string name="health_calc_current_status">当前状态：</string>
+    <string name="health_calc_cycle_impact">2. 充电循环次数影响：%1$d%%</string>
+    <string name="health_calc_current_cycles">当前循环次数：%1$d次</string>
+    <string name="health_calc_impact_level">影响程度：</string>
+    <string name="health_calc_capacity_impact">3. 实际容量影响：%1$d%%</string>
+    <string name="health_calc_current_capacity">当前实际容量：%1$d mAh</string>
+    <string name="health_calc_design_capacity">设计容量：%1$d mAh</string>
+    <string name="health_calc_capacity_retention">容量保持率：%1$d%%</string>
+    <string name="health_calc_temperature_impact">4. 温度影响：%1$d%%</string>
+    <string name="health_calc_current_temp">当前温度：%1$.1f°C</string>
+    <string name="health_calc_charge_habit_impact">5. 充电习惯影响：%1$d%%</string>
+    <string name="health_calc_assessment_based">基于您的充电行为模式评估</string>
+    <string name="health_calc_assessment_dimensions">评估维度：充电频率、充电时间、充电速率等</string>
+    <string name="health_calc_comprehensive">6. 综合计算：</string>
+    <string name="health_calc_formula">基础得分 × 循环次数系数 × 容量系数 × 温度系数 × 充电习惯系数</string>
+    <string name="health_calc_calculation" formatted="false">%1$d * %.2f * %.2f * %.2f * %.2f</string>
+    <string name="health_calc_result" formatted="true">= %.2f</string>
+    <string name="health_calc_final_score">最终得分：%1$d分</string>
+    
+    <!-- Charging type explanation details -->
+    <string name="health_charging_slow_title">1. 慢充 (Trickle Charge / Standard Charge)</string>
+    <string name="health_charging_slow_analogy">类比：用一根小水管，以恒定、平缓的水流注水。</string>
+    <string name="health_charging_slow_technical">技术解释：通常指功率在10W-15W以下的充电。使用标准的5V电压和较低的电流，整个过程电压电流基本不变，直到快满时才略微调整。</string>
+    <string name="health_charging_slow_advantages">优点：发热小，对电池的化学压力最小，有利于长期电池健康。</string>
+    <string name="health_charging_slow_disadvantages">缺点：速度慢。</string>
+    <string name="health_charging_slow_when">何时发生：使用不支持快充的旧充电器；或手机/充电器有一方不支持对方的快充协议时，会自动回落到5V慢充。</string>
+    
+    <string name="health_charging_fast_title">2. 快充 (Quick Charge / Fast Charge)</string>
+    <string name="health_charging_fast_analogy">类比：前期用消防水管猛灌，当水位快满时，自动换回小水管。</string>
+    <string name="health_charging_fast_technical">技术解释：指通过提升电压和/或电流，将充电功率提升到18W以上的技术。它不是从头到尾全功率，而是一个智能的、多阶段的过程：</string>
+    <string name="health_charging_fast_stage1">- 阶段1：恒流预充：如果电池电量极低，会以小电流先激活。</string>
+    <string name="health_charging_fast_stage2" formatted="false">- 阶段2：恒流快充 (核心阶段)：充电器和手机协商出一个最高的安全功率（如27W、65W），在此阶段以最大功率充电，电量从0%迅速冲到50%-70%。</string>
+    <string name="health_charging_fast_stage3" formatted="false">- 阶段3：恒压减流：当电池电压达到上限（约4.2V-4.4V），充电器保持电压不变，电流开始逐渐减小。功率也随之下降。此阶段电量从70%充到90%以上。</string>
+    <string name="health_charging_fast_advantages">优点：极大缩短充电时间，解决续航焦虑。</string>
+    <string name="health_charging_fast_disadvantages">缺点：相对慢充会产生更多热量，对电池的长期健康有轻微影响（但现代手机的管理系统已将其控制在安全范围内）。</string>
+    
+    <string name="health_charging_trickle_title">3. 涓流充电 (Trickle Charge / Maintenance Charge)</string>
+    <string name="health_charging_trickle_analogy">类比：水池即将灌满，改用滴管一滴一滴地加，直到完全精确满盈。</string>
+    <string name="health_charging_trickle_technical" formatted="false">技术解释：这是充电的最后阶段（通常是95%或98%以后）。此时充电功率极低（可能只有1-2W），以非常微小的电流慢慢将电池充至100%。</string>
+    <string name="health_charging_trickle_purpose">目的：</string>
+    <string name="health_charging_trickle_protect">- 保护电池：避免在电池已接近满电时继续大电流冲击，减少电池压力和发热。</string>
+    <string name="health_charging_trickle_calibrate">- 校准电量计：让手机更精确地判断"100%"这个点。</string>
+    <string name="health_charging_trickle_smart" formatted="false"><![CDATA[智能运用：手机的"优化电池充电"功能，就是利用了涓流充电的原理。它先快速充到80%，然后暂停，在你起床前再用涓流慢慢充满最后20%，从而缩短电池处于100%高压状态的时间。]]></string>
+
+    <!-- SystemInfoFragment -->
+    <!-- Section titles -->
+    <string name="system_info_section_storage">存储信息</string>
+    <string name="system_info_section_network">网络信息</string>
+    <string name="system_info_section_system">系统信息</string>
+    <string name="system_info_section_camera">相机信息</string>
+    <string name="system_info_section_screen">屏幕信息</string>
+    <string name="system_info_section_sensor">传感器信息</string>
+
+    <!-- System info labels -->
+    <string name="system_info_device">设备</string>
+    <string name="system_info_model">型号</string>
+    <string name="system_info_model_code">型号代码</string>
+    <string name="system_info_product_code">产品代码</string>
+    <string name="system_info_device_code">设备ID</string>
+    <string name="system_info_board_code">主板代码</string>
+    <string name="system_info_manufacturer">制造商</string>
+    <string name="system_info_brand">品牌</string>
+    <string name="system_info_android_version">Android版本</string>
+    <string name="system_info_api_level">API级别</string>
+    <string name="system_info_security_patch">安全补丁级别</string>
+    <string name="system_info_build_display">构建显示</string>
+    <string name="system_info_build_fingerprint">构建指纹</string>
+    <string name="system_info_build_time">构建时间</string>
+    <string name="system_info_treble_support">Treble支持</string>
+    <string name="system_info_root_status">Root状态</string>
+    <string name="system_info_kernel_version">内核版本</string>
+    <string name="system_info_architecture">架构</string>
+    <string name="system_info_cpu_abi">CPU ABI</string>
+
+    <!-- Network info labels -->
+    <string name="system_info_bssid">BSSID</string>
+    <string name="system_info_connection_speed">连接速度</string>
+    <string name="system_info_signal_strength">信号强度</string>
+    <string name="system_info_frequency">频率</string>
+    <string name="system_info_band">频段</string>
+    <string name="system_info_ipv4_address">IPv4地址</string>
+    <string name="system_info_sim_operator">SIM运营商</string>
+
+    <!-- Storage info labels -->
+    <string name="system_info_internal_total">内部存储总量</string>
+    <string name="system_info_internal_used">内部存储已用</string>
+    <string name="system_info_internal_available">内部存储可用</string>
+    <string name="system_info_external_total">外部存储总量</string>
+    <string name="system_info_external_used">外部存储已用</string>
+    <string name="system_info_external_available">外部存储可用</string>
+
+    <!-- Camera info labels -->
+    <string name="system_info_front_camera">前置摄像头</string>
+    <string name="system_info_megapixels">像素数</string>
+    <string name="system_info_effective_megapixels">有效像素</string>
+    <string name="system_info_resolution">分辨率</string>
+    <string name="system_info_sensor_size">传感器尺寸</string>
+    <string name="system_info_pixel_size">像素尺寸</string>
+    <string name="system_info_color_filter_array">颜色滤镜阵列</string>
+    <string name="system_info_aperture">光圈</string>
+    <string name="system_info_focal_length">焦距</string>
+    <string name="system_info_35mm_equivalent">35mm等效焦距</string>
+    <string name="system_info_crop_factor">裁剪系数</string>
+    <string name="system_info_field_of_view">视野</string>
+    <string name="system_info_shutter_speed">快门速度</string>
+    <string name="system_info_iso_range">ISO范围</string>
+    <string name="system_info_flash">闪光灯</string>
+    <string name="system_info_video_stabilization">视频防抖</string>
+    <string name="system_info_optical_stabilization">光学防抖</string>
+    <string name="system_info_ae_lock">AE锁定</string>
+    <string name="system_info_wb_lock">WB锁定</string>
+    <string name="system_info_features">特性</string>
+    <string name="system_info_exposure_modes">曝光模式</string>
+    <string name="system_info_autofocus_modes">自动对焦模式</string>
+    <string name="system_info_white_balance_modes">白平衡模式</string>
+    <string name="system_info_scene_modes">场景模式</string>
+    <string name="system_info_color_effects">色彩效果</string>
+    <string name="system_info_max_face_count">最大人脸数</string>
+    <string name="system_info_face_detection_mode">人脸检测模式</string>
+    <string name="system_info_camera2_api_support">Camera2 API支持</string>
+    <string name="system_info_rear_camera">后置摄像头</string>
+
+    <!-- Screen info labels -->
+    <string name="system_info_screen_resolution">分辨率</string>
+    <string name="system_info_aspect_ratio">宽高比</string>
+    <string name="system_info_screen_size">屏幕尺寸</string>
+    <string name="system_info_screen_density">屏幕密度</string>
+    <string name="system_info_gpu">GPU</string>
+    <string name="system_info_refresh_rate">刷新率</string>
+
+    <!-- Sensor info labels -->
+    <string name="system_info_sensor_count">传感器数量</string>
+    <string name="system_info_sensor">传感器</string>
+    <string name="system_info_sensor_type">类型</string>
+    <string name="system_info_sensor_manufacturer">制造商</string>
+    <string name="system_info_sensor_resolution">分辨率</string>
+    <string name="system_info_sensor_max_range">最大范围</string>
+    <string name="system_info_sensor_power">功率</string>
+    <string name="system_info_sensor_min_delay">最小延迟</string>
+    <string name="system_info_sensor_version">版本</string>
+
+    <!-- Sensor types -->
+    
+    <!-- HealthFragment additional elements -->
+    <string name="health_actual_capacity">实际容量</string>
+    <string name="health_design_capacity">设计容量</string>
+    <string name="health_avg_charging_time">平均充电时间</string>
+    <string name="health_minutes">分钟</string>
+    <string name="health_hour_unit">点</string>
+    <string name="health_avg_start_level">平均起始电量</string>
+    <string name="health_avg_end_level">平均结束电量</string>
+    <string name="health_peak_charging_period">峰值充电时段</string>
+    <string name="health_hour_0">0点</string>
+    <string name="health_overnight_charging_ratio">过夜充电比例</string>
+    <string name="health_charging_recommendations">充电建议</string>
+    <string name="health_recent_charging_records">最近充电记录</string>
+    <string name="health_charging_records_list">充电记录列表</string>
+    <string name="health_charging_habits_statistics">充电习惯统计数据</string>
+    <string name="system_info_sensor_type_accelerometer">加速度传感器</string>
+    <string name="system_info_sensor_type_ambient_temperature">环境温度传感器</string>
+    <string name="system_info_sensor_type_dynamic_sensor_meta">动态传感器元</string>
+    <string name="system_info_sensor_type_gravity">重力传感器</string>
+    <string name="system_info_sensor_type_gyroscope">陀螺仪</string>
+    <string name="system_info_sensor_type_gyroscope_uncalibrated">未校准陀螺仪</string>
+    <string name="system_info_sensor_type_heart_rate">心率传感器</string>
+    <string name="system_info_sensor_type_light">光线传感器</string>
+    <string name="system_info_sensor_type_linear_acceleration">线性加速度传感器</string>
+    <string name="system_info_sensor_type_magnetic_field">磁场传感器</string>
+    <string name="system_info_sensor_type_magnetic_field_uncalibrated">未校准磁场传感器</string>
+    <string name="system_info_sensor_type_orientation">方向传感器</string>
+    <string name="system_info_sensor_type_pressure">压力传感器</string>
+    <string name="system_info_sensor_type_proximity">接近传感器</string>
+    <string name="system_info_sensor_type_relative_humidity">相对湿度传感器</string>
+    <string name="system_info_sensor_type_rotation_vector">旋转矢量传感器</string>
+    <string name="system_info_sensor_type_sensor_meta">传感器元</string>
+    <string name="system_info_sensor_type_significant_motion">重大运动传感器</string>
+    <string name="system_info_sensor_type_step_counter">计步器</string>
+    <string name="system_info_sensor_type_step_detector">步数检测器</string>
+    <string name="system_info_sensor_type_temperature">温度传感器</string>
+    <string name="system_info_sensor_type_game_rotation_vector">游戏旋转矢量传感器</string>
+    <string name="system_info_sensor_type_geomagnetic_rotation_vector">地磁旋转矢量传感器</string>
+    <string name="system_info_sensor_type_uncalibrated_gyroscope">未校准陀螺仪</string>
+    <string name="system_info_sensor_type_uncalibrated_magnetic_field">未校准磁场传感器</string>
+    
+    <!-- Additional system info strings -->
+    <string name="system_info_not_shown">(未显示)</string>
+    <string name="system_info_unknown">未知</string>
+    <string name="system_info_treble_supported">支持</string>
+    <string name="system_info_root_not_obtained">未获得</string>
+    <string name="system_info_camera_info">相机信息</string>
+    <string name="system_info_cannot_get_camera_info">无法获取相机信息</string>
+    <string name="system_info_screen_info">屏幕信息</string>
+    <string name="system_info_cannot_get_screen_info">无法获取屏幕信息</string>
+    <string name="system_info_sensor_info">传感器信息</string>
+    <string name="system_info_cannot_get_sensor_info">无法获取传感器信息</string>
+
+    <!-- ImageCompressionFragment -->
+    <string name="image_compression_title">图片压缩介绍</string>
+    <string name="image_compression_description">此功能可帮助您压缩图片以节省存储空间。您可以选择保留或删除原始图片。</string>
+    <string name="image_compression_detailed_description">我们提供高效的图片压缩功能，可以帮助您减小图片文件大小，节省存储空间和网络流量。支持多种压缩选项和模式。</string>
+    <string name="image_compression_mode">压缩模式</string>
+    <string name="image_compression_option_keep_original">保留源图片，压缩图片存储到子目录</string>
+    <string name="image_compression_option_delete_original">删除源图片，只保留压缩文件</string>
+    <string name="image_compression_select_directory">选择目录</string>
+    <string name="image_compression_select_image_directory">选择图片目录</string>
+    <string name="image_compression_no_directory_selected">未选择目录</string>
+    <string name="image_compression_start">开始压缩</string>
+    <string name="image_compression_result">压缩结果</string>
+    
+    <!-- Charging recommendations -->
+    <string name="recommendation_start_low" formatted="false">您经常在电量过低（%1$d%%）时充电，建议在电量高于20%时开始充电</string>
+    <string name="recommendation_start_good">充电习惯良好，起始电量合适</string>
+    <string name="recommendation_start_high">您习惯在高电量时充电，可以尝试在电量更低时再充电</string>
+    <string name="recommendation_end_high" formatted="false">您经常充满电（%1$d%%），建议充至80%即可延长电池寿命</string>
+    <string name="recommendation_end_good">充电结束电量合适，有助于保护电池</string>
+    <string name="recommendation_end_low">充电结束电量较低，可能影响使用体验</string>
+    <string name="recommendation_overnight" formatted="false">您经常过夜充电（%1$d%%的充电会话），建议使用智能充电提醒功能</string>
+    <string name="recommendation_duration_long" formatted="false">平均充电时间较长（%1$d小时），建议检查充电器功率或充电时减少使用手机</string>
 </resources>

@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="电池健康评估"
+                android:text="@string/health_title"
                 android:textColor="@color/gray_800"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -84,7 +84,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="充电循环次数"
+                        android:text="@string/health_cycle_count"
                         android:textColor="@color/gray_600"
                         android:textSize="14sp" />
 
@@ -115,7 +115,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="实际容量"
+                        android:text="@string/health_actual_capacity"
                         android:textColor="@color/gray_600"
                         android:textSize="14sp" />
 
@@ -146,7 +146,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="设计容量"
+                        android:text="@string/health_design_capacity"
                         android:textColor="@color/gray_600"
                         android:textSize="14sp" />
 
@@ -177,7 +177,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="健康度百分比"
+                        android:text="@string/health_percentage"
                         android:textColor="@color/gray_600"
                         android:textSize="14sp" />
 
@@ -208,7 +208,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="充电习惯评分"
+                        android:text="@string/health_charge_habit_score"
                         android:textColor="@color/gray_600"
                         android:textSize="14sp" />
 
@@ -239,7 +239,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="当前温度"
+                        android:text="@string/health_current_temperature"
                         android:textColor="@color/gray_600"
                         android:textSize="14sp" />
 
@@ -269,7 +269,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="充电类型说明"
+                        android:text="@string/health_charging_type_explanation"
                         android:textColor="@color/gray_800"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -293,7 +293,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="电池健康建议"
+                        android:text="@string/health_battery_advice"
                         android:textColor="@color/gray_800"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -303,7 +303,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="电池健康状况良好，请继续保持良好的充电习惯。"
+                        android:text="@string/health_advice_good"
                         android:textColor="@color/gray_600"
                         android:textSize="14sp" />
             </LinearLayout>
@@ -317,7 +317,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="健康度计算说明"
+                        android:text="@string/health_calculation_explanation"
                         android:textColor="@color/gray_800"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -327,7 +327,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="电池健康度基于多个维度综合计算得出..."
+                        android:text="@string/health_calc_process"
                         android:textColor="@color/gray_600"
                         android:textSize="14sp"
                         android:lineSpacingExtra="4dp" />
@@ -343,7 +343,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="充电习惯分析"
+                        android:text="@string/health_charging_habits_analysis"
                         android:textColor="@color/gray_800"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -370,7 +370,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="总充电次数"
+                                android:text="@string/health_total_charging_sessions"
                                 android:textColor="@color/gray_600"
                                 android:textSize="14sp" />
                                 
@@ -396,7 +396,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="平均充电时间"
+                                android:text="@string/health_avg_charging_time"
                                 android:textColor="@color/gray_600"
                                 android:textSize="14sp" />
                                 
@@ -406,7 +406,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:gravity="end"
-                                android:text="0分钟"
+                                android:text="0"
                                 android:textColor="@color/gray_800"
                                 android:textSize="14sp"
                                 android:textStyle="bold" />
@@ -422,7 +422,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="平均起始电量"
+                                android:text="@string/health_avg_start_level"
                                 android:textColor="@color/gray_600"
                                 android:textSize="14sp" />
                                 
@@ -448,7 +448,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="平均结束电量"
+                                android:text="@string/health_avg_end_level"
                                 android:textColor="@color/gray_600"
                                 android:textSize="14sp" />
                                 
@@ -474,7 +474,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="峰值充电时段"
+                                android:text="@string/health_peak_charging_period"
                                 android:textColor="@color/gray_600"
                                 android:textSize="14sp" />
                                 
@@ -484,7 +484,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:gravity="end"
-                                android:text="0点"
+                                android:text="@string/health_hour_0"
                                 android:textColor="@color/gray_800"
                                 android:textSize="14sp"
                                 android:textStyle="bold" />
@@ -500,7 +500,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="过夜充电比例"
+                                android:text="@string/health_overnight_charging_ratio"
                                 android:textColor="@color/gray_600"
                                 android:textSize="14sp" />
                                 
@@ -528,7 +528,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="充电建议"
+                    android:text="@string/health_charging_recommendations"
                     android:textColor="@color/gray_800"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -543,7 +543,7 @@
                     android:id="@+id/charging_recommendations_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="暂无充电记录，无法提供建议"
+                    android:text="@string/health_no_charging_data"
                     android:textColor="@color/gray_600"
                     android:textSize="14sp"
                     android:lineSpacingExtra="4dp" />
@@ -559,7 +559,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="最近充电记录"
+                    android:text="@string/health_recent_charging_records"
                     android:textColor="@color/gray_800"
                     android:textSize="16sp"
                     android:textStyle="bold" />

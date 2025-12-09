@@ -58,13 +58,13 @@ class ChargingSessionAdapter(
         
         // 显示充电模式
         val modeText = when (session.chargingMode) {
-            com.batteryapp.model.ChargingMode.Mode.TRICKLE.name -> "涓流充电"
-            com.batteryapp.model.ChargingMode.Mode.SLOW.name -> "慢充"
-            com.batteryapp.model.ChargingMode.Mode.NORMAL.name -> "普通充电"
-            com.batteryapp.model.ChargingMode.Mode.FAST.name -> "快充"
-            com.batteryapp.model.ChargingMode.Mode.SUPER_FAST.name -> "超级快充"
-            com.batteryapp.model.ChargingMode.Mode.ULTRA_FAST.name -> "极速快充"
-            else -> "未知"
+            com.batteryapp.model.ChargingMode.Mode.TRICKLE.name -> holder.itemView.context.getString(R.string.charging_mode_trickle)
+            com.batteryapp.model.ChargingMode.Mode.SLOW.name -> holder.itemView.context.getString(R.string.charging_mode_slow)
+            com.batteryapp.model.ChargingMode.Mode.NORMAL.name -> holder.itemView.context.getString(R.string.charging_mode_normal)
+            com.batteryapp.model.ChargingMode.Mode.FAST.name -> holder.itemView.context.getString(R.string.charging_mode_fast)
+            com.batteryapp.model.ChargingMode.Mode.SUPER_FAST.name -> holder.itemView.context.getString(R.string.charging_mode_super_fast)
+            com.batteryapp.model.ChargingMode.Mode.ULTRA_FAST.name -> holder.itemView.context.getString(R.string.charging_mode_ultra_fast)
+            else -> holder.itemView.context.getString(R.string.unknown)
         }
         holder.chargingMode.text = modeText
         

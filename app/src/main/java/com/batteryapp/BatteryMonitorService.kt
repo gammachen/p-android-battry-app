@@ -36,7 +36,7 @@ class BatteryMonitorService : Service() {
     // 当前充电会话中记录到的最大功率（瓦）
     private var chargingSessionMaxPowerW: Float = 0.0f
     // 当前充电会话的充电器类型（如 USB、AC、无线等）
-    private var chargingSessionChargerType: String = "未知"
+    private var chargingSessionChargerType: String = ""
     // 上一次广播接收时的充电状态，用于检测充电开始/结束事件
     private var previousIsCharging = false
 
@@ -59,6 +59,7 @@ class BatteryMonitorService : Service() {
         Log.d(TAG, "Service created")
         isRunning = true
         batteryRepository = BatteryRepository(this)
+        chargingSessionChargerType = getString(R.string.unknown)
         registerBatteryReceiver()
     }
 
@@ -102,11 +103,11 @@ class BatteryMonitorService : Service() {
                         Log.d(TAG, "充电中，并且前一个状态不是充电中，并且能够得到充电类型（USB、AC、无线、dock等），插上电源线并且已经识别出物理电源线的场景: $chargePlug BatteryManager.BATTERY_PLUGGED_USB: ${BatteryManager.BATTERY_PLUGGED_USB} BatteryManager.BATTERY_PLUGGED_AC: ${BatteryManager.BATTERY_PLUGGED_AC} BatteryManager.BATTERY_PLUGGED_WIRELESS: ${BatteryManager.BATTERY_PLUGGED_WIRELESS} BatteryManager.BATTERY_PLUGGED_DOCK: ${BatteryManager.BATTERY_PLUGGED_DOCK}")
                         
                         val chargerType = when {
-                            chargePlug == BatteryManager.BATTERY_PLUGGED_USB -> "USB"
-                            chargePlug == BatteryManager.BATTERY_PLUGGED_AC -> "AC"
-                            chargePlug == BatteryManager.BATTERY_PLUGGED_WIRELESS -> "无线"
-                            chargePlug == BatteryManager.BATTERY_PLUGGED_DOCK -> "dock"
-                            else -> "未知（${chargePlug}）"
+                            chargePlug == BatteryManager.BATTERY_PLUGGED_USB -> getString(R.string.charger_type_usb)
+                            chargePlug == BatteryManager.BATTERY_PLUGGED_AC -> getString(R.string.charger_type_ac)
+                            chargePlug == BatteryManager.BATTERY_PLUGGED_WIRELESS -> getString(R.string.charger_type_wireless)
+                            chargePlug == BatteryManager.BATTERY_PLUGGED_DOCK -> getString(R.string.charger_type_dock)
+                            else -> getString(R.string.charging_mode_unknown_format, chargePlug)
                         }
                         // 开始新的充电会话
                         startChargingSession(batteryStatus.percentage, batteryStatus.temperature.toFloat(), chargerType)

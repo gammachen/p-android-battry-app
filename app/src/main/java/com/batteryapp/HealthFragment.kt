@@ -135,16 +135,16 @@ class HealthFragment : Fragment() {
         
         // 格式化充电时间（毫秒转分钟）
         val avgMinutes = (analysis.avgChargingTime / (60 * 1000)).toInt()
-        avgChargingTimeTextView.text = "${avgMinutes}分钟"
+        avgChargingTimeTextView.text = "$avgMinutes${getString(R.string.health_minutes)}"
         
         avgStartLevelTextView.text = "${analysis.avgStartLevel.toInt()}%"
         avgEndLevelTextView.text = "${analysis.avgEndLevel.toInt()}%"
-        peakHourTextView.text = "${analysis.peakChargingHour}点"
+        peakHourTextView.text = "${analysis.peakChargingHour}${getString(R.string.health_hour_unit)}"
         overnightPercentageTextView.text = "${analysis.overnightChargePercentage.toInt()}%"
         
         // 更新充电建议
         if (analysis.recommendations.isEmpty()) {
-            chargingRecommendationsTextView.text = "暂无充电记录，无法提供建议"
+            chargingRecommendationsTextView.text = getString(R.string.health_no_charging_data)
         } else {
             val recommendationsText = analysis.recommendations.joinToString("\n• ", prefix = "• ")
             chargingRecommendationsTextView.text = recommendationsText
@@ -244,61 +244,61 @@ class HealthFragment : Fragment() {
         val chargeHabitFactor = healthData.chargeHabitScore / 100.0
         
         // 构建说明文本
-        explanationBuilder.append("电池健康度计算过程：\n\n")
+        explanationBuilder.append(getString(R.string.health_calc_process)).append("\n\n")
         
         // 1. 基础得分
-        explanationBuilder.append("1. 基础得分：${baseScore.toInt()}分\n")
-        explanationBuilder.append("   - 基于电池健康状态评估\n")
-        explanationBuilder.append("   - 当前状态：")
+        explanationBuilder.append(String.format(getString(R.string.health_calc_base_score), baseScore.toInt())).append("\n")
+        explanationBuilder.append("   - ").append(getString(R.string.health_calc_based_on)).append("\n")
+        explanationBuilder.append("   - ").append(getString(R.string.health_calc_current_status))
         explanationBuilder.append(when (healthData.batteryHealth) {
-            2 -> "健康（BATTERY_HEALTH_GOOD）\n"
-            3 -> "过热（BATTERY_HEALTH_OVERHEAT）\n"
-            4 -> "损坏（BATTERY_HEALTH_DEAD）\n"
-            5 -> "过电压（BATTERY_HEALTH_OVER_VOLTAGE）\n"
-            6 -> "不明故障（BATTERY_HEALTH_UNSPECIFIED_FAILURE）\n"
-            7 -> "低温（BATTERY_HEALTH_COLD）\n"
-            else -> "未知状态\n"
+            2 -> getString(R.string.health_status_good) + "\n"
+            3 -> getString(R.string.health_status_overheat) + "\n"
+            4 -> getString(R.string.health_status_dead) + "\n"
+            5 -> getString(R.string.health_status_over_voltage) + "\n"
+            6 -> getString(R.string.health_status_unspecified_failure) + "\n"
+            7 -> getString(R.string.health_status_cold) + "\n"
+            else -> getString(R.string.health_status_unknown) + "\n"
         })
         
         // 2. 充电循环次数影响
-        explanationBuilder.append("\n2. 充电循环次数影响：${(cycleFactor * 100).toInt()}%\n")
-        explanationBuilder.append("   - 当前循环次数：${healthData.cycleCount}次\n")
-        explanationBuilder.append("   - 影响程度：")
+        explanationBuilder.append("\n").append(String.format(getString(R.string.health_calc_cycle_impact), (cycleFactor * 100).toInt())).append("\n")
+        explanationBuilder.append("   - ").append(String.format(getString(R.string.health_calc_current_cycles), healthData.cycleCount)).append("\n")
+        explanationBuilder.append("   - ").append(getString(R.string.health_calc_impact_level))
         explanationBuilder.append(when {
-            healthData.cycleCount <= 100 -> "无影响（≤100次）\n"
-            healthData.cycleCount <= 300 -> "轻微影响（101-300次）\n"
-            healthData.cycleCount <= 500 -> "中等影响（301-500次）\n"
-            else -> "显著影响（>500次）\n"
+            healthData.cycleCount <= 100 -> getString(R.string.health_cycle_impact_none) + "\n"
+            healthData.cycleCount <= 300 -> getString(R.string.health_cycle_impact_minor) + "\n"
+            healthData.cycleCount <= 500 -> getString(R.string.health_cycle_impact_moderate) + "\n"
+            else -> getString(R.string.health_cycle_impact_significant) + "\n"
         })
         
         // 3. 实际容量影响
-        explanationBuilder.append("\n3. 实际容量影响：${(capacityFactor * 100).toInt()}%\n")
-        explanationBuilder.append("   - 当前实际容量：${healthData.actualCapacity} mAh\n")
-        explanationBuilder.append("   - 设计容量：${designCapacity.toInt()} mAh\n")
-        explanationBuilder.append("   - 容量保持率：${(capacityFactor * 100).toInt()}%\n")
+        explanationBuilder.append("\n").append(String.format(getString(R.string.health_calc_capacity_impact), (capacityFactor * 100).toInt())).append("\n")
+        explanationBuilder.append("   - ").append(String.format(getString(R.string.health_calc_current_capacity), healthData.actualCapacity)).append("\n")
+        explanationBuilder.append("   - ").append(String.format(getString(R.string.health_calc_design_capacity), designCapacity.toInt())).append("\n")
+        explanationBuilder.append("   - ").append(String.format(getString(R.string.health_calc_capacity_retention), (capacityFactor * 100).toInt())).append("\n")
         
         // 4. 温度影响
-        explanationBuilder.append("\n4. 温度影响：${(temperatureFactor * 100).toInt()}%\n")
-        explanationBuilder.append("   - 当前温度：${healthData.temperature}°C\n")
-        explanationBuilder.append("   - 影响程度：")
+        explanationBuilder.append("\n").append(String.format(getString(R.string.health_calc_temperature_impact), (temperatureFactor * 100).toInt())).append("\n")
+        explanationBuilder.append("   - ").append(String.format(getString(R.string.health_calc_current_temp), healthData.temperature)).append("\n")
+        explanationBuilder.append("   - ").append(getString(R.string.health_calc_impact_level))
         explanationBuilder.append(when {
-            healthData.temperature < 0 || healthData.temperature > 45 -> "严重影响（<0°C或>45°C）\n"
-            healthData.temperature < 10 || healthData.temperature > 40 -> "中等影响（<10°C或>40°C）\n"
-            healthData.temperature < 20 || healthData.temperature > 30 -> "轻微影响（<20°C或>30°C）\n"
-            else -> "无影响（20-30°C，理想范围）\n"
+            healthData.temperature < 0 || healthData.temperature > 45 -> getString(R.string.health_temperature_impact_severe) + "\n"
+            healthData.temperature < 10 || healthData.temperature > 40 -> getString(R.string.health_temperature_impact_moderate) + "\n"
+            healthData.temperature < 20 || healthData.temperature > 30 -> getString(R.string.health_temperature_impact_minor) + "\n"
+            else -> getString(R.string.health_temperature_impact_none) + "\n"
         })
         
         // 5. 充电习惯影响
-        explanationBuilder.append("\n5. 充电习惯影响：${healthData.chargeHabitScore}%\n")
-        explanationBuilder.append("   - 基于您的充电行为模式评估\n")
-        explanationBuilder.append("   - 评估维度：充电频率、充电时间、充电速率等\n")
+        explanationBuilder.append("\n").append(String.format(getString(R.string.health_calc_charge_habit_impact), healthData.chargeHabitScore)).append("\n")
+        explanationBuilder.append("   - ").append(getString(R.string.health_calc_assessment_based)).append("\n")
+        explanationBuilder.append("   - ").append(getString(R.string.health_calc_assessment_dimensions)).append("\n")
         
         // 6. 综合计算
-        explanationBuilder.append("\n6. 综合计算：\n")
-        explanationBuilder.append("   - 基础得分 × 循环次数系数 × 容量系数 × 温度系数 × 充电习惯系数\n")
-        explanationBuilder.append("   - ${baseScore.toInt()} × ${String.format("%.2f", cycleFactor)} × ${String.format("%.2f", capacityFactor)} × ${String.format("%.2f", temperatureFactor)} × ${String.format("%.2f", chargeHabitFactor)}\n")
+        explanationBuilder.append("\n").append(getString(R.string.health_calc_comprehensive)).append("\n")
+        explanationBuilder.append("   - ").append(getString(R.string.health_calc_formula)).append("\n")
+        explanationBuilder.append("   - ").append(String.format(getString(R.string.health_calc_calculation), baseScore.toInt(), cycleFactor, capacityFactor, temperatureFactor, chargeHabitFactor)).append("\n")
         explanationBuilder.append("   - = ${String.format("%.2f", baseScore * cycleFactor * capacityFactor * temperatureFactor * chargeHabitFactor)}\n")
-        explanationBuilder.append("   - 最终得分：${finalScore}分\n")
+        explanationBuilder.append("   - ").append(String.format(getString(R.string.health_calc_final_score), finalScore)).append("\n")
         
         return explanationBuilder.toString()
     }
@@ -306,35 +306,35 @@ class HealthFragment : Fragment() {
     private fun getChargingTypeExplanation(): String {
         val explanationBuilder = StringBuilder()
         
-        explanationBuilder.append("1. 慢充 (Trickle Charge / Standard Charge)\n")
-        explanationBuilder.append("   类比：用一根小水管，以恒定、平缓的水流注水。\n")
-        explanationBuilder.append("   技术解释：通常指功率在10W-15W以下的充电。使用标准的5V电压和较低的电流，整个过程电压电流基本不变，直到快满时才略微调整。\n")
-        explanationBuilder.append("   优点：发热小，对电池的化学压力最小，有利于长期电池健康。\n")
-        explanationBuilder.append("   缺点：速度慢。\n")
-        explanationBuilder.append("   何时发生：使用不支持快充的旧充电器；或手机/充电器有一方不支持对方的快充协议时，会自动回落到5V慢充。\n\n")
+        explanationBuilder.append("1. ").append(getString(R.string.health_charging_type_slow)).append("\n")
+        explanationBuilder.append("   ").append(getString(R.string.health_charging_type_slow_analogy)).append("\n")
+        explanationBuilder.append("   ").append(getString(R.string.health_charging_type_slow_tech)).append("\n")
+        explanationBuilder.append("   ").append(getString(R.string.health_charging_type_slow_advantages)).append("\n")
+        explanationBuilder.append("   ").append(getString(R.string.health_charging_type_slow_disadvantages)).append("\n")
+        explanationBuilder.append("   ").append(getString(R.string.health_charging_type_slow_when)).append("\n\n")
         
-        explanationBuilder.append("2. 快充 (Quick Charge / Fast Charge)\n")
-        explanationBuilder.append("   类比：前期用消防水管猛灌，当水位快满时，自动换回小水管。\n")
-        explanationBuilder.append("   技术解释：指通过提升电压和/或电流，将充电功率提升到18W以上的技术。它不是从头到尾全功率，而是一个智能的、多阶段的过程：\n")
-        explanationBuilder.append("   - 阶段1：恒流预充：如果电池电量极低，会以小电流先激活。\n")
-        explanationBuilder.append("   - 阶段2：恒流快充 (核心阶段)：充电器和手机协商出一个最高的安全功率（如27W、65W），在此阶段以最大功率充电，电量从0%迅速冲到50%-70%。\n")
-        explanationBuilder.append("   - 阶段3：恒压减流：当电池电压达到上限（约4.2V-4.4V），充电器保持电压不变，电流开始逐渐减小。功率也随之下降。此阶段电量从70%充到90%以上。\n")
-        explanationBuilder.append("   优点：极大缩短充电时间，解决续航焦虑。\n")
-        explanationBuilder.append("   缺点：相对慢充会产生更多热量，对电池的长期健康有轻微影响（但现代手机的管理系统已将其控制在安全范围内）。\n\n")
+        explanationBuilder.append("2. ").append(getString(R.string.health_charging_type_fast)).append("\n")
+        explanationBuilder.append("   ").append(getString(R.string.health_charging_type_fast_analogy)).append("\n")
+        explanationBuilder.append("   ").append(getString(R.string.health_charging_type_fast_tech)).append("\n")
+        explanationBuilder.append("   ").append(getString(R.string.health_charging_type_fast_stage1)).append("\n")
+        explanationBuilder.append("   ").append(getString(R.string.health_charging_type_fast_stage2)).append("\n")
+        explanationBuilder.append("   ").append(getString(R.string.health_charging_type_fast_stage3)).append("\n")
+        explanationBuilder.append("   ").append(getString(R.string.health_charging_type_fast_advantages)).append("\n")
+        explanationBuilder.append("   ").append(getString(R.string.health_charging_type_fast_disadvantages)).append("\n\n")
         
-        explanationBuilder.append("3. 涓流充电 (Trickle Charge / Maintenance Charge)\n")
-        explanationBuilder.append("   类比：水池即将灌满，改用滴管一滴一滴地加，直到完全精确满盈。\n")
-        explanationBuilder.append("   技术解释：这是充电的最后阶段（通常是95%或98%以后）。此时充电功率极低（可能只有1-2W），以非常微小的电流慢慢将电池充至100%。\n")
-        explanationBuilder.append("   目的：\n")
-        explanationBuilder.append("   - 保护电池：避免在电池已接近满电时继续大电流冲击，减少电池压力和发热。\n")
-        explanationBuilder.append("   - 校准电量计：让手机更精确地判断\"100%\"这个点。\n")
-        explanationBuilder.append("   智能运用：手机的\"优化电池充电\"功能，就是利用了涓流充电的原理。它先快速充到80%，然后暂停，在你起床前再用涓流慢慢充满最后20%，从而缩短电池处于100%高压状态的时间。\n\n")
+        explanationBuilder.append("3. ").append(getString(R.string.health_charging_type_trickle)).append("\n")
+        explanationBuilder.append("   ").append(getString(R.string.health_charging_type_trickle_analogy)).append("\n")
+        explanationBuilder.append("   ").append(getString(R.string.health_charging_type_trickle_tech)).append("\n")
+        explanationBuilder.append("   ").append(getString(R.string.health_charging_type_trickle_purpose)).append("\n")
+        explanationBuilder.append("   ").append(getString(R.string.health_charging_type_trickle_purpose_protect)).append("\n")
+        explanationBuilder.append("   ").append(getString(R.string.health_charging_type_trickle_purpose_calibrate)).append("\n")
+        explanationBuilder.append("   ").append(getString(R.string.health_charging_type_trickle_smart)).append("\n\n")
         
-        explanationBuilder.append("核心结论与建议：\n")
-        explanationBuilder.append("1. 协议匹配是关键：想要实现快充，必须确保手机支持、充电器支持、数据线也支持同一快充协议。否则会自动降级为慢充。\n")
-        explanationBuilder.append("2. 看功率(W)比单独看V或A更有意义：功率直接反映了充电速度。一个30W的充电器通常比18W的快。\n")
-        explanationBuilder.append("3. 通用性选择：目前USB PD (含PPS) 协议是最通用、前景最广的快充标准，被苹果、谷歌、三星及众多笔记本厂商支持。\n")
-        explanationBuilder.append("4. 不必恐惧快充伤电池：在手机厂商严格的温控和智能管理下，快充对电池寿命的额外损耗非常有限。")
+        explanationBuilder.append(getString(R.string.health_charging_type_conclusion)).append("\n")
+        explanationBuilder.append(getString(R.string.health_charging_type_conclusion_1)).append("\n")
+        explanationBuilder.append(getString(R.string.health_charging_type_conclusion_2)).append("\n")
+        explanationBuilder.append(getString(R.string.health_charging_type_conclusion_3)).append("\n")
+        explanationBuilder.append(getString(R.string.health_charging_type_conclusion_4))
         
         return explanationBuilder.toString()
     }
@@ -344,19 +344,19 @@ class HealthFragment : Fragment() {
         
         // 基本健康状况建议
         when {
-            healthScore >= 90 -> adviceBuilder.append("电池健康状况良好，")
-            healthScore >= 70 -> adviceBuilder.append("电池健康状况一般，")
-            healthScore >= 50 -> adviceBuilder.append("电池健康状况较差，")
-            else -> adviceBuilder.append("电池健康状况严重不良，")
+            healthScore >= 90 -> adviceBuilder.append(getString(R.string.health_advice_excellent))
+            healthScore >= 70 -> adviceBuilder.append(getString(R.string.health_advice_good_text))
+            healthScore >= 50 -> adviceBuilder.append(getString(R.string.health_advice_fair))
+            else -> adviceBuilder.append(getString(R.string.health_advice_poor))
         }
         
         // 基于温度的建议
         when {
             healthData.temperature < 0 || healthData.temperature > 45 -> 
-                adviceBuilder.append("当前温度过高/过低，建议在20-30°C的环境中使用手机。")
+                adviceBuilder.append(getString(R.string.health_advice_temperature_extreme))
             healthData.temperature < 10 || healthData.temperature > 40 -> 
-                adviceBuilder.append("当前温度偏离理想范围，尽量避免在极端温度下使用手机。")
-            else -> adviceBuilder.append("当前温度处于理想范围。")
+                adviceBuilder.append(getString(R.string.health_advice_temperature_moderate))
+            else -> adviceBuilder.append(getString(R.string.health_advice_temperature_ideal))
         }
         
         adviceBuilder.append("\n\n")
@@ -364,13 +364,13 @@ class HealthFragment : Fragment() {
         // 基于循环次数的建议
         when {
             healthData.cycleCount > 500 -> 
-                adviceBuilder.append("充电循环次数已超过500次，电池性能可能明显下降，建议考虑更换电池。")
+                adviceBuilder.append(getString(R.string.health_advice_cycle_over_500))
             healthData.cycleCount > 300 -> 
-                adviceBuilder.append("充电循环次数已超过300次，建议减少电池深度放电，尽量保持20%-80%电量。")
+                adviceBuilder.append(getString(R.string.health_advice_cycle_over_300))
             healthData.cycleCount > 100 -> 
-                adviceBuilder.append("充电循环次数正常，继续保持良好的充电习惯。")
+                adviceBuilder.append(getString(R.string.health_advice_cycle_normal))
             else -> 
-                adviceBuilder.append("充电循环次数较少，电池处于最佳状态。")
+                adviceBuilder.append(getString(R.string.health_advice_cycle_few))
         }
         
         adviceBuilder.append("\n\n")
@@ -381,11 +381,11 @@ class HealthFragment : Fragment() {
         
         when {
             capacityPercentage < 70 -> 
-                adviceBuilder.append("电池实际容量已降至设计容量的${capacityPercentage}%，建议更换电池以获得更好的续航体验。")
+                adviceBuilder.append(String.format(getString(R.string.health_advice_capacity_below_70), capacityPercentage))
             capacityPercentage < 85 -> 
-                adviceBuilder.append("电池实际容量为设计容量的${capacityPercentage}%，建议减少后台应用运行，优化电池使用。")
+                adviceBuilder.append(String.format(getString(R.string.health_advice_capacity_below_85), capacityPercentage))
             else -> 
-                adviceBuilder.append("电池实际容量保持良好，继续保持现有的使用习惯。")
+                adviceBuilder.append(getString(R.string.health_advice_capacity_good))
         }
         
         adviceBuilder.append("\n\n")
@@ -393,21 +393,21 @@ class HealthFragment : Fragment() {
         // 基于充电习惯的建议
         when {
             healthData.chargeHabitScore < 60 -> 
-                adviceBuilder.append("充电习惯评分较低，建议避免整夜充电、过度放电和频繁快充。")
+                adviceBuilder.append(getString(R.string.health_advice_habit_poor))
             healthData.chargeHabitScore < 80 -> 
-                adviceBuilder.append("充电习惯评分一般，建议尽量使用原装充电器，避免在充电时玩大型游戏。")
+                adviceBuilder.append(getString(R.string.health_advice_habit_fair))
             else -> 
-                adviceBuilder.append("充电习惯良好，请继续保持。")
+                adviceBuilder.append(getString(R.string.health_advice_habit_good))
         }
         
         // 通用建议
         adviceBuilder.append("\n\n")
-        adviceBuilder.append("通用建议：")
-        adviceBuilder.append("\n1. 避免将手机暴露在高温或低温环境中")
-        adviceBuilder.append("\n2. 尽量使用原装充电器和数据线")
-        adviceBuilder.append("\n3. 避免长时间深度放电（电量低于20%）")
-        adviceBuilder.append("\n4. 减少快充次数，优先使用标准充电")
-        adviceBuilder.append("\n5. 充电时尽量避免使用手机")
+        adviceBuilder.append(getString(R.string.health_advice_general))
+        adviceBuilder.append("\n").append(getString(R.string.health_advice_general_1))
+        adviceBuilder.append("\n").append(getString(R.string.health_advice_general_2))
+        adviceBuilder.append("\n").append(getString(R.string.health_advice_general_3))
+        adviceBuilder.append("\n").append(getString(R.string.health_advice_general_4))
+        adviceBuilder.append("\n").append(getString(R.string.health_advice_general_5))
         
         return adviceBuilder.toString()
     }

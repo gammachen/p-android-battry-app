@@ -29,7 +29,7 @@ class BatteryUsageFragment : Fragment() {
     private lateinit var progressBar: ProgressBar
     private lateinit var adapter: AppUsagePagerAdapter
     // 添加"按预估电量"标签页和"运行中的APP"标签页
-    private val tabTitles = arrayOf("总耗电量", "按预估电量", "运行中的APP（实时）")
+    private lateinit var tabTitles: Array<String>
     
     private var appUsageLists = mapOf(
         BatteryRepository.BatteryUsageRankType.TIME_USAGE to emptyList<AppBatteryUsage>(),
@@ -50,6 +50,13 @@ class BatteryUsageFragment : Fragment() {
         
         // 初始化ViewModel
         viewModel = ViewModelProvider(requireActivity()).get(BatteryViewModel::class.java)
+        
+        // 初始化标签页标题
+        tabTitles = arrayOf(
+            getString(R.string.tab_title_total_usage),
+            getString(R.string.tab_title_estimated_consumption),
+            getString(R.string.tab_title_running_apps)
+        )
         
         // 初始化ViewPager2适配器
         adapter = AppUsagePagerAdapter(requireActivity(), appUsageLists)

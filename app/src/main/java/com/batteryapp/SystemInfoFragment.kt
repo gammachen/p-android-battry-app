@@ -67,30 +67,30 @@ class SystemInfoFragment : Fragment() {
         val systemInfo = mutableMapOf<String, String>()
         
         // 设备信息
-        systemInfo["设备"] = getDeviceInfo()
-        systemInfo["型号"] = Build.MODEL
-        systemInfo["型号代码"] = Build.DEVICE
-        systemInfo["产品代码"] = Build.PRODUCT
-        systemInfo["设备代号"] = Build.ID
-        systemInfo["主板代号"] = Build.BOARD
-        systemInfo["制造商"] = Build.MANUFACTURER
-        systemInfo["品牌"] = Build.BRAND
+        systemInfo[getString(R.string.system_info_device)] = getDeviceInfo()
+        systemInfo[getString(R.string.system_info_model)] = Build.MODEL
+        systemInfo[getString(R.string.system_info_model_code)] = Build.DEVICE
+        systemInfo[getString(R.string.system_info_product_code)] = Build.PRODUCT
+        systemInfo[getString(R.string.system_info_device_code)] = Build.ID
+        systemInfo[getString(R.string.system_info_board_code)] = Build.BOARD
+        systemInfo[getString(R.string.system_info_manufacturer)] = Build.MANUFACTURER
+        systemInfo[getString(R.string.system_info_brand)] = Build.BRAND
         
         // 操作系统信息
-        systemInfo["Android 版本"] = "Android ${Build.VERSION.RELEASE} (${Build.VERSION.CODENAME})"
-        systemInfo["API 级别"] = Build.VERSION.SDK_INT.toString()
-        systemInfo["安全补丁级别"] = Build.VERSION.SECURITY_PATCH
-        systemInfo["版本号"] = Build.DISPLAY
-        systemInfo["构建指纹"] = Build.FINGERPRINT
-        systemInfo["编译时间"] = Date(Build.TIME).toString()
-        systemInfo["Treble 支持"] = "支持" // 模拟数据
-        systemInfo["Root 权限"] = "未获得" // 简单判断，实际需要更复杂的检测
+        systemInfo[getString(R.string.system_info_android_version)] = "Android ${Build.VERSION.RELEASE} (${Build.VERSION.CODENAME})"
+        systemInfo[getString(R.string.system_info_api_level)] = Build.VERSION.SDK_INT.toString()
+        systemInfo[getString(R.string.system_info_security_patch)] = Build.VERSION.SECURITY_PATCH
+        systemInfo[getString(R.string.system_info_build_display)] = Build.DISPLAY
+        systemInfo[getString(R.string.system_info_build_fingerprint)] = Build.FINGERPRINT
+        systemInfo[getString(R.string.system_info_build_time)] = Date(Build.TIME).toString()
+        systemInfo[getString(R.string.system_info_treble_support)] = getString(R.string.system_info_treble_supported) // 模拟数据
+        systemInfo[getString(R.string.system_info_root_status)] = getString(R.string.system_info_root_not_obtained) // 简单判断，实际需要更复杂的检测
         
         // 其他系统信息
-        systemInfo["内核版本"] = System.getProperty("os.version") ?: "未知"
-        systemInfo["架构"] = System.getProperty("os.arch") ?: "未知"
-        systemInfo["CPU 架构"] = Build.SUPPORTED_ABIS.joinToString(", ")
-        systemInfo["屏幕密度"] = resources.displayMetrics.densityDpi.toString() + "dpi"
+        systemInfo[getString(R.string.system_info_kernel_version)] = System.getProperty("os.version") ?: getString(R.string.system_info_unknown)
+        systemInfo[getString(R.string.system_info_architecture)] = System.getProperty("os.arch") ?: getString(R.string.system_info_unknown)
+        systemInfo[getString(R.string.system_info_cpu_abi)] = Build.SUPPORTED_ABIS.joinToString(", ")
+        systemInfo[getString(R.string.system_info_screen_density)] = resources.displayMetrics.densityDpi.toString() + "dpi"
         
         addInfoToContainer(systemInfoContainer, systemInfo)
     }
@@ -113,31 +113,31 @@ class SystemInfoFragment : Fragment() {
             val wifiManager = requireContext().getSystemService(Context.WIFI_SERVICE) as WifiManager
             val wifiInfo = wifiManager.connectionInfo
             
-            networkInfo["BSSID"] = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                wifiInfo.bssid ?: "(未显示)"
+            networkInfo[getString(R.string.system_info_bssid)] = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                wifiInfo.bssid ?: getString(R.string.system_info_not_shown)
             } else {
-                wifiInfo.macAddress ?: "(未显示)"
+                wifiInfo.macAddress ?: getString(R.string.system_info_not_shown)
             }
-            networkInfo["连接速度"] = "${wifiInfo.linkSpeed} Mbps"
-            networkInfo["信号强度"] = "${wifiInfo.rssi} dBm"
+            networkInfo[getString(R.string.system_info_connection_speed)] = "${wifiInfo.linkSpeed} Mbps"
+            networkInfo[getString(R.string.system_info_signal_strength)] = "${wifiInfo.rssi} dBm"
             
             // 频率和频段
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val frequency = wifiInfo.frequency
-                networkInfo["频率"] = "$frequency MHz"
-                networkInfo["频段"] = if (frequency in 2400..2483) "2.4 GHz" else "5 GHz"
+                networkInfo[getString(R.string.system_info_frequency)] = "$frequency MHz"
+                networkInfo[getString(R.string.system_info_band)] = if (frequency in 2400..2483) "2.4 GHz" else "5 GHz"
             } else {
-                networkInfo["频率"] = "(未显示)"
-                networkInfo["频段"] = "(未显示)"
+                networkInfo[getString(R.string.system_info_frequency)] = getString(R.string.system_info_not_shown)
+                networkInfo[getString(R.string.system_info_band)] = getString(R.string.system_info_not_shown)
             }
             
             // IP地址
-            networkInfo["IPv4 地址"] = Formatter.formatIpAddress(wifiInfo.ipAddress)
+            networkInfo[getString(R.string.system_info_ipv4_address)] = Formatter.formatIpAddress(wifiInfo.ipAddress)
             
             // 移动数据和SIM卡信息 - 只获取不需要危险权限的信息
             val telephonyManager = requireContext().getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
             try {
-                networkInfo["SIM 运营商"] = telephonyManager.networkOperatorName
+                networkInfo[getString(R.string.system_info_sim_operator)] = telephonyManager.networkOperatorName
             } catch (e: SecurityException) {
                 // 忽略没有权限的情况
                 Log.e("SystemInfoFragment", "获取SIM卡信息失败: ${e.message}")
@@ -160,16 +160,16 @@ class SystemInfoFragment : Fragment() {
             // 内部存储
             val internalStorage = Environment.getDataDirectory()
             val internalStats = getStorageStats(internalStorage)
-            storageInfo["内部存储总量"] = internalStats.first
-            storageInfo["内部存储已使用"] = internalStats.second
-            storageInfo["内部存储可用"] = internalStats.third
+            storageInfo[getString(R.string.system_info_internal_total)] = internalStats.first
+            storageInfo[getString(R.string.system_info_internal_used)] = internalStats.second
+            storageInfo[getString(R.string.system_info_internal_available)] = internalStats.third
             
             // 外部存储
             val externalStorage = Environment.getExternalStorageDirectory()
             val externalStats = getStorageStats(externalStorage)
-            storageInfo["外部存储总量"] = externalStats.first
-            storageInfo["外部存储已使用"] = externalStats.second
-            storageInfo["外部存储可用"] = externalStats.third
+            storageInfo[getString(R.string.system_info_external_total)] = externalStats.first
+            storageInfo[getString(R.string.system_info_external_used)] = externalStats.second
+            storageInfo[getString(R.string.system_info_external_available)] = externalStats.third
             
         } catch (e: Exception) {
             Log.e("SystemInfoFragment", "获取存储信息失败: ${e.message}")
@@ -241,61 +241,144 @@ class SystemInfoFragment : Fragment() {
             // 使用Camera2 API获取相机信息
             val cameraManager = requireContext().getSystemService(Context.CAMERA_SERVICE) as CameraManager
             
+            // TODO: 替换为真实的Camera2 API调用获取相机信息
+            /*
             // 前置摄像头信息
-            cameraInfo["前置摄像头"] = ""
-            cameraInfo["百万像素"] = "16.2 MP"
-            cameraInfo["有效百万像素"] = "4 MP"
-            cameraInfo["分辨率"] = "2320x1744"
-            cameraInfo["传感器尺寸"] = "1/2.8\""
-            cameraInfo["像素大小"] = "4.64 x 3.49 mm"
-            cameraInfo["滤镜颜色排列"] = "GBRG"
-            cameraInfo["孔径"] = "f/2.0"
-            cameraInfo["焦距"] = "3.41 mm"
-            cameraInfo["35mm等效焦距"] = "25 mm"
-            cameraInfo["裁切系数"] = "7.5x"
-            cameraInfo["视场角"] = "68.5° 水平"
-            cameraInfo["快门速度"] = "1/50000 - 1/5 s"
-            cameraInfo["ISO 感光度范围"] = "100 - 6400"
-            cameraInfo["闪光灯"] = "×"
-            cameraInfo["视频防抖"] = "✓"
-            cameraInfo["光学防抖"] = "×"
-            cameraInfo["AE 锁定"] = "✓"
-            cameraInfo["WB 锁定"] = "✓"
-            cameraInfo["功能"] = "Manual sensor, RAW 模式, 连拍"
-            cameraInfo["曝光模式"] = "Manual, External flash"
-            cameraInfo["自动对焦模式"] = "Manual"
-            cameraInfo["白平衡模式"] = "Off, Auto, Incandescent, Fluorescent, Warm, Fluorescent, Daylight, Cloudy, Twilight, Shade"
-            cameraInfo["场景模式"] = "Face priority, Action, Portrait, Landscape, Night, Night portrait, Theatre, Beach, Snow, Sunset, Steady, Fireworks, Sports, Party, Candlelight, Barcode, HDR"
-            cameraInfo["色彩效果"] = "Off"
-            cameraInfo["最大面部计数"] = "15"
-            cameraInfo["面部检测模式"] = "simple"
-            cameraInfo["Camera2 API support"] = "Level 3"
+            cameraInfo[getString(R.string.system_info_front_camera)] = ""
+            cameraInfo[getString(R.string.system_info_megapixels)] = "16.2 MP"
+            cameraInfo[getString(R.string.system_info_effective_megapixels)] = "4 MP"
+            cameraInfo[getString(R.string.system_info_resolution)] = "2320x1744"
+            cameraInfo[getString(R.string.system_info_sensor_size)] = "1/2.8\""
+            cameraInfo[getString(R.string.system_info_pixel_size)] = "4.64 x 3.49 mm"
+            cameraInfo[getString(R.string.system_info_color_filter_array)] = "GBRG"
+            cameraInfo[getString(R.string.system_info_aperture)] = "f/2.0"
+            cameraInfo[getString(R.string.system_info_focal_length)] = "3.41 mm"
+            cameraInfo[getString(R.string.system_info_35mm_equivalent)] = "25 mm"
+            cameraInfo[getString(R.string.system_info_crop_factor)] = "7.5x"
+            cameraInfo[getString(R.string.system_info_field_of_view)] = "68.5° 水平"
+            cameraInfo[getString(R.string.system_info_shutter_speed)] = "1/50000 - 1/5 s"
+            cameraInfo[getString(R.string.system_info_iso_range)] = "100 - 6400"
+            cameraInfo[getString(R.string.system_info_flash)] = "×"
+            cameraInfo[getString(R.string.system_info_video_stabilization)] = "✓"
+            cameraInfo[getString(R.string.system_info_optical_stabilization)] = "×"
+            cameraInfo[getString(R.string.system_info_ae_lock)] = "✓"
+            cameraInfo[getString(R.string.system_info_wb_lock)] = "✓"
+            cameraInfo[getString(R.string.system_info_features)] = "Manual sensor, RAW 模式, 连拍"
+            cameraInfo[getString(R.string.system_info_exposure_modes)] = "Manual, External flash"
+            cameraInfo[getString(R.string.system_info_autofocus_modes)] = "Manual"
+            cameraInfo[getString(R.string.system_info_white_balance_modes)] = "Off, Auto, Incandescent, Fluorescent, Warm, Fluorescent, Daylight, Cloudy, Twilight, Shade"
+            cameraInfo[getString(R.string.system_info_scene_modes)] = "Face priority, Action, Portrait, Landscape, Night, Night portrait, Theatre, Beach, Snow, Sunset, Steady, Fireworks, Sports, Party, Candlelight, Barcode, HDR"
+            cameraInfo[getString(R.string.system_info_color_effects)] = "Off"
+            cameraInfo[getString(R.string.system_info_max_face_count)] = "15"
+            cameraInfo[getString(R.string.system_info_face_detection_mode)] = "simple"
+            cameraInfo[getString(R.string.system_info_camera2_api_support)] = "Level 3"
             
             // 后置摄像头信息
-            cameraInfo["后置摄像头"] = ""
-            cameraInfo["百万像素 (后)"] = "48.0 MP"
-            cameraInfo["有效百万像素 (后)"] = "12.0 MP"
-            cameraInfo["分辨率 (后)"] = "8000x6000"
-            cameraInfo["传感器尺寸 (后)"] = "1/1.56\""
-            cameraInfo["像素大小 (后)"] = "0.80 μm"
-            cameraInfo["滤镜颜色排列 (后)"] = "RGGB"
-            cameraInfo["孔径 (后)"] = "f/1.8"
-            cameraInfo["焦距 (后)"] = "2.84 mm"
-            cameraInfo["35mm等效焦距 (后)"] = "26 mm"
-            cameraInfo["裁切系数 (后)"] = "6.5x"
-            cameraInfo["视场角 (后)"] = "83.5° 水平"
-            cameraInfo["快门速度 (后)"] = "1/80000 - 30 s"
-            cameraInfo["ISO 感光度范围 (后)"] = "50 - 12800"
-            cameraInfo["闪光灯 (后)"] = "✓"
-            cameraInfo["视频防抖 (后)"] = "✓"
-            cameraInfo["光学防抖 (后)"] = "✓"
-            cameraInfo["AE 锁定 (后)"] = "✓"
-            cameraInfo["WB 锁定 (后)"] = "✓"
-            cameraInfo["功能 (后)"] = "Manual sensor, RAW 模式, 连拍, 深度感知"
+            cameraInfo[getString(R.string.system_info_rear_camera)] = ""
+            cameraInfo["${getString(R.string.system_info_megapixels)} (后)"] = "48.0 MP"
+            cameraInfo["${getString(R.string.system_info_effective_megapixels)} (后)"] = "12.0 MP"
+            cameraInfo["${getString(R.string.system_info_resolution)} (后)"] = "8000x6000"
+            cameraInfo["${getString(R.string.system_info_sensor_size)} (后)"] = "1/1.56\""
+            cameraInfo["${getString(R.string.system_info_pixel_size)} (后)"] = "0.80 μm"
+            cameraInfo["${getString(R.string.system_info_color_filter_array)} (后)"] = "RGGB"
+            cameraInfo["${getString(R.string.system_info_aperture)} (后)"] = "f/1.8"
+            cameraInfo["${getString(R.string.system_info_focal_length)} (后)"] = "2.84 mm"
+            cameraInfo["${getString(R.string.system_info_35mm_equivalent)} (后)"] = "26 mm"
+            cameraInfo["${getString(R.string.system_info_crop_factor)} (后)"] = "6.5x"
+            cameraInfo["${getString(R.string.system_info_field_of_view)} (后)"] = "83.5° 水平"
+            cameraInfo["${getString(R.string.system_info_shutter_speed)} (后)"] = "1/80000 - 30 s"
+            cameraInfo["${getString(R.string.system_info_iso_range)} (后)"] = "50 - 12800"
+            cameraInfo["${getString(R.string.system_info_flash)} (后)"] = "✓"
+            cameraInfo["${getString(R.string.system_info_video_stabilization)} (后)"] = "✓"
+            cameraInfo["${getString(R.string.system_info_optical_stabilization)} (后)"] = "✓"
+            cameraInfo["${getString(R.string.system_info_ae_lock)} (后)"] = "✓"
+            cameraInfo["${getString(R.string.system_info_wb_lock)} (后)"] = "✓"
+            cameraInfo["${getString(R.string.system_info_features)} (后)"] = "Manual sensor, RAW 模式, 连拍, 深度感知"
+            */
+            
+            // 获取相机ID列表
+            val cameraIds = cameraManager.cameraIdList
+            
+            for (cameraId in cameraIds) {
+                // 获取相机设备特性
+                val characteristics = cameraManager.getCameraCharacteristics(cameraId)
+                
+                // 确定相机位置
+                val lensFacing = characteristics.get(CameraCharacteristics.LENS_FACING)
+                val isFrontCamera = lensFacing == CameraCharacteristics.LENS_FACING_FRONT
+                val isRearCamera = lensFacing == CameraCharacteristics.LENS_FACING_BACK
+                
+                if (isFrontCamera || isRearCamera) {
+                    val prefix = if (isFrontCamera) "" else " (后)"
+                    val cameraLabel = if (isFrontCamera) getString(R.string.system_info_front_camera) else getString(R.string.system_info_rear_camera)
+                    
+                    // 添加相机标签
+                    cameraInfo[cameraLabel] = ""
+                    
+                    // 获取传感器信息
+                    val sensorInfo = characteristics.get(CameraCharacteristics.SENSOR_INFO_PHYSICAL_SIZE)
+                    val pixelArraySize = characteristics.get(CameraCharacteristics.SENSOR_INFO_PIXEL_ARRAY_SIZE)
+                    
+                    // 计算像素数 (MP)
+                    if (pixelArraySize != null) {
+                        val totalPixels = pixelArraySize.width * pixelArraySize.height
+                        val megapixels = totalPixels.toDouble() / 1_000_000
+                        cameraInfo["${getString(R.string.system_info_megapixels)}$prefix"] = String.format("%.1f MP", megapixels)
+                    }
+                    
+                    // 分辨率
+                    if (pixelArraySize != null) {
+                        cameraInfo["${getString(R.string.system_info_resolution)}$prefix"] = "${pixelArraySize.width}x${pixelArraySize.height}"
+                    }
+                    
+                    // 传感器尺寸
+                    if (sensorInfo != null) {
+                        cameraInfo["${getString(R.string.system_info_sensor_size)}$prefix"] = String.format("%.2f×%.2f mm", sensorInfo.width, sensorInfo.height)
+                    }
+                    
+                    // 光圈大小
+                    val aperture = characteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)
+                    if (aperture != null && aperture.isNotEmpty()) {
+                        cameraInfo["${getString(R.string.system_info_aperture)}$prefix"] = String.format("f/%.1f", aperture[0])
+                    }
+                    
+                    // 焦距
+                    val focalLengths = characteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_FOCAL_LENGTHS)
+                    if (focalLengths != null && focalLengths.isNotEmpty()) {
+                        cameraInfo["${getString(R.string.system_info_focal_length)}$prefix"] = String.format("%.2f mm", focalLengths[0])
+                    }
+                    
+                    // Camera2 API 支持级别
+                    val camera2Level = characteristics.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) as Int?
+                    val levelString = when (camera2Level) {
+                        CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY -> "Legacy"
+                        CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED -> "Limited"
+                        CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL -> "Full"
+                        CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_3 -> "Level 3"
+                        else -> "Unknown"
+                    }
+                    cameraInfo["${getString(R.string.system_info_camera2_api_support)}$prefix"] = levelString
+                    
+                    // 视频防抖
+                    val videoStabilizationModes = characteristics.get(CameraCharacteristics.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES)
+                    val videoStabilization = videoStabilizationModes?.isNotEmpty() == true
+                    cameraInfo["${getString(R.string.system_info_video_stabilization)}$prefix"] = if (videoStabilization) "✓" else "×"
+                    
+                    // 光学防抖
+                    val opticalStabilizationModes = characteristics.get(CameraCharacteristics.LENS_INFO_AVAILABLE_OPTICAL_STABILIZATION)
+                    val opticalStabilization = opticalStabilizationModes?.isNotEmpty() == true
+                    cameraInfo["${getString(R.string.system_info_optical_stabilization)}$prefix"] = if (opticalStabilization) "✓" else "×"
+                }
+            }
+            
+            // 如果没有获取到相机信息，显示提示
+            if (cameraInfo.isEmpty()) {
+                cameraInfo[getString(R.string.system_info_camera_info)] = getString(R.string.system_info_cannot_get_camera_info)
+            }
             
         } catch (e: Exception) {
             Log.e("SystemInfoFragment", "获取相机信息失败: ${e.message}")
-            cameraInfo["相机信息"] = "无法获取相机信息"
+            cameraInfo[getString(R.string.system_info_camera_info)] = getString(R.string.system_info_cannot_get_camera_info)
         }
         
         addInfoToContainer(cameraInfoContainer, cameraInfo)
@@ -317,30 +400,30 @@ class SystemInfoFragment : Fragment() {
             val ydpi = displayMetrics.ydpi
             
             // 分辨率
-            screenInfo["分辨率"] = "${widthPixels}x${heightPixels}"
+            screenInfo[getString(R.string.system_info_screen_resolution)] = "${widthPixels}x${heightPixels}"
             
             // 计算宽高比
             val aspectRatio = calculateAspectRatio(widthPixels, heightPixels)
-            screenInfo["宽高比"] = aspectRatio
+            screenInfo[getString(R.string.system_info_aspect_ratio)] = aspectRatio
             
             // 计算屏幕尺寸（英寸）
             val screenSize = calculateScreenSize(widthPixels, heightPixels, xdpi, ydpi)
-            screenInfo["屏幕尺寸"] = "${String.format("%.1f", screenSize)} 英寸"
+            screenInfo[getString(R.string.system_info_screen_size)] = "${String.format("%.1f", screenSize)} 英寸"
             
             // 屏幕密度
-            screenInfo["屏幕密度"] = "${displayMetrics.densityDpi} dpi"
+            screenInfo[getString(R.string.system_info_screen_density)] = "${displayMetrics.densityDpi} dpi"
             
             // 获取GPU信息
             val gpuInfo = getGpuInfo()
-            screenInfo["GPU"] = gpuInfo
+            screenInfo[getString(R.string.system_info_gpu)] = gpuInfo
             
             // 获取屏幕刷新率
             val refreshRate = getRefreshRate()
-            screenInfo["刷新率"] = "${refreshRate} Hz"
+            screenInfo[getString(R.string.system_info_refresh_rate)] = "${refreshRate} Hz"
             
         } catch (e: Exception) {
             Log.e("SystemInfoFragment", "获取屏幕信息失败: ${e.message}")
-            screenInfo["屏幕信息"] = "无法获取屏幕信息"
+            screenInfo[getString(R.string.system_info_screen_info)] = getString(R.string.system_info_cannot_get_screen_info)
         }
         
         addInfoToContainer(screenInfoContainer, screenInfo)
@@ -431,53 +514,53 @@ class SystemInfoFragment : Fragment() {
             val sensorManager = requireContext().getSystemService(Context.SENSOR_SERVICE) as SensorManager
             val sensors = sensorManager.getSensorList(Sensor.TYPE_ALL)
             
-            sensorInfo["传感器数量"] = "${sensors.size}"
+            sensorInfo[getString(R.string.system_info_sensor_count)] = "${sensors.size}"
             
             // 遍历所有传感器，获取详细信息
             sensors.forEachIndexed { index, sensor ->
                 val sensorType = when (sensor.type) {
-                    Sensor.TYPE_ACCELEROMETER -> "加速度传感器"
-                    Sensor.TYPE_AMBIENT_TEMPERATURE -> "环境温度传感器"
-                    Sensor.TYPE_GYROSCOPE -> "陀螺仪传感器"
-                    Sensor.TYPE_LIGHT -> "光线传感器"
-                    Sensor.TYPE_MAGNETIC_FIELD -> "磁场传感器"
-                    Sensor.TYPE_PRESSURE -> "压力传感器"
-                    Sensor.TYPE_PROXIMITY -> "距离传感器"
-                    Sensor.TYPE_RELATIVE_HUMIDITY -> "相对湿度传感器"
-                    Sensor.TYPE_STEP_COUNTER -> "计步器"
-                    Sensor.TYPE_STEP_DETECTOR -> "步数检测器"
-                    Sensor.TYPE_GRAVITY -> "重力传感器"
-                    Sensor.TYPE_LINEAR_ACCELERATION -> "线性加速度传感器"
-                    Sensor.TYPE_ROTATION_VECTOR -> "旋转向量传感器"
-                    Sensor.TYPE_HEART_RATE -> "心率传感器"
-                    Sensor.TYPE_GAME_ROTATION_VECTOR -> "游戏旋转向量传感器"
-                    Sensor.TYPE_GYROSCOPE_UNCALIBRATED -> "未校准陀螺仪"
-                    Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED -> "未校准磁场传感器"
-                    Sensor.TYPE_SIGNIFICANT_MOTION -> "显著运动传感器"
-                    Sensor.TYPE_STATIONARY_DETECT -> "静止检测传感器"
-                    Sensor.TYPE_ACCELEROMETER_UNCALIBRATED -> "未校准加速度传感器"
-                    Sensor.TYPE_LOW_LATENCY_OFFBODY_DETECT -> "低延迟离身检测传感器"
-                    Sensor.TYPE_POSE_6DOF -> "6DOF姿态传感器"
-                    Sensor.TYPE_HEART_BEAT -> "心跳传感器"
-                    Sensor.TYPE_HINGE_ANGLE -> "铰链角度传感器"
-                    else -> "未知传感器类型"
+                    Sensor.TYPE_ACCELEROMETER -> getString(R.string.system_info_sensor_type_accelerometer)
+                    Sensor.TYPE_AMBIENT_TEMPERATURE -> getString(R.string.system_info_sensor_type_temperature)
+                    Sensor.TYPE_GYROSCOPE -> getString(R.string.system_info_sensor_type_gyroscope)
+                    Sensor.TYPE_LIGHT -> getString(R.string.system_info_sensor_type_light)
+                    Sensor.TYPE_MAGNETIC_FIELD -> getString(R.string.system_info_sensor_type_magnetic_field)
+                    Sensor.TYPE_PRESSURE -> getString(R.string.system_info_sensor_type_pressure)
+                    Sensor.TYPE_PROXIMITY -> getString(R.string.system_info_sensor_type_proximity)
+                    Sensor.TYPE_RELATIVE_HUMIDITY -> getString(R.string.system_info_sensor_type_humidity)
+                    Sensor.TYPE_STEP_COUNTER -> getString(R.string.system_info_sensor_type_step_counter)
+                    Sensor.TYPE_STEP_DETECTOR -> getString(R.string.system_info_sensor_type_step_detector)
+                    Sensor.TYPE_GRAVITY -> getString(R.string.system_info_sensor_type_gravity)
+                    Sensor.TYPE_LINEAR_ACCELERATION -> getString(R.string.system_info_sensor_type_linear_acceleration)
+                    Sensor.TYPE_ROTATION_VECTOR -> getString(R.string.system_info_sensor_type_rotation_vector)
+                    Sensor.TYPE_HEART_RATE -> getString(R.string.system_info_sensor_type_heart_rate)
+                    Sensor.TYPE_GAME_ROTATION_VECTOR -> getString(R.string.system_info_sensor_type_game_rotation_vector)
+                    Sensor.TYPE_GYROSCOPE_UNCALIBRATED -> getString(R.string.system_info_sensor_type_gyroscope_uncalibrated)
+                    Sensor.TYPE_MAGNETIC_FIELD_UNCALIBRATED -> getString(R.string.system_info_sensor_type_magnetic_field_uncalibrated)
+                    Sensor.TYPE_SIGNIFICANT_MOTION -> getString(R.string.system_info_sensor_type_significant_motion)
+                    Sensor.TYPE_STATIONARY_DETECT -> getString(R.string.system_info_sensor_type_stationary_detect)
+                    Sensor.TYPE_ACCELEROMETER_UNCALIBRATED -> getString(R.string.system_info_sensor_type_accelerometer_uncalibrated)
+                    Sensor.TYPE_LOW_LATENCY_OFFBODY_DETECT -> getString(R.string.system_info_sensor_type_low_latency_offbody_detect)
+                    Sensor.TYPE_POSE_6DOF -> getString(R.string.system_info_sensor_type_pose_6dof)
+                    Sensor.TYPE_HEART_BEAT -> getString(R.string.system_info_sensor_type_heart_beat)
+                    Sensor.TYPE_HINGE_ANGLE -> getString(R.string.system_info_sensor_type_hinge_angle)
+                    else -> getString(R.string.system_info_sensor_type_unknown)
                 }
                 
                 // 添加传感器详细信息
-                sensorInfo["传感器 ${index + 1}"] = sensor.name
-                sensorInfo["类型 ${index + 1}"] = sensorType
-                sensorInfo["制造商 ${index + 1}"] = sensor.vendor
-                sensorInfo["分辨率 ${index + 1}"] = sensor.resolution.toString()
-                sensorInfo["最大范围 ${index + 1}"] = sensor.maximumRange.toString()
-                sensorInfo["耗电量 ${index + 1}"] = sensor.power.toString() + " mA"
-                sensorInfo["最小延迟 ${index + 1}"] = sensor.minDelay.toString() + " μs"
-                sensorInfo["版本 ${index + 1}"] = sensor.version.toString()
+                sensorInfo["${getString(R.string.system_info_sensor)} ${index + 1}"] = sensor.name
+                sensorInfo["${getString(R.string.system_info_sensor_type)} ${index + 1}"] = sensorType
+                sensorInfo["${getString(R.string.system_info_sensor_manufacturer)} ${index + 1}"] = sensor.vendor
+                sensorInfo["${getString(R.string.system_info_sensor_resolution)} ${index + 1}"] = sensor.resolution.toString()
+                sensorInfo["${getString(R.string.system_info_sensor_max_range)} ${index + 1}"] = sensor.maximumRange.toString()
+                sensorInfo["${getString(R.string.system_info_sensor_power)} ${index + 1}"] = sensor.power.toString() + " mA"
+                sensorInfo["${getString(R.string.system_info_sensor_min_delay)} ${index + 1}"] = sensor.minDelay.toString() + " μs"
+                sensorInfo["${getString(R.string.system_info_sensor_version)} ${index + 1}"] = sensor.version.toString()
                 sensorInfo[""] = ""
             }
             
         } catch (e: Exception) {
             Log.e("SystemInfoFragment", "获取传感器信息失败: ${e.message}")
-            sensorInfo["传感器信息"] = "无法获取传感器信息"
+            sensorInfo[getString(R.string.system_info_sensor_info)] = getString(R.string.system_info_cannot_get_sensor_info)
         }
         
         addInfoToContainer(sensorInfoContainer, sensorInfo)

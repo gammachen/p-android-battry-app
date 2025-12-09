@@ -11,14 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <androidx.appcompat.widget.Toolbar
+    <!-- <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/green_100"
-        app:title="实时状态"
+        app:title="@string/nav_title_charging"
         app:titleTextColor="@color/gray_800"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" /> -->
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -351,7 +351,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="预估充满时长"
+                        android:text="@string/estimated_full_charging_time"
                         android:textColor="@color/orange_500"
                         android:textSize="14sp" />
 
@@ -428,7 +428,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="性能模式"
+                        android:text="@string/performance_mode"
                         android:textColor="@color/gray_800"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -450,7 +450,7 @@
                     android:id="@+id/tv_performance_mode_tip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="可提升设备性能，但会增加耗电和发热"
+                    android:text="@string/performance_mode_tip"
                     android:textColor="@color/gray_600"
                     android:textSize="14sp"
                     android:lineSpacingExtra="4dp" />
@@ -488,7 +488,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="省电模式"
+                        android:text="@string/power_saving_mode"
                         android:textColor="@color/gray_800"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -510,7 +510,7 @@
                     android:id="@+id/tv_power_saving_mode_tip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="可提升续航时间，建议：\n 关闭熄屏显示 \n 关闭自动同步 \n 关闭触感反馈 \n 关闭系统提示音 \n 减弱显示视觉效果 \n 调整超时灭屏时间 \n 显示应用后台活动 \n 降低系统运行性能 \n 关闭智能语音助手唤醒 \n 关闭允许唤醒前台应用 \n 关闭允许后台启动 \n 关闭允许应用自启动 \n 关闭应用关联启动 \n "
+                    android:text="@string/power_saving_mode_tip"
                     android:textColor="@color/gray_600"
                     android:textSize="14sp"
                     android:lineSpacingExtra="4dp" />
@@ -547,7 +547,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="今日亮屏时长"
+                        android:text="@string/today_screen_on_time"
                         android:textColor="@color/gray_800"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -594,7 +594,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="耗电排行"
+                        android:text="@string/battery_usage_rank"
                         android:textColor="@color/gray_800"
                         android:textSize="16sp"
                         android:textStyle="bold" />

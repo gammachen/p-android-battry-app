@@ -2,6 +2,7 @@ package com.batteryapp.data
 
 import androidx.room.Room
 import android.content.Context
+import com.batteryapp.R
 import com.batteryapp.model.BatteryData
 import com.batteryapp.model.BatteryHealthData
 import com.batteryapp.model.AppBatteryUsage
@@ -612,27 +613,27 @@ class BatteryRepository(private val context: Context) {
         
         // 充电起始电量建议
         when {
-            avgStart < 20 -> recommendations.add("您经常在电量过低（${avgStart.toInt()}%）时充电，建议在电量高于20%时开始充电")
-            avgStart in 20.0..40.0 -> recommendations.add("充电习惯良好，起始电量合适")
-            else -> recommendations.add("您习惯在高电量时充电，可以尝试在电量更低时再充电")
+            avgStart < 20 -> recommendations.add(context.getString(R.string.recommendation_start_low, avgStart.toInt()))
+            avgStart in 20.0..40.0 -> recommendations.add(context.getString(R.string.recommendation_start_good))
+            else -> recommendations.add(context.getString(R.string.recommendation_start_high))
         }
         
         // 充电结束电量建议
         when {
-            avgEnd > 90 -> recommendations.add("您经常充满电（${avgEnd.toInt()}%），建议充至80%即可延长电池寿命")
-            avgEnd in 70.0..90.0 -> recommendations.add("充电结束电量合适，有助于保护电池")
-            else -> recommendations.add("充电结束电量较低，可能影响使用体验")
+            avgEnd > 90 -> recommendations.add(context.getString(R.string.recommendation_end_high, avgEnd.toInt()))
+            avgEnd in 70.0..90.0 -> recommendations.add(context.getString(R.string.recommendation_end_good))
+            else -> recommendations.add(context.getString(R.string.recommendation_end_low))
         }
         
         // 过夜充电建议
         if (overnightPercent > 30) {
-            recommendations.add("您经常过夜充电（${overnightPercent.toInt()}%的充电会话），建议使用智能充电提醒功能")
+            recommendations.add(context.getString(R.string.recommendation_overnight, overnightPercent.toInt()))
         }
         
         // 充电时长建议
         val hours = avgTime / (60 * 60 * 1000)
         if (hours > 3) {
-            recommendations.add("平均充电时间较长（${hours.toInt()}小时），建议检查充电器功率或充电时减少使用手机")
+            recommendations.add(context.getString(R.string.recommendation_duration_long, hours.toInt()))
         }
         
         return recommendations

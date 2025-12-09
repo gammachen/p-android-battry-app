@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/green_500" />
+    <foreground>
+        <vector xmlns:android="http://schemas.android.com/apk/res/android"
+            android:width="108dp"
+            android:height="108dp"
+            android:viewportWidth="108"
+            android:viewportHeight="108">
+            <!-- 电池主体 -->
+            <path
+                d="M18,30 L90,30 L90,78 L18,78 Z"
+                fill="@color/white"
+                android:pathData="M18,30 L90,30 L90,78 L18,78 Z"
+                android:fillColor="@color/white" />
+            <!-- 电池正极 -->
+            <path
+                d="M90,46 L94,46 L94,62 L90,62 Z"
+                android:pathData="M90,46 L94,46 L94,62 L90,62 Z"
+                android:fillColor="@color/white" />
+            <!-- 电池电量 -->
+            <path
+                d="M26,38 L82,38 L82,70 L26,70 Z"
+                android:pathData="M26,38 L82,38 L82,70 L26,70 Z"
+                android:fillColor="@color/green_700" />
+        </vector>
+    </foreground>
+</adaptive-icon>
