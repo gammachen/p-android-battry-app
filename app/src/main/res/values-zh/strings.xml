@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">电池检测</string>
+    <string name="app_name">微辣玩机</string>
     <string name="battery_life">电池寿命</string>
     <string name="battery_usage">电量使用情况</string>
     <string name="chart_comparison">图文对比</string>
@@ -361,8 +361,8 @@
     <string name="health_charging_records_list">充电记录列表</string>
     <string name="health_charging_habits_statistics">充电习惯统计数据</string>
     <string name="system_info_sensor_type_accelerometer">加速度传感器</string>
-    <string name="system_info_sensor_type_ambient_temperature">环境温度传感器</string>
-    <string name="system_info_sensor_type_dynamic_sensor_meta">动态传感器元</string>
+
+
     <string name="system_info_sensor_type_gravity">重力传感器</string>
     <string name="system_info_sensor_type_gyroscope">陀螺仪</string>
     <string name="system_info_sensor_type_gyroscope_uncalibrated">未校准陀螺仪</string>
@@ -371,20 +371,19 @@
     <string name="system_info_sensor_type_linear_acceleration">线性加速度传感器</string>
     <string name="system_info_sensor_type_magnetic_field">磁场传感器</string>
     <string name="system_info_sensor_type_magnetic_field_uncalibrated">未校准磁场传感器</string>
-    <string name="system_info_sensor_type_orientation">方向传感器</string>
+
     <string name="system_info_sensor_type_pressure">压力传感器</string>
     <string name="system_info_sensor_type_proximity">接近传感器</string>
-    <string name="system_info_sensor_type_relative_humidity">相对湿度传感器</string>
+
     <string name="system_info_sensor_type_rotation_vector">旋转矢量传感器</string>
-    <string name="system_info_sensor_type_sensor_meta">传感器元</string>
+
     <string name="system_info_sensor_type_significant_motion">重大运动传感器</string>
     <string name="system_info_sensor_type_step_counter">计步器</string>
     <string name="system_info_sensor_type_step_detector">步数检测器</string>
     <string name="system_info_sensor_type_temperature">温度传感器</string>
     <string name="system_info_sensor_type_game_rotation_vector">游戏旋转矢量传感器</string>
-    <string name="system_info_sensor_type_geomagnetic_rotation_vector">地磁旋转矢量传感器</string>
-    <string name="system_info_sensor_type_uncalibrated_gyroscope">未校准陀螺仪</string>
-    <string name="system_info_sensor_type_uncalibrated_magnetic_field">未校准磁场传感器</string>
+
+
     
     <!-- Additional system info strings -->
     <string name="system_info_not_shown">(未显示)</string>
@@ -412,12 +411,12 @@
     <string name="image_compression_result">压缩结果</string>
     
     <!-- Charging recommendations -->
-    <string name="recommendation_start_low" formatted="false">您经常在电量过低（%1$d%%）时充电，建议在电量高于20%时开始充电</string>
+    <string name="recommendation_start_low">您经常在电量过低（%1$d%%）时充电，建议在电量高于20%%时开始充电</string>
     <string name="recommendation_start_good">充电习惯良好，起始电量合适</string>
     <string name="recommendation_start_high">您习惯在高电量时充电，可以尝试在电量更低时再充电</string>
-    <string name="recommendation_end_high" formatted="false">您经常充满电（%1$d%%），建议充至80%即可延长电池寿命</string>
+    <string name="recommendation_end_high">您经常充满电（%1$d%%），建议充至80%%即可延长电池寿命</string>
     <string name="recommendation_end_good">充电结束电量合适，有助于保护电池</string>
     <string name="recommendation_end_low">充电结束电量较低，可能影响使用体验</string>
-    <string name="recommendation_overnight" formatted="false">您经常过夜充电（%1$d%%的充电会话），建议使用智能充电提醒功能</string>
-    <string name="recommendation_duration_long" formatted="false">平均充电时间较长（%1$d小时），建议检查充电器功率或充电时减少使用手机</string>
+    <string name="recommendation_overnight">您经常过夜充电（%1$d%%的充电会话），建议使用智能充电提醒功能</string>
+    <string name="recommendation_duration_long">平均充电时间较长（%1$d小时），建议检查充电器功率或充电时减少使用手机</string>
 </resources>

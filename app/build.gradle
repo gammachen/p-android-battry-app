@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.batteryapp'
+    namespace 'com.sf.batteryapp'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.batteryapp"
+        applicationId "com.sf.batteryapp"
         minSdk 24
         targetSdk 34
         versionCode 1

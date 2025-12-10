@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Battery Monitor</string>
+    <string name="app_name">SpicyPlay</string>
     <string name="battery_life">Battery Life</string>
     <string name="battery_usage">Battery Usage</string>
     <string name="chart_comparison">Chart Comparison</string>
@@ -370,31 +370,31 @@ System is already in optimal condition!</string>
     <string name="system_info_sensor_version">Version</string>
 
     <!-- Sensor types -->
-    <string name="system_info_sensor_type_accelerometer">Accelerometer</string>
-    <string name="system_info_sensor_type_temperature">Ambient Temperature</string>
-    <string name="system_info_sensor_type_gyroscope">Gyroscope</string>
-    <string name="system_info_sensor_type_light">Light</string>
-    <string name="system_info_sensor_type_magnetic_field">Magnetic Field</string>
-    <string name="system_info_sensor_type_pressure">Pressure</string>
-    <string name="system_info_sensor_type_proximity">Proximity</string>
-    <string name="system_info_sensor_type_humidity">Relative Humidity</string>
-    <string name="system_info_sensor_type_step_counter">Step Counter</string>
-    <string name="system_info_sensor_type_step_detector">Step Detector</string>
-    <string name="system_info_sensor_type_gravity">Gravity</string>
-    <string name="system_info_sensor_type_linear_acceleration">Linear Acceleration</string>
-    <string name="system_info_sensor_type_rotation_vector">Rotation Vector</string>
-    <string name="system_info_sensor_type_heart_rate">Heart Rate</string>
-    <string name="system_info_sensor_type_game_rotation_vector">Game Rotation Vector</string>
-    <string name="system_info_sensor_type_gyroscope_uncalibrated">Gyroscope Uncalibrated</string>
-    <string name="system_info_sensor_type_magnetic_field_uncalibrated">Magnetic Field Uncalibrated</string>
-    <string name="system_info_sensor_type_significant_motion">Significant Motion</string>
-    <string name="system_info_sensor_type_stationary_detect">Stationary Detect</string>
-    <string name="system_info_sensor_type_accelerometer_uncalibrated">Accelerometer Uncalibrated</string>
-    <string name="system_info_sensor_type_low_latency_offbody_detect">Low Latency Offbody Detect</string>
-    <string name="system_info_sensor_type_pose_6dof">Pose 6DOF</string>
-    <string name="system_info_sensor_type_heart_beat">Heart Beat</string>
-    <string name="system_info_sensor_type_hinge_angle">Hinge Angle</string>
-    <string name="system_info_sensor_type_unknown">Unknown Sensor Type</string>
+    <string name="system_info_sensor_type_accelerometer" translatable="false">Accelerometer</string>
+    <string name="system_info_sensor_type_temperature" translatable="false">Ambient Temperature</string>
+    <string name="system_info_sensor_type_gyroscope" translatable="false">Gyroscope</string>
+    <string name="system_info_sensor_type_light" translatable="false">Light</string>
+    <string name="system_info_sensor_type_magnetic_field" translatable="false">Magnetic Field</string>
+    <string name="system_info_sensor_type_pressure" translatable="false">Pressure</string>
+    <string name="system_info_sensor_type_proximity" translatable="false">Proximity</string>
+    <string name="system_info_sensor_type_humidity" translatable="false">Relative Humidity</string>
+    <string name="system_info_sensor_type_step_counter" translatable="false">Step Counter</string>
+    <string name="system_info_sensor_type_step_detector" translatable="false">Step Detector</string>
+    <string name="system_info_sensor_type_gravity" translatable="false">Gravity</string>
+    <string name="system_info_sensor_type_linear_acceleration" translatable="false">Linear Acceleration</string>
+    <string name="system_info_sensor_type_rotation_vector" translatable="false">Rotation Vector</string>
+    <string name="system_info_sensor_type_heart_rate" translatable="false">Heart Rate</string>
+    <string name="system_info_sensor_type_game_rotation_vector" translatable="false">Game Rotation Vector</string>
+    <string name="system_info_sensor_type_gyroscope_uncalibrated" translatable="false">Gyroscope Uncalibrated</string>
+    <string name="system_info_sensor_type_magnetic_field_uncalibrated" translatable="false">Magnetic Field Uncalibrated</string>
+    <string name="system_info_sensor_type_significant_motion" translatable="false">Significant Motion</string>
+    <string name="system_info_sensor_type_stationary_detect" translatable="false">Stationary Detect</string>
+    <string name="system_info_sensor_type_accelerometer_uncalibrated" translatable="false">Accelerometer Uncalibrated</string>
+    <string name="system_info_sensor_type_low_latency_offbody_detect" translatable="false">Low Latency Offbody Detect</string>
+    <string name="system_info_sensor_type_pose_6dof" translatable="false">Pose 6DOF</string>
+    <string name="system_info_sensor_type_heart_beat" translatable="false">Heart Beat</string>
+    <string name="system_info_sensor_type_hinge_angle" translatable="false">Hinge Angle</string>
+    <string name="system_info_sensor_type_unknown" translatable="false">Unknown Sensor Type</string>
     
     <!-- Additional system info strings -->
     <string name="system_info_not_shown">(Not shown)</string>
@@ -420,4 +420,6 @@ System is already in optimal condition!</string>
     <string name="image_compression_no_directory_selected">No directory selected</string>
     <string name="image_compression_start">Start Compression</string>
     <string name="image_compression_result">Compression Result</string>
+    
+
 </resources>
