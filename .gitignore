@@ -4,6 +4,9 @@
 *.apk
 *.ap_*.aab
 
+sign.zip
+upload_certificate.pem
+
 # Files for the ART/Dalvik VM
 *.dex
 
