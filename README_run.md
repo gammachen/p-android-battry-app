@@ -1073,3 +1073,21 @@ adb -s 192.168.31.38:5555 logcat -v time -s dBatteryApp_x
 12-08 16:38:36.209 D/BatteryMonitorService( 6809): 充电类型: 1
 12-08 16:38:36.209 D/BatteryMonitorService( 6809): Battery Status Updated: BatteryStatus(percentage=81, isCharging=true, status=2, current=0, voltage=4.252, temperature=27.0, power=0.0)
 ```
+
+```bash
+隐私声明
+
+https://alphago.ltd:5001/enterprise/about_privacy_declare_x.html
+
+https://developer.huawei.com/consumer/cn/service/josp/agc/index.html#/myApp/116284665/9249519184596012000
+a、通过网络或其他合法途径获取pepk.jar。
+b、将签名密钥签名文件（.jks文件） 和pepk.jar解压至jdk的bin目录。
+c、运行cmd命令打开命令行窗口，进入JDK的bin目录，运行如下命令打包、加密签名密钥文件。
+java -jar pepk.jar --keystore sign-keystore.jks --alias sign --output=sign.zip --encryptionkey=034200041E224EE22B45D19B23DB91BA9F52DE0A06513E03A5821409B34976FDEED6E0A47DBA48CC249DD93734A6C5D9A0F43461F9E140F278A5D2860846C2CF5D2C3C02 --include-cert
+sign-keystore.jks: 签名密钥的签名文件。
+sign: 签名文件的别名。
+sign.zip: 打包生成的签名密钥zip包。
+encryptionkey: 加密使用的公钥，请使用命令中固定的公钥。
+d、上传步骤c生成的zip包。
+```
+
